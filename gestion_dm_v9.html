@@ -26,8 +26,8 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 .sb-brand{padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;}
 .sb-logo{width:34px;height:34px;border-radius:6px;object-fit:cover;}
 .sb-brand h1{font-size:15px;font-weight:700;color:var(--text);}
-.sb-brand span{font-size:10px;color:var(--text3);font-family:'Space Mono',monospace;}
-.sb-section{padding:16px 20px 5px;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);font-family:'Space Mono',monospace;}
+.sb-brand span{font-size:10px;color:var(--text3);font-family:monospace;}
+.sb-section{padding:16px 20px 5px;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);font-family:monospace;}
 .sb-nav{flex:1;padding:6px 0;overflow-y:auto;}
 .nav-item{display:flex;align-items:center;gap:9px;padding:9px 20px;cursor:pointer;font-size:13px;color:var(--text2);border-left:2px solid transparent;transition:all 0.12s;}
 .nav-item:hover{color:var(--text);background:var(--accent-dim);}
@@ -36,7 +36,7 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 .nav-item.active svg{opacity:1;}
 .sb-footer{border-top:1px solid var(--border);}
 .sb-status{padding:13px 20px;}
-.status-pill{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--text3);font-family:'Space Mono',monospace;}
+.status-pill{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--text3);font-family:monospace;}
 .dot{width:6px;height:6px;border-radius:50%;background:#444;flex-shrink:0;}
 .dot.ok{background:var(--green);box-shadow:0 0 5px rgba(29,158,117,0.5);}
 .dot.err{background:var(--red);}
@@ -46,7 +46,7 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 .topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 26px;height:52px;display:flex;align-items:center;justify-content:space-between;}
 .page-title{font-size:14px;font-weight:600;}
 .topbar-right{display:flex;align-items:center;gap:12px;}
-.dolar-pill{font-size:11px;font-family:'Space Mono',monospace;color:var(--blue);background:var(--blue-lt);padding:4px 10px;border-radius:20px;cursor:pointer;border:none;}
+.dolar-pill{font-size:11px;font-family:monospace;color:var(--blue);background:var(--blue-lt);padding:4px 10px;border-radius:20px;cursor:pointer;border:none;}
 .dolar-pill:hover{opacity:0.8;}
 .btn{padding:6px 13px;border-radius:var(--r);font-size:12px;font-family:'Space Grotesk',sans-serif;cursor:pointer;font-weight:500;border:1px solid var(--border-md);background:transparent;color:var(--text2);transition:all 0.12s;}
 .btn:hover{color:var(--text);border-color:var(--border-hi);background:var(--accent-dim);}
@@ -54,7 +54,7 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 .btn-p:hover{background:#D0CEC8;}
 .btn-p:disabled{opacity:0.4;cursor:not-allowed;}
 .btn-sm{padding:4px 9px;font-size:11px;}
-.btn-del{padding:3px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;font-family:'Space Mono',monospace;}
+.btn-del{padding:3px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;font-family:monospace;}
 .btn-del:hover{background:var(--red-lt);}
 .content{flex:1;padding:22px 26px;overflow-y:auto;}
 .screen{display:none;}
@@ -63,44 +63,44 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 .dash-top{display:grid;grid-template-columns:1fr 260px;gap:14px;margin-bottom:14px;}
 .dash-chart{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px;}
 .dash-chart-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;}
-.chart-title{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-family:'Space Mono',monospace;}
+.chart-title{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-family:monospace;}
 .chart-filters{display:flex;gap:6px;}
 .chart-filters select{padding:4px 8px;border:1px solid var(--border-md);border-radius:var(--r);font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--text2);background:var(--bg3);outline:none;cursor:pointer;}
 /* METRICS */
 .dash-metrics{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:10px;}
 .mc{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:14px 16px;display:flex;flex-direction:column;justify-content:center;}
-.mc-label{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;font-family:'Space Mono',monospace;}
-.mc-val{font-size:16px;font-weight:700;letter-spacing:-0.3px;font-family:'Space Mono',monospace;color:var(--text);line-height:1.3;}
+.mc-label{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;font-family:monospace;}
+.mc-val{font-size:16px;font-weight:700;letter-spacing:-0.3px;font-family:monospace;color:var(--text);line-height:1.3;}
 .mc-val.pos{color:var(--green);}
 .mc-val.neg{color:var(--red);}
-.mc-val2{font-size:16px;font-weight:700;font-family:'Space Mono',monospace;line-height:1.3;color:var(--blue);}
-.mc-val2-ars{font-size:12px;font-family:'Space Mono',monospace;color:var(--text3);margin-top:3px;}
+.mc-val2{font-size:16px;font-weight:700;font-family:monospace;line-height:1.3;color:var(--blue);}
+.mc-val2-ars{font-size:12px;font-family:monospace;color:var(--text3);margin-top:3px;}
 .mc-divider{height:1px;background:var(--border);margin:6px 0;}
-.mc-sub{font-size:10px;color:var(--text3);margin-top:4px;font-family:'Space Mono',monospace;}
-.mc-deuda{font-size:10px;margin-top:4px;font-family:'Space Mono',monospace;}
+.mc-sub{font-size:10px;color:var(--text3);margin-top:4px;font-family:monospace;}
+.mc-deuda{font-size:10px;margin-top:4px;font-family:monospace;}
 /* UNIDADES */
 .dash-units{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px;}
 .uu{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:16px;position:relative;overflow:hidden;}
 .uu::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--uc,#fff);}
-.uu-name{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;font-family:'Space Mono',monospace;}
+.uu-name{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;font-family:monospace;}
 .uu-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:5px;}
 .uu-row span:first-child{color:var(--text3);}
-.uu-saldo{font-size:16px;font-weight:700;font-family:'Space Mono',monospace;border-top:1px solid var(--border);padding-top:9px;margin-top:9px;}
+.uu-saldo{font-size:16px;font-weight:700;font-family:monospace;border-top:1px solid var(--border);padding-top:9px;margin-top:9px;}
 /* TABLE */
 .tw{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:18px;}
 .tw-head{display:flex;align-items:center;justify-content:space-between;padding:11px 15px;border-bottom:1px solid var(--border);}
-.tw-title{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-family:'Space Mono',monospace;}
+.tw-title{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-family:monospace;}
 table{width:100%;border-collapse:collapse;font-size:12px;}
 thead{background:var(--bg3);}
-th{text-align:left;padding:9px 14px;font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border);white-space:nowrap;font-family:'Space Mono',monospace;}
+th{text-align:left;padding:9px 14px;font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border);white-space:nowrap;font-family:monospace;}
 td{padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:var(--bg3);}
 .empty-row{text-align:center;padding:36px;color:var(--text3);font-size:13px;}
 /* USD cell */
-.usd-cell{font-size:10px;color:var(--text3);font-family:'Space Mono',monospace;display:block;margin-top:2px;}
+.usd-cell{font-size:10px;color:var(--text3);font-family:monospace;display:block;margin-top:2px;}
 /* BADGES */
-.badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500;font-family:'Space Mono',monospace;}
+.badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500;font-family:monospace;}
 .b-ventas{background:var(--blue-lt);color:var(--blue);}
 .b-servicios{background:var(--green-lt);color:var(--green);}
 .b-compra{background:var(--amber-lt);color:var(--amber);}
@@ -116,28 +116,28 @@ tr:hover td{background:var(--bg3);}
 /* CAJA */
 .caja-methods{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px;}
 .cm{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:24px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:110px;}
-.cm-name{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px;font-family:'Space Mono',monospace;text-align:center;width:100%;}
-.cm-val{font-size:22px;font-weight:700;font-family:'Space Mono',monospace;text-align:center;width:100%;display:block;}
+.cm-name{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px;font-family:monospace;text-align:center;width:100%;}
+.cm-val{font-size:22px;font-weight:700;font-family:monospace;text-align:center;width:100%;display:block;}
 .cm-val.pos{color:var(--green);}
 .cm-val.neg{color:var(--red);}
-.cm-ars{font-size:12px;font-family:'Space Mono',monospace;color:var(--text3);text-align:center;margin-top:4px;display:block;}
-.cm-val-sm{font-size:16px;font-weight:700;font-family:'Space Mono',monospace;text-align:center;width:100%;display:block;margin-bottom:2px;}
+.cm-ars{font-size:12px;font-family:monospace;color:var(--text3);text-align:center;margin-top:4px;display:block;}
+.cm-val-sm{font-size:16px;font-weight:700;font-family:monospace;text-align:center;width:100%;display:block;margin-bottom:2px;}
 .cm-val-sm.pos{color:var(--green);}
 .cm-val-sm.neg{color:var(--red);}
-.cm-row-label{font-size:10px;color:var(--text3);font-family:'Space Mono',monospace;text-align:center;text-transform:uppercase;letter-spacing:0.06em;margin-top:4px;}
-.cm-input{width:100%;padding:7px 10px;border:1px solid var(--border-md);border-radius:var(--r);font-family:'Space Mono',monospace;font-size:14px;color:var(--text);background:var(--bg3);outline:none;text-align:center;margin-top:4px;}
+.cm-row-label{font-size:10px;color:var(--text3);font-family:monospace;text-align:center;text-transform:uppercase;letter-spacing:0.06em;margin-top:4px;}
+.cm-input{width:100%;padding:7px 10px;border:1px solid var(--border-md);border-radius:var(--r);font-family:monospace;font-size:14px;color:var(--text);background:var(--bg3);outline:none;text-align:center;margin-top:4px;}
 .cm-input:focus{border-color:var(--border-hi);}
 .cm-divider-line{height:1px;background:var(--border);margin:10px 0 6px;}
-.cm-ars-line{font-size:11px;color:var(--blue);font-family:'Space Mono',monospace;text-align:center;margin-top:3px;}
+.cm-ars-line{font-size:11px;color:var(--blue);font-family:monospace;text-align:center;margin-top:3px;}
 .caja-chart-wrap{display:flex;justify-content:center;margin-bottom:18px;}
 .caja-chart-inner{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px;width:50%;}
 /* FORM */
 .fw{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:22px;max-width:660px;}
-.fs{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px;padding-bottom:9px;border-bottom:1px solid var(--border);font-family:'Space Mono',monospace;}
+.fs{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px;padding-bottom:9px;border-bottom:1px solid var(--border);font-family:monospace;}
 .fg{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px;}
 .ff{grid-column:1/-1;}
 .fgroup{display:flex;flex-direction:column;gap:5px;}
-.fgroup label{font-size:10px;font-weight:500;color:var(--text2);font-family:'Space Mono',monospace;}
+.fgroup label{font-size:10px;font-weight:500;color:var(--text2);font-family:monospace;}
 .fgroup input,.fgroup select{padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--text);background:var(--bg3);outline:none;transition:border-color 0.14s;}
 .fgroup input:focus,.fgroup select:focus{border-color:var(--border-hi);}
 .fgroup select option{background:var(--bg3);}
@@ -148,7 +148,7 @@ tr:hover td{background:var(--bg3);}
 /* CONFIG */
 .cfg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:20px;}
 .cfg-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px;}
-.cfg-title{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;font-family:'Space Mono',monospace;}
+.cfg-title{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;font-family:monospace;}
 .cfg-list{list-style:none;margin-bottom:10px;}
 .cfg-list li{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);}
 .cfg-list li:last-child{border-bottom:none;}
@@ -160,7 +160,7 @@ tr:hover td{background:var(--bg3);}
 .u-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:18px;}
 .u-detail{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:18px;}
 .chart-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:17px;margin-bottom:18px;}
-.sec-label{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:11px;font-family:'Space Mono',monospace;}
+.sec-label{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:11px;font-family:monospace;}
 .nav-subitem{display:flex;align-items:center;gap:9px;padding:7px 20px 7px 32px;cursor:pointer;font-size:12px;color:var(--text3);border-left:2px solid transparent;transition:all 0.12s;}
 .nav-subitem:hover{color:var(--text);background:rgba(255,255,255,0.04);}
 .nav-subitem.active{color:var(--text);background:rgba(255,255,255,0.06);border-left-color:rgba(255,255,255,0.4);}
@@ -171,7 +171,7 @@ tr:hover td{background:var(--bg3);}
 .cel-filters{display:flex;gap:9px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
 .cel-filters select,.cel-filters input{padding:6px 11px;border:1px solid var(--border-md);border-radius:var(--r);font-family:'Space Grotesk',sans-serif;font-size:12px;color:var(--text);background:var(--bg3);outline:none;}
 .cel-filters input{width:220px;}
-.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;font-family:'Space Mono',monospace;}
+.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;font-family:monospace;}
 .b-stock{background:var(--green-lt);color:var(--green);}
 .b-vendido{background:var(--blue-lt);color:var(--blue);}
 .b-reparacion{background:var(--amber-lt);color:var(--amber);}
@@ -185,21 +185,21 @@ tr:hover td{background:var(--bg3);}
 .cel-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
 .cel-form-full{grid-column:1/-1;}
 .cel-fgroup{display:flex;flex-direction:column;gap:5px;}
-.cel-fgroup label{font-size:10px;font-weight:500;color:var(--text2);font-family:'Space Mono',monospace;}
+.cel-fgroup label{font-size:10px;font-weight:500;color:var(--text2);font-family:monospace;}
 .cel-fgroup input,.cel-fgroup select,.cel-fgroup textarea{padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--text);background:var(--bg3);outline:none;}
 .cel-fgroup input:focus,.cel-fgroup select:focus{border-color:var(--border-hi);}
-.cel-modal-section{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin:18px 0 12px;padding-top:14px;border-top:1px solid var(--border);font-family:'Space Mono',monospace;}
+.cel-modal-section{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin:18px 0 12px;padding-top:14px;border-top:1px solid var(--border);font-family:monospace;}
 .cel-modal-actions{display:flex;justify-content:space-between;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
 .arreglo-list{margin-bottom:10px;}
 .arreglo-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;}
 .arreglo-item span{flex:1;color:var(--text2);}
-.arreglo-item .cost{font-family:'Space Mono',monospace;color:var(--red);font-weight:600;}
+.arreglo-item .cost{font-family:monospace;color:var(--red);font-weight:600;}
 .arreglo-item button{padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;}
 .arreglo-add{display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-top:8px;}
 .arreglo-add input{padding:7px 10px;border:1px solid var(--border-md);border-radius:var(--r);font-size:12px;color:var(--text);background:var(--bg3);outline:none;}
 .ganancia-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;margin-top:14px;display:flex;justify-content:space-between;align-items:center;}
-.ganancia-label{font-size:11px;color:var(--text3);font-family:'Space Mono',monospace;}
-.ganancia-val{font-size:18px;font-weight:700;font-family:'Space Mono',monospace;}
+.ganancia-label{font-size:11px;color:var(--text3);font-family:monospace;}
+.ganancia-val{font-size:18px;font-weight:700;font-family:monospace;}
 /* MODAL CONFIRM */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center;}
 .modal-bg.show{display:flex;}
@@ -211,9 +211,9 @@ tr:hover td{background:var(--bg3);}
 .toast{position:fixed;bottom:22px;right:22px;background:var(--text);color:var(--bg);padding:11px 18px;border-radius:var(--r);font-size:13px;font-weight:600;transform:translateY(80px);opacity:0;transition:all 0.25s;z-index:200;}
 .toast.show{transform:translateY(0);opacity:1;}
 .toast.err{background:var(--red);color:#fff;}
-.ing{color:var(--green);font-family:'Space Mono',monospace;font-size:12px;}
-.egr{color:var(--red);font-family:'Space Mono',monospace;font-size:12px;}
-.mono{font-family:'Space Mono',monospace;}
+.ing{color:var(--green);font-family:monospace;font-size:12px;}
+.egr{color:var(--red);font-family:monospace;font-size:12px;}
+.mono{font-family:monospace;}
 </style>
 </head>
 <body>
@@ -350,21 +350,32 @@ tr:hover td{background:var(--bg3);}
 
     <!-- CARGAR -->
     <div class="screen" id="screen-cargar">
-      <div class="fw">
+      <div class="fw" style="max-width:780px;">
         <div class="fs">Nuevo movimiento</div>
+
+        <!-- PASO 1: Fecha y Unidad siempre visibles -->
         <div class="fg">
           <div class="fgroup"><label>Fecha *</label><input type="date" id="f-fecha"></div>
           <div class="fgroup"><label>Unidad de negocio *</label>
             <select id="f-unidad" onchange="onUnidadChange()"><option value="">Selecciona...</option></select>
           </div>
         </div>
-        <div id="f-extended" style="display:none;">
+
+        <!-- PASO 2: Operacion - aparece al elegir unidad -->
+        <div id="f-op-row" style="display:none;">
           <div class="fg">
             <div class="fgroup"><label>Operacion *</label>
-              <select id="f-operacion" onchange="updateCats()"><option value="">Selecciona...</option></select></div>
+              <select id="f-operacion" onchange="onOperacionChange()"><option value="">Selecciona...</option></select>
+            </div>
+          </div>
+        </div>
+
+        <!-- FORMULARIO GENERAL (no celulares) -->
+        <div id="f-general" style="display:none;">
+          <div class="fg">
             <div class="fgroup"><label>Categoria</label>
               <select id="f-categoria"><option value="">Selecciona operacion primero</option></select></div>
-            <div class="fgroup ff"><label>Cliente</label>
+            <div class="fgroup"><label>Cliente</label>
               <input type="text" id="f-desc" placeholder="Nombre del cliente..."></div>
             <div class="fgroup"><label>Ingreso (ARS)</label>
               <input type="number" id="f-ingreso" placeholder="0.00" min="0" step="0.01"></div>
@@ -380,6 +391,147 @@ tr:hover td{background:var(--bg3);}
             <button class="btn btn-p" id="btn-guardar" onclick="guardar()">Guardar movimiento</button>
           </div>
         </div>
+
+        <!-- CELULARES: COMPRA -->
+        <div id="f-cel-compra" style="display:none;">
+          <div style="background:var(--bg3);border-radius:var(--r);padding:16px;margin-bottom:12px;">
+            <div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.08em;">Agregar celulares a la lista</div>
+            <div class="cel-form-grid">
+              <div class="cel-fgroup"><label>IMEI *</label><input type="text" id="nc-imei" placeholder="15 digitos"></div>
+              <div class="cel-fgroup"><label>Marca</label><input type="text" id="nc-marca" placeholder="Apple, Samsung..."></div>
+              <div class="cel-fgroup"><label>Modelo *</label><input type="text" id="nc-modelo" placeholder="iPhone 15 Pro..."></div>
+              <div class="cel-fgroup"><label>Color</label><input type="text" id="nc-color"></div>
+              <div class="cel-fgroup"><label>Capacidad</label>
+                <select id="nc-cap"><option value="">-</option><option>64GB</option><option>128GB</option><option>256GB</option><option>512GB</option><option>1TB</option></select></div>
+              <div class="cel-fgroup"><label>Bateria %</label><input type="number" id="nc-bat" placeholder="100" min="0" max="100"></div>
+              <div class="cel-fgroup"><label>Estado equipo</label>
+                <select id="nc-estado-eq"><option>NUEVO</option><option>SEMI NUEVO</option><option>USADO</option></select></div>
+              <div class="cel-fgroup"><label>Precio costo (ARS)</label><input type="number" id="nc-costo" placeholder="0" min="0"></div>
+              <div class="cel-fgroup"><label>Precio lista (ARS)</label><input type="number" id="nc-lista" placeholder="0" min="0"></div>
+              <div class="cel-fgroup"><label>Gtia proveedor (m)</label><input type="number" id="nc-gtia" placeholder="0" min="0"></div>
+              <div class="cel-fgroup cel-form-full"><label>Proveedor</label><input type="text" id="nc-proveedor"></div>
+              <div class="cel-fgroup cel-form-full"><label>Observaciones</label><input type="text" id="nc-obs" placeholder="Estado del equipo, accesorios incluidos, etc..."></div>
+            </div>
+            <button class="btn btn-sm" onclick="compraAgregarCelular()" style="margin-top:4px;">+ Agregar a la lista</button>
+          </div>
+          <div id="compra-lista" style="margin-bottom:12px;"></div>
+          <div class="fg">
+            <div class="fgroup"><label>Metodo de pago</label>
+              <select id="compra-metodo"><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select></div>
+          </div>
+          <div class="fa">
+            <button class="btn" onclick="clearForm()">Limpiar</button>
+            <button class="btn btn-p" onclick="celGuardarDesdeForm('compra')">Guardar compra</button>
+          </div>
+        </div>
+
+        <!-- CELULARES: VENTA -->
+        <div id="f-cel-venta" style="display:none;">
+          <div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Buscar celular por IMEI</div>
+          <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <input type="text" id="venta-imei-input" placeholder="Escribi el IMEI del celular a vender..." style="flex:1;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+            <button class="btn" onclick="ventaBuscarIMEI()">Buscar</button>
+          </div>
+          <div id="venta-cel-info" style="display:none;background:var(--bg3);border-radius:var(--r);padding:14px;margin-bottom:14px;">
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+              <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">MODELO</div><div style="font-size:13px;font-weight:600;" id="venta-info-modelo">-</div></div>
+              <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">COLOR / GB</div><div style="font-size:13px;" id="venta-info-detalle">-</div></div>
+              <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">COSTO TOTAL</div><div style="font-size:13px;font-weight:600;color:var(--red);" id="venta-info-costo">-</div></div>
+              <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">PRECIO LISTA</div><div style="font-size:13px;font-weight:600;color:var(--green);" id="venta-info-lista">-</div></div>
+            </div>
+          </div>
+          <div id="venta-form-ext" style="display:none;">
+            <div class="cel-form-grid">
+              <div class="cel-fgroup"><label>Precio de venta (ARS) *</label><input type="number" id="venta-precio" placeholder="0" oninput="ventaCalcGanancia()"></div>
+              <div class="cel-fgroup"><label>Cliente</label><input type="text" id="venta-cliente" placeholder="Nombre..."></div>
+              <div class="cel-fgroup"><label>Metodo de pago</label>
+                <select id="venta-metodo"><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select></div>
+              <div class="cel-fgroup"><label>Garantia venta (meses)</label><input type="number" id="venta-gtia" placeholder="3" min="0"></div>
+            </div>
+            <div class="ganancia-box">
+              <div><div class="ganancia-label">Ganancia neta estimada</div></div>
+              <div class="ganancia-val" id="venta-ganancia">$0</div>
+            </div>
+            <div style="font-size:10px;color:var(--text3);font-family:monospace;margin:14px 0 8px;text-transform:uppercase;letter-spacing:0.08em;">Parte de pago (opcional)</div>
+            <div style="display:flex;gap:8px;margin-bottom:8px;">
+              <input type="text" id="pp-imei-input" placeholder="IMEI del celular como parte de pago..." style="flex:1;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+              <button class="btn" onclick="ppAgregarCelular()">+ Agregar</button>
+            </div>
+            <div id="pp-lista" style="margin-bottom:8px;"></div>
+            <div id="pp-form-new" style="display:none;background:var(--bg3);border-radius:var(--r);padding:14px;margin-bottom:10px;">
+              <div style="font-size:11px;color:var(--text3);margin-bottom:10px;font-family:monospace;">NUEVO EQUIPO COMO PARTE DE PAGO</div>
+              <div class="cel-form-grid">
+                <div class="cel-fgroup"><label>IMEI</label><input type="text" id="pp-imei"></div>
+                <div class="cel-fgroup"><label>Marca</label><input type="text" id="pp-marca"></div>
+                <div class="cel-fgroup"><label>Modelo</label><input type="text" id="pp-modelo"></div>
+                <div class="cel-fgroup"><label>Color</label><input type="text" id="pp-color"></div>
+                <div class="cel-fgroup"><label>GB</label>
+                  <select id="pp-cap"><option value="">-</option><option>64GB</option><option>128GB</option><option>256GB</option><option>512GB</option><option>1TB</option></select></div>
+                <div class="cel-fgroup"><label>Bateria %</label><input type="number" id="pp-bat" placeholder="100" min="0" max="100"></div>
+                <div class="cel-fgroup"><label>Estado</label>
+                  <select id="pp-estado"><option>NUEVO</option><option>SEMI NUEVO</option><option>USADO</option></select></div>
+                <div class="cel-fgroup"><label>Valor recibido (ARS)</label><input type="number" id="pp-valor" placeholder="0"></div>
+              </div>
+              <button class="btn btn-sm" onclick="ppConfirmarNuevo()">Confirmar parte de pago</button>
+            </div>
+            <div class="fa">
+              <button class="btn" onclick="clearForm()">Limpiar</button>
+              <button class="btn btn-p" onclick="celGuardarDesdeForm('venta')">Guardar venta</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CELULARES: REPARACION / REPUESTO -->
+        <div id="f-cel-reparacion" style="display:none;">
+          <div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Buscar celular por IMEI</div>
+          <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <input type="text" id="rep-imei-input" placeholder="IMEI del celular..." style="flex:1;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+            <button class="btn" onclick="repBuscarIMEI()">Buscar</button>
+          </div>
+          <div id="rep-cel-info" style="display:none;background:var(--bg3);border-radius:var(--r);padding:14px;margin-bottom:14px;">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+              <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">MODELO</div><div style="font-size:13px;font-weight:600;" id="rep-info-modelo">-</div></div>
+              <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">COSTO ACTUAL</div><div style="font-size:13px;font-weight:600;color:var(--red);" id="rep-info-costo">-</div></div>
+              <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">ESTADO</div><div style="font-size:13px;" id="rep-info-estado">-</div></div>
+            </div>
+          </div>
+          <div id="rep-form-ext" style="display:none;">
+            <div class="cel-form-grid">
+              <div class="cel-fgroup"><label>Tipo</label>
+                <select id="rep-tipo"><option value="REPARACION">Reparacion</option><option value="REPUESTO">Repuesto</option></select></div>
+              <div class="cel-fgroup"><label>Fecha</label><input type="date" id="rep-fecha"></div>
+              <div class="cel-fgroup cel-form-full"><label>Descripcion *</label><input type="text" id="rep-desc" placeholder="Ej: Cambio de pantalla, bateria..."></div>
+              <div class="cel-fgroup"><label>Costo (ARS) *</label><input type="number" id="rep-costo" placeholder="0" min="0" oninput="repCalcNuevoCosto()"></div>
+              <div class="cel-fgroup"><label>Nuevo estado</label>
+                <select id="rep-nuevo-estado"><option value="EN REPARACION">EN REPARACION</option><option value="EN STOCK">EN STOCK (listo)</option></select></div>
+            </div>
+            <div class="ganancia-box">
+              <div><div class="ganancia-label">Nuevo costo total del equipo</div></div>
+              <div class="ganancia-val" id="rep-nuevo-costo" style="color:var(--red);">-</div>
+            </div>
+            <div class="fa">
+              <button class="btn" onclick="clearForm()">Limpiar</button>
+              <button class="btn btn-p" onclick="celGuardarDesdeForm('reparacion')">Guardar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CELULARES: GASTOS -->
+        <div id="f-cel-gastos" style="display:none;">
+          <div class="cel-form-grid">
+            <div class="cel-fgroup"><label>Categoria</label>
+              <select id="gasto-cat"><option>RECURSOS HUMANOS</option><option>MARKETING</option><option>OPERATIVO</option><option>ENVIOS</option><option>OTROS</option></select></div>
+            <div class="cel-fgroup"><label>Descripcion *</label><input type="text" id="gasto-desc" placeholder="Descripcion del gasto..."></div>
+            <div class="cel-fgroup"><label>Monto (ARS) *</label><input type="number" id="gasto-monto" placeholder="0" min="0"></div>
+            <div class="cel-fgroup"><label>Metodo de pago</label>
+              <select id="gasto-metodo"><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option></select></div>
+          </div>
+          <div class="fa">
+            <button class="btn" onclick="clearForm()">Limpiar</button>
+            <button class="btn btn-p" onclick="celGuardarDesdeForm('gastos')">Guardar gasto</button>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -527,11 +679,11 @@ tr:hover td{background:var(--bg3);}
       </div>
       <div id="venta-cel-info" style="display:none;background:var(--bg3);border-radius:var(--r);padding:14px;margin-bottom:14px;">
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;">
-          <div><div style="font-size:10px;color:var(--text3);font-family:'Space Mono',monospace;">MODELO</div><div style="font-size:13px;font-weight:600;" id="venta-info-modelo">-</div></div>
-          <div><div style="font-size:10px;color:var(--text3);font-family:'Space Mono',monospace;">COLOR / GB</div><div style="font-size:13px;" id="venta-info-detalle">-</div></div>
-          <div><div style="font-size:10px;color:var(--text3);font-family:'Space Mono',monospace;">BATERIA</div><div style="font-size:13px;" id="venta-info-bat">-</div></div>
-          <div><div style="font-size:10px;color:var(--text3);font-family:'Space Mono',monospace;">COSTO TOTAL</div><div style="font-size:13px;font-weight:600;color:var(--red);" id="venta-info-costo">-</div></div>
-          <div><div style="font-size:10px;color:var(--text3);font-family:'Space Mono',monospace;">PRECIO LISTA</div><div style="font-size:13px;font-weight:600;color:var(--green);" id="venta-info-lista">-</div></div>
+          <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">MODELO</div><div style="font-size:13px;font-weight:600;" id="venta-info-modelo">-</div></div>
+          <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">COLOR / GB</div><div style="font-size:13px;" id="venta-info-detalle">-</div></div>
+          <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">BATERIA</div><div style="font-size:13px;" id="venta-info-bat">-</div></div>
+          <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">COSTO TOTAL</div><div style="font-size:13px;font-weight:600;color:var(--red);" id="venta-info-costo">-</div></div>
+          <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">PRECIO LISTA</div><div style="font-size:13px;font-weight:600;color:var(--green);" id="venta-info-lista">-</div></div>
         </div>
       </div>
       <div id="venta-form-ext" style="display:none;">
@@ -554,7 +706,7 @@ tr:hover td{background:var(--bg3);}
         </div>
         <div id="pp-lista"></div>
         <div id="pp-form-new" style="display:none;background:var(--bg3);border-radius:var(--r);padding:14px;margin-bottom:10px;">
-          <div style="font-size:11px;color:var(--text3);margin-bottom:10px;font-family:'Space Mono',monospace;">NUEVO EQUIPO COMO PARTE DE PAGO</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:10px;font-family:monospace;">NUEVO EQUIPO COMO PARTE DE PAGO</div>
           <div class="cel-form-grid">
             <div class="cel-fgroup"><label>IMEI</label><input type="text" id="pp-imei"></div>
             <div class="cel-fgroup"><label>Marca</label><input type="text" id="pp-marca"></div>
@@ -581,9 +733,9 @@ tr:hover td{background:var(--bg3);}
       </div>
       <div id="rep-cel-info" style="display:none;background:var(--bg3);border-radius:var(--r);padding:14px;margin-bottom:14px;">
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
-          <div><div style="font-size:10px;color:var(--text3);font-family:'Space Mono',monospace;">MODELO</div><div style="font-size:13px;font-weight:600;" id="rep-info-modelo">-</div></div>
-          <div><div style="font-size:10px;color:var(--text3);font-family:'Space Mono',monospace;">COSTO ACTUAL</div><div style="font-size:13px;font-weight:600;color:var(--red);" id="rep-info-costo">-</div></div>
-          <div><div style="font-size:10px;color:var(--text3);font-family:'Space Mono',monospace;">ESTADO</div><div style="font-size:13px;" id="rep-info-estado">-</div></div>
+          <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">MODELO</div><div style="font-size:13px;font-weight:600;" id="rep-info-modelo">-</div></div>
+          <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">COSTO ACTUAL</div><div style="font-size:13px;font-weight:600;color:var(--red);" id="rep-info-costo">-</div></div>
+          <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">ESTADO</div><div style="font-size:13px;" id="rep-info-estado">-</div></div>
         </div>
       </div>
       <div id="rep-form-ext" style="display:none;">
@@ -750,17 +902,64 @@ function populateSelects(){
   document.getElementById('fil-c').innerHTML='<option value="">Todas las categorias</option>';
 }
 
+var CEL_OPS=['VENTAS','COMPRA','REPARACION','REPUESTO','GASTOS'];
+var CEL_OP_MAP={VENTAS:'venta',COMPRA:'compra',REPARACION:'reparacion',REPUESTO:'reparacion',GASTOS:'gastos'};
+
 function onUnidadChange(){
   var unidad=document.getElementById('f-unidad').value;
-  var ext=document.getElementById('f-extended');
-  if(unidad){
-    ext.style.display='block';
-    // Populate operacion based on unidad
-    var so=document.getElementById('f-operacion');
-    so.innerHTML='<option value="">Selecciona...</option>'+cfg.operaciones.map(function(o){return'<option>'+o+'</option>';}).join('');
-    document.getElementById('f-categoria').innerHTML='<option value="">Selecciona operacion primero</option>';
+  // Hide all dynamic sections
+  hideAllFormSections();
+  if(!unidad)return;
+  // Show operacion row
+  document.getElementById('f-op-row').style.display='block';
+  // Populate operaciones based on unidad
+  var so=document.getElementById('f-operacion');
+  var ops=unidad==='CELULARES'?CEL_OPS:cfg.operaciones;
+  so.innerHTML='<option value="">Selecciona...</option>'+ops.map(function(o){return'<option>'+o+'</option>';}).join('');
+  document.getElementById('f-categoria').innerHTML='<option value="">Selecciona operacion primero</option>';
+}
+
+function hideAllFormSections(){
+  document.getElementById('f-op-row').style.display='none';
+  document.getElementById('f-general').style.display='none';
+  ['compra','venta','reparacion','gastos'].forEach(function(op){
+    var el=document.getElementById('f-cel-'+op);
+    if(el)el.style.display='none';
+  });
+  // Reset cel info panels
+  var panels=['venta-cel-info','venta-form-ext','rep-cel-info','rep-form-ext','pp-form-new'];
+  panels.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});
+  ventaImeiActual=null;repImeiActual=null;
+  compraListaTemp=[];ppListaTemp=[];
+}
+
+function onOperacionChange(){
+  var unidad=document.getElementById('f-unidad').value;
+  var op=document.getElementById('f-operacion').value;
+  // Hide all form sections
+  document.getElementById('f-general').style.display='none';
+  ['compra','venta','reparacion','gastos'].forEach(function(o){
+    var el=document.getElementById('f-cel-'+o);
+    if(el)el.style.display='none';
+  });
+  if(!op)return;
+  if(unidad==='CELULARES'){
+    var celOp=CEL_OP_MAP[op];
+    if(celOp){
+      var el=document.getElementById('f-cel-'+celOp);
+      if(el){
+        el.style.display='block';
+        // Set date fields
+        var today=new Date().toISOString().slice(0,10);
+        if(celOp==='compra'&&document.getElementById('compra-fecha'))document.getElementById('compra-fecha').value=document.getElementById('f-fecha').value||today;
+        if(celOp==='reparacion'&&document.getElementById('rep-fecha'))document.getElementById('rep-fecha').value=document.getElementById('f-fecha').value||today;
+        if(celOp==='compra')renderCompraLista();
+      }
+    }
   }else{
-    ext.style.display='none';
+    // General form
+    document.getElementById('f-general').style.display='block';
+    updateCats();
   }
 }
 
@@ -879,10 +1078,12 @@ async function guardar(){
 }
 
 function clearForm(){
-  ['f-fecha','f-unidad','f-operacion','f-desc','f-ingreso','f-egreso','f-metodo','f-nota'].forEach(function(id){document.getElementById(id).value='';});
-  document.getElementById('f-categoria').innerHTML='<option value="">Selecciona operacion primero</option>';
+  ['f-fecha','f-unidad','f-operacion','f-desc','f-ingreso','f-egreso','f-metodo','f-nota'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  var catEl=document.getElementById('f-categoria');if(catEl)catEl.innerHTML='<option value="">Selecciona operacion primero</option>';
   document.getElementById('f-fecha').value=new Date().toISOString().slice(0,10);
-  document.getElementById('f-extended').style.display='none';
+  hideAllFormSections();
+  compraListaTemp=[];ppListaTemp=[];
+  renderCompraLista();
 }
 
 // DELETE
@@ -1326,37 +1527,34 @@ function celRenderTabla(tipo){
   }).join('');
 }
 
-// ABRIR OPERACION
+// ABRIR OPERACION - redirect to cargar form
 function celAbrirOp(op, imeiPre){
-  celCurrentOp=op;
-  compraListaTemp=[];ppListaTemp=[];
-  ventaImeiActual=null;repImeiActual=null;
-  // Hide all op sections
-  ['compra','venta','reparacion','gastos'].forEach(function(o){
-    var el=document.getElementById('cel-op-'+o);
-    if(el)el.style.display='none';
-  });
-  var titles={compra:'Compra de celulares',venta:'Venta de celular',reparacion:'Reparacion / Repuesto',gastos:'Gastos — Celulares'};
-  document.getElementById('cel-modal-title').textContent=titles[op]||op;
-  // Show current op
-  var opEl=document.getElementById('cel-op-'+op);
-  if(opEl)opEl.style.display='block';
-  // Pre-fill IMEI if provided
-  if(imeiPre){
-    if(op==='reparacion'){document.getElementById('rep-imei-input').value=imeiPre;repBuscarIMEI();}
-    if(op==='venta'){document.getElementById('venta-imei-input').value=imeiPre;ventaBuscarIMEI();}
-  }
-  // Set dates
-  var today=new Date().toISOString().slice(0,10);
-  if(op==='compra')document.getElementById('compra-fecha').value=today;
-  if(op==='venta')document.getElementById('venta-fecha').value=today;
-  if(op==='reparacion')document.getElementById('rep-fecha').value=today;
-  if(op==='gastos')document.getElementById('gasto-fecha').value=today;
-  // Reset displays
-  if(op==='venta'){document.getElementById('venta-cel-info').style.display='none';document.getElementById('venta-form-ext').style.display='none';}
-  if(op==='reparacion'){document.getElementById('rep-cel-info').style.display='none';document.getElementById('rep-form-ext').style.display='none';}
-  if(op==='compra'){renderCompraLista();}
-  document.getElementById('cel-modal-bg').classList.add('show');
+  // Navigate to cargar screen
+  go('cargar', document.querySelectorAll('.nav-item')[2]);
+  // Set unidad to CELULARES
+  setTimeout(function(){
+    var unidadSel=document.getElementById('f-unidad');
+    unidadSel.value='CELULARES';
+    onUnidadChange();
+    // Set operacion
+    var opMap={compra:'COMPRA',venta:'VENTAS',reparacion:'REPARACION',gastos:'GASTOS'};
+    setTimeout(function(){
+      var opSel=document.getElementById('f-operacion');
+      opSel.value=opMap[op]||op.toUpperCase();
+      onOperacionChange();
+      // Pre-fill IMEI if provided
+      if(imeiPre){
+        setTimeout(function(){
+          if(op==='reparacion'&&document.getElementById('rep-imei-input')){
+            document.getElementById('rep-imei-input').value=imeiPre;repBuscarIMEI();
+          }
+          if(op==='venta'&&document.getElementById('venta-imei-input')){
+            document.getElementById('venta-imei-input').value=imeiPre;ventaBuscarIMEI();
+          }
+        },100);
+      }
+    },50);
+  },50);
 }
 
 function celAbrirDetalle(id){
@@ -1376,46 +1574,69 @@ function celCerrarModal(){
 function compraAgregarCelular(){
   var imei=document.getElementById('nc-imei').value.trim();
   var modelo=document.getElementById('nc-modelo').value.trim();
-  if(!imei||!modelo){showToast('IMEI y modelo son obligatorios',true);return;}
+  // Validate IMEI: exactly 15 digits
+  if(!imei){showToast('IMEI es obligatorio',true);return;}
+  if(!/^\d{15}$/.test(imei)){showToast('El IMEI debe tener exactamente 15 digitos',true);return;}
+  if(!modelo){showToast('El modelo es obligatorio',true);return;}
   // Check IMEI not duplicate
   var existing=celulares.find(function(c){return c.imei===imei;});
   if(existing){showToast('IMEI ya existe en el sistema',true);return;}
   var dup=compraListaTemp.find(function(c){return c.imei===imei;});
   if(dup){showToast('IMEI ya en la lista',true);return;}
+  var batVal=document.getElementById('nc-bat').value;
+  var costoVal=document.getElementById('nc-costo').value;
+  var listaVal=document.getElementById('nc-lista').value;
+  var gtiaVal=document.getElementById('nc-gtia').value;
+  var obsVal=document.getElementById('nc-obs').value;
   compraListaTemp.push({
     imei:imei,
     marca:document.getElementById('nc-marca').value.trim().toUpperCase()||'SIN MARCA',
     modelo:modelo,
-    color:document.getElementById('nc-color').value,
-    capacidad:document.getElementById('nc-cap').value,
-    bateria:document.getElementById('nc-bat').value,
+    color:document.getElementById('nc-color').value||null,
+    capacidad:document.getElementById('nc-cap').value||null,
+    bateria:batVal?parseInt(batVal):null,
     estado_equipo:document.getElementById('nc-estado-eq').value,
-    precio_compra:parseFloat(document.getElementById('nc-costo').value)||0,
-    precio_lista:parseFloat(document.getElementById('nc-lista').value)||0,
-    garantia_proveedor:parseInt(document.getElementById('nc-gtia').value)||0,
-    proveedor:document.getElementById('nc-proveedor').value,
+    precio_compra:costoVal?parseFloat(costoVal):0,
+    precio_lista:listaVal?parseFloat(listaVal):0,
+    garantia_proveedor:gtiaVal?parseInt(gtiaVal):0,
+    proveedor:document.getElementById('nc-proveedor').value||null,
+    notas:obsVal||null,
     estado:'EN STOCK'
   });
   // Clear fields
-  ['nc-imei','nc-marca','nc-modelo','nc-color','nc-bat','nc-costo','nc-lista','nc-gtia','nc-proveedor'].forEach(function(id){document.getElementById(id).value='';});
+  ['nc-imei','nc-marca','nc-modelo','nc-color','nc-bat','nc-costo','nc-lista','nc-gtia','nc-proveedor','nc-obs'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
   document.getElementById('nc-cap').value='';
   document.getElementById('nc-estado-eq').value='NUEVO';
   renderCompraLista();
+  showToast('Celular agregado a la lista');
 }
 
 function renderCompraLista(){
   var el=document.getElementById('compra-lista');
-  if(!compraListaTemp.length){el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:8px 0;margin-bottom:8px;">Agrega los celulares comprados abajo.</div>';return;}
-  el.innerHTML='<div style="margin-bottom:10px;">'+compraListaTemp.map(function(c,i){
-    return'<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
-      '<span class="mono" style="color:var(--text3);font-size:11px;">'+c.imei+'</span>'+
-      '<span style="flex:1"><strong>'+c.marca+'</strong> '+c.modelo+' '+( c.color||'')+' '+(c.capacidad||'')+'</span>'+
-      '<span style="color:var(--red);font-family:monospace;">'+fmtARS(c.precio_compra)+'</span>'+
-      '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;" data-idx="'+i+'" onclick="compraQuitarCelular(this.dataset.idx)">x</button>'+
-      '</div>';
-  }).join('')+'</div>';
+  if(!el)return;
+  if(!compraListaTemp.length){
+    el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:8px 0;margin-bottom:8px;">Agrega al menos un celular con IMEI y modelo.</div>';
+    return;
+  }
+  el.innerHTML='<div style="margin-bottom:10px;"><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:6px;">'+compraListaTemp.length+' celular(es) en la lista:</div>'+
+    compraListaTemp.map(function(c,i){
+      return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
+        '<div style="flex:1;">'+
+          '<div><span class="mono" style="color:var(--text3);font-size:10px;margin-right:8px;">'+c.imei+'</span>'+
+          '<strong>'+c.marca+' '+c.modelo+'</strong>'+
+          (c.color?' '+c.color:'')+
+          (c.capacidad?' '+c.capacidad:'')+
+          (c.bateria!==null&&c.bateria!==undefined?' '+c.bateria+'%':'')+
+          '</div>'+
+          (c.notas?'<div style="font-size:11px;color:var(--text3);margin-top:3px;">'+c.notas+'</div>':'')+
+        '</div>'+
+        '<span style="color:var(--red);font-family:monospace;font-weight:600;flex-shrink:0;">'+fmtARS(c.precio_compra)+'</span>'+
+        '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;flex-shrink:0;" data-idx="'+i+'" onclick="compraQuitarCelular(this.dataset.idx)">x</button>'+
+        '</div>';
+    }).join('')+'</div>';
 }
-
 function compraQuitarCelular(idx){compraListaTemp.splice(parseInt(idx),1);renderCompraLista();}
 
 // === VENTA ===
@@ -1524,24 +1745,78 @@ function repCalcNuevoCosto(){
 }
 
 // === GUARDAR OPERACION ===
+async function celGuardarDesdeForm(op){
+  celCurrentOp=op;
+  // Get fecha from main form
+  var fecha=document.getElementById('f-fecha').value||new Date().toISOString().slice(0,10);
+  // Set fecha into op-specific fields if needed
+  if(op==='compra'){
+    var cf=document.getElementById('compra-fecha');
+    if(cf&&!cf.value)cf.value=fecha;
+  }
+  if(op==='reparacion'){
+    var rf=document.getElementById('rep-fecha');
+    if(rf&&!rf.value)rf.value=fecha;
+  }
+  if(op==='gastos'){
+    var gf=document.getElementById('gasto-fecha');
+    if(gf)gf.value=fecha;
+  }
+  await celGuardarOp();
+  // After save, clear and go to relevant cel screen
+  clearForm();
+}
+
 async function celGuardarOp(){
   var op=celCurrentOp;
   try{
     if(op==='compra'){
       if(!compraListaTemp.length){showToast('Agrega al menos un celular',true);return;}
-      var fecha=document.getElementById('compra-fecha').value;
-      var metodo=document.getElementById('compra-metodo').value;
+      var fecha=document.getElementById('compra-fecha')?document.getElementById('compra-fecha').value:'';
+      if(!fecha)fecha=document.getElementById('f-fecha').value||new Date().toISOString().slice(0,10);
+      var metodo=document.getElementById('compra-metodo')?document.getElementById('compra-metodo').value:'EFECTIVO';
       // Insert all celulares
       for(var i=0;i<compraListaTemp.length;i++){
         var c=compraListaTemp[i];
-        var payload=Object.assign({},c,{fecha_compra:fecha,metodo_pago_compra:metodo});
-        delete payload.valor;
+        // Build clean payload - no undefined/empty strings for numeric fields
+        var payload={
+          imei:c.imei,
+          marca:c.marca||'SIN MARCA',
+          modelo:c.modelo,
+          color:c.color||null,
+          capacidad:c.capacidad||null,
+          bateria:c.bateria!==null&&c.bateria!==undefined&&c.bateria!==''?parseInt(c.bateria):null,
+          estado_equipo:c.estado_equipo||'NUEVO',
+          precio_compra:parseFloat(c.precio_compra)||0,
+          precio_lista:parseFloat(c.precio_lista)||0,
+          garantia_proveedor:parseInt(c.garantia_proveedor)||0,
+          proveedor:c.proveedor||null,
+          notas:c.notas||null,
+          estado:'EN STOCK',
+          fecha_compra:fecha||null,
+          metodo_pago_compra:metodo
+        };
         var res=await fetch(SUPA_URL+'/rest/v1/celulares',{
           method:'POST',
           headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
           body:JSON.stringify(payload)
         });
-        if(!res.ok){var e=await res.text();showToast('Error: '+e.slice(0,60),true);return;}
+        if(!res.ok){
+          var eBody=await res.text();
+          var eMsg='';
+          try{var eJson=JSON.parse(eBody);eMsg=eJson.message||eBody.slice(0,80);}catch(ex){eMsg=eBody.slice(0,80);}
+          showToast('Error en celular '+c.imei+': '+eMsg,true);
+          return;
+        }
+      }
+      // Register movimiento egreso
+      var totalCosto=compraListaTemp.reduce(function(s,c){return s+(parseFloat(c.precio_compra)||0);},0);
+      if(totalCosto>0){
+        await guardarMovimientoInterno({
+          fecha:fecha,unidad:'CELULARES',operacion:'COMPRA',
+          categoria:'MERCADERIA',descripcion:compraListaTemp.length+' celular(es) comprado(s)',
+          ingreso:0,egreso:totalCosto,metodo:metodo,mensaje:''
+        });
       }
       showToast(compraListaTemp.length+' celular(es) agregado(s) al stock');
     }
