@@ -46,7 +46,7 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 .topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 26px;height:52px;display:flex;align-items:center;justify-content:space-between;}
 .page-title{font-size:14px;font-weight:600;}
 .topbar-right{display:flex;align-items:center;gap:12px;}
-.dolar-pill{font-size:11px;font-family:monospace;color:var(--blue);background:var(--blue-lt);padding:4px 10px;border-radius:20px;cursor:pointer;border:none;}
+.dolar-pill{font-size:11px;font-family:monospace;color:#1D9E75;background:rgba(29,158,117,0.15);padding:4px 10px;border-radius:20px;cursor:pointer;border:none;font-weight:600;}
 .dolar-pill:hover{opacity:0.8;}
 .btn{padding:6px 13px;border-radius:var(--r);font-size:12px;font-family:'Space Grotesk',sans-serif;cursor:pointer;font-weight:500;border:1px solid var(--border-md);background:transparent;color:var(--text2);transition:all 0.12s;}
 .btn:hover{color:var(--text);border-color:var(--border-hi);background:var(--accent-dim);}
@@ -278,7 +278,11 @@ tr:hover td{background:var(--bg3);}
   <div class="topbar">
     <div class="page-title" id="page-title">Dashboard</div>
     <div class="topbar-right">
-      <button class="dolar-pill" id="dolar-pill" onclick="fetchDolar(true)" title="Cotizacion dolar blue — click para actualizar">USD blue: cargando...</button>
+      <button class="dolar-pill" id="dolar-pill" onclick="fetchDolar(true)" title="Click para actualizar">Blue $...</button>
+      <div class="currency-toggle">
+        <button id="btn-usd" class="curr-btn active" onclick="setCurrency('USD')">USD</button>
+        <button id="btn-ars" class="curr-btn" onclick="setCurrency('ARS')">ARS</button>
+      </div>
       <button class="btn" onclick="location.reload()">↻ Actualizar</button>
     </div>
   </div>
@@ -338,13 +342,42 @@ tr:hover td{background:var(--bg3);}
 
     <!-- CAJA -->
     <div class="screen" id="screen-caja">
-      <div class="sec-label">Saldo por metodo de pago</div>
+      <!-- Saldo total unificado -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px 22px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div class="sec-label" style="margin-bottom:6px;">Saldo total unificado</div>
+          <div style="font-size:28px;font-weight:700;font-family:monospace;" id="caja-total-unif">-</div>
+          <div style="font-size:13px;color:var(--text3);margin-top:3px;" id="caja-total-sub">-</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="sec-label" style="margin-bottom:6px;">Proyeccion fin de mes</div>
+          <div style="font-size:22px;font-weight:700;font-family:monospace;" id="caja-proyeccion">-</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px;" id="caja-proy-sub">basado en promedio diario</div>
+        </div>
+      </div>
+      <!-- Metodos -->
+      <div class="sec-label">Saldo por metodo</div>
       <div class="caja-methods" id="caja-methods"></div>
-      <div class="caja-chart-wrap">
-        <div class="caja-chart-inner">
-          <div class="chart-title" style="margin-bottom:13px;">Distribucion</div>
+      <!-- Charts row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+        <div class="chart-box" style="margin-bottom:0;">
+          <div class="chart-title" style="margin-bottom:13px;">Distribucion actual</div>
           <canvas id="chartCaja" height="200"></canvas>
         </div>
+        <div class="chart-box" style="margin-bottom:0;">
+          <div class="chart-title" style="margin-bottom:13px;">Evolucion diaria — saldo neto</div>
+          <canvas id="chartCajaHist" height="200"></canvas>
+        </div>
+      </div>
+      <!-- Conciliacion diaria -->
+      <div class="tw">
+        <div class="tw-head">
+          <div class="tw-title">Conciliacion dia a dia</div>
+          <div style="font-size:11px;color:var(--text3);">Marca cada dia como conciliado cuando verifica el saldo real</div>
+        </div>
+        <table><thead><tr>
+          <th>Fecha</th><th>Ingresos</th><th>Egresos</th><th>Neto del dia</th><th>Saldo acumulado</th><th>Conciliado</th>
+        </tr></thead><tbody id="caja-concil-body"></tbody></table>
       </div>
     </div>
 
@@ -444,9 +477,35 @@ tr:hover td{background:var(--bg3);}
             <div class="cel-form-grid">
               <div class="cel-fgroup"><label>Precio de venta (ARS) *</label><input type="number" id="venta-precio" placeholder="0" oninput="ventaCalcGanancia()"></div>
               <div class="cel-fgroup"><label>Cliente</label><input type="text" id="venta-cliente" placeholder="Nombre..."></div>
-              <div class="cel-fgroup"><label>Metodo de pago</label>
-                <select id="venta-metodo"><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select></div>
+              <div class="cel-fgroup cel-form-full">
+                <label>Metodo de pago (podes dividir en hasta 3 metodos)</label>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">
+                  <select id="venta-metodo1" onchange="ventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select>
+                  <input type="number" id="venta-monto1" placeholder="Monto 1" min="0" step="0.01" oninput="ventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+                  <select id="venta-metodo2" onchange="ventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select>
+                  <input type="number" id="venta-monto2" placeholder="Monto 2 (opcional)" min="0" step="0.01" oninput="ventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+                  <select id="venta-metodo3" onchange="ventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select>
+                  <input type="number" id="venta-monto3" placeholder="Monto 3 (opcional)" min="0" step="0.01" oninput="ventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+                </div>
+                <div id="venta-mixto-info" style="font-size:11px;color:var(--text3);margin-top:5px;font-family:monospace;"></div>
+              </div>
               <div class="cel-fgroup"><label>Garantia venta (meses)</label><input type="number" id="venta-gtia" placeholder="3" min="0"></div>
+            </div>
+            <div style="margin-top:10px;">
+              <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);cursor:pointer;">
+                <input type="checkbox" id="venta-cuotas-check" onchange="ventaToggleCuotas()"> Venta en cuotas
+              </label>
+              <div id="venta-cuotas-form" style="display:none;margin-top:10px;background:var(--bg3);border-radius:var(--r);padding:14px;">
+                <div class="cel-form-grid">
+                  <div class="cel-fgroup"><label>Cantidad de cuotas</label><input type="number" id="vc-cantidad" placeholder="6" min="1" oninput="ventaCalcCuota()"></div>
+                  <div class="cel-fgroup"><label>Monto por cuota (ARS)</label><input type="number" id="vc-monto" placeholder="0" min="0" oninput="ventaCalcCuota()"></div>
+                  <div class="cel-fgroup"><label>Fecha primer pago</label><input type="date" id="vc-inicio"></div>
+                  <div class="cel-fgroup"><label>Frecuencia</label>
+                    <select id="vc-frecuencia"><option value="mensual">Mensual</option><option value="quincenal">Quincenal</option><option value="semanal">Semanal</option></select></div>
+                  <div class="cel-fgroup cel-form-full"><label>Fecha limite acordada</label><input type="date" id="vc-limite"></div>
+                </div>
+                <div style="font-size:11px;color:var(--text3);font-family:monospace;margin-top:8px;" id="vc-info"></div>
+              </div>
             </div>
             <div class="ganancia-box">
               <div><div class="ganancia-label">Ganancia neta estimada</div></div>
@@ -577,12 +636,22 @@ tr:hover td{background:var(--bg3);}
 
     <!-- CEL RESUMEN -->
     <div class="screen" id="screen-cel-resumen">
-      <div class="cel-metrics">
+      <div class="u-metrics" style="grid-template-columns:repeat(5,1fr);">
         <div class="mc"><div class="mc-label">En stock</div><div class="mc-val amber" id="cr-stock">0</div><div class="mc-sub">unidades</div></div>
-        <div class="mc"><div class="mc-label">Vendidos</div><div class="mc-val" id="cr-vendidos">0</div><div class="mc-sub">unidades</div></div>
+        <div class="mc"><div class="mc-label">Vendidos</div><div class="mc-val pos" id="cr-vendidos">0</div><div class="mc-sub">unidades</div></div>
         <div class="mc"><div class="mc-label">En reparacion</div><div class="mc-val" id="cr-rep">0</div><div class="mc-sub">unidades</div></div>
         <div class="mc"><div class="mc-label">Ganancia total</div><div class="mc-val pos" id="cr-gan">-</div><div class="mc-sub">vendidos</div></div>
         <div class="mc"><div class="mc-label">Inversion stock</div><div class="mc-val neg" id="cr-inv">-</div><div class="mc-sub">en stock</div></div>
+      </div>
+      <div class="u-detail">
+        <div class="chart-box" style="margin-bottom:0"><div class="chart-title" style="margin-bottom:13px;">Ventas por mes</div><canvas id="chartCelMes" height="180"></canvas></div>
+        <div class="chart-box" style="margin-bottom:0"><div class="chart-title" style="margin-bottom:13px;">Ganancia por mes</div><canvas id="chartCelGan" height="180"></canvas></div>
+      </div>
+      <div style="margin-top:14px;" class="tw">
+        <div class="tw-head"><div class="tw-title">Ultimas ventas</div></div>
+        <table><thead><tr>
+          <th>Fecha</th><th>IMEI</th><th>Modelo</th><th>Costo</th><th>Venta</th><th>Ganancia</th><th>Cliente</th>
+        </tr></thead><tbody id="cr-ventas-body"></tbody></table>
       </div>
     </div>
 
@@ -788,6 +857,16 @@ tr:hover td{background:var(--bg3);}
   </div>
 </div>
 
+<div class="cel-modal-bg" id="cel-det-modal">
+  <div class="cel-modal" style="max-width:580px;">
+    <h3 style="display:flex;justify-content:space-between;align-items:center;">
+      Detalle de venta
+      <button class="btn btn-sm" onclick="document.getElementById('cel-det-modal').classList.remove('show')">Cerrar</button>
+    </h3>
+    <div id="cel-det-body" style="margin-top:16px;"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -815,13 +894,47 @@ if(cfg.operaciones.indexOf('AJUSTE')===-1)cfg.operaciones.push('AJUSTE');
 
 var BOP={VENTAS:'b-ventas',SERVICIOS:'b-servicios',COMPRA:'b-compra',GASTOS:'b-gastos',INVERSION:'b-inversion',AJUSTE:'b-ajuste'};
 var BMET={MP:'b-mp',EFECTIVO:'b-efectivo',USD:'b-usd','NARANJA X':'b-naranja','A LIQUIDAR':'b-liquidar',DEUDA:'b-deuda'};
+
+function metodoBadge(metodo){
+  // Handle mixed format like "MP:50000|EFECTIVO:30000"
+  if(!metodo)return'<span class="badge b-liquidar">-</span>';
+  if(metodo.indexOf('|')>-1||metodo.indexOf(':')>-1){
+    // Mixed payment - show each method name only
+    var parts=metodo.split('|');
+    return parts.map(function(p){
+      var name=p.split(':')[0].trim();
+      var cls=BMET[name]||'b-liquidar';
+      return'<span class="badge '+cls+'">'+name+'</span>';
+    }).join(' ');
+  }
+  var cls=BMET[metodo]||'b-liquidar';
+  return'<span class="badge '+cls+'">'+metodo+'</span>';
+}
+
+function metodoLabel(metodo){
+  // Return clean label for display
+  if(!metodo)return'-';
+  if(metodo.indexOf('|')>-1){
+    return metodo.split('|').map(function(p){
+      var parts=p.split(':');
+      var name=parts[0].trim();
+      var monto=parts[1]?fmtARS(parseFloat(parts[1])):'' ;
+      return name+(monto?' '+monto:'');
+    }).join(' + ');
+  }
+  if(metodo.indexOf(':')>-1){
+    var parts=metodo.split(':');
+    return parts[0].trim();
+  }
+  return metodo;
+}
 var METC={MP:'#1D9E75',EFECTIVO:'#EF9F27',USD:'#378ADD','NARANJA X':'#D85A30','A LIQUIDAR':'#888780'};
 var UCOLORS={CELULARES:'#7F77DD',TIENDAS:'#1D9E75','SERVICIO TECNICO':'#378ADD'};
 var NOM=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 var CATC=['#7F77DD','#1D9E75','#378ADD','#EF9F27','#D85A30','#888780','#D4537E','#639922'];
 var TITLES={dashboard:'Dashboard',caja:'Caja',cargar:'Cargar movimiento',movimientos:'Movimientos',config:'Configuracion',unidad:'Unidad'};
 var movs=[],cMes=null,cCaja=null,cU=null,cUCat=null,curU='CELULARES';
-var dolarBlue=0,pendingDelId=null;
+var dolarBlue=0,pendingDelId=null,currentCurrency='USD';
 
 Chart.defaults.color='#5A5856';
 Chart.defaults.borderColor='rgba(255,255,255,0.06)';
@@ -841,6 +954,9 @@ function fmtUSD(n){
 }
 function fmtMov(n,metodo){
   if(!n||n===0)return'';
+  // For mixed payments, show ARS
+  if(metodo&&metodo.indexOf('|')>-1)return fmtARS(n);
+  // Pure USD
   if(metodo==='USD')return fmtUSD(n);
   return fmtARS(n);
 }
@@ -862,17 +978,47 @@ async function fetchDolar(manual){
     var res=await fetch('https://dolarapi.com/v1/dolares/blue');
     var d=await res.json();
     dolarBlue=d.venta||d.compra||0;
-    document.getElementById('dolar-pill').textContent='USD blue: $'+Math.round(dolarBlue).toLocaleString('es-AR');
-    // Update caja USD display if visible
-    var cajaTxt=document.getElementById('d-caja-usd');
-    if(cajaTxt&&cajaTxt.textContent!=='-'){
-      var usdVal=parseFloat(cajaTxt.dataset.raw||0);
-      document.getElementById('d-caja-usd-ars').textContent=usdVal&&dolarBlue?'= '+fmtARS(usdVal*dolarBlue):'';
-    }
-    if(manual)showToast('Cotizacion actualizada: $'+Math.round(dolarBlue).toLocaleString('es-AR'));
+    document.getElementById('dolar-pill').textContent='Blue $'+Math.round(dolarBlue).toLocaleString('es-AR');
+    if(manual){showToast('Cotizacion actualizada: $'+Math.round(dolarBlue).toLocaleString('es-AR'));refreshCurrentScreen();}
   }catch(e){
-    document.getElementById('dolar-pill').textContent='USD blue: sin conexion';
+    document.getElementById('dolar-pill').textContent='Blue s/c';
   }
+}
+
+function setCurrency(cur){
+  currentCurrency=cur;
+  document.getElementById('btn-usd').classList.toggle('active',cur==='USD');
+  document.getElementById('btn-ars').classList.toggle('active',cur==='ARS');
+  refreshCurrentScreen();
+}
+
+function refreshCurrentScreen(){
+  var active=document.querySelector('.screen.active');
+  if(!active)return;
+  var id=active.id.replace('screen-','');
+  if(id==='dashboard')renderDash();
+  else if(id==='caja')renderCaja();
+  else if(id==='cel-resumen')celRenderResumen();
+  else if(id==='cel-stock')celRenderTabla('stock');
+  else if(id==='cel-vendidos')celRenderTabla('vendidos');
+  else if(id==='cel-reparacion')celRenderTabla('reparacion');
+  else if(id==='unidad')renderU();
+  else if(id==='movimientos')renderMovs();
+}
+
+// Smart format: show in current currency
+function fmtSmart(arsAmount){
+  if(currentCurrency==='USD'&&dolarBlue>0){
+    return fmtUSD(arsAmount/dolarBlue);
+  }
+  return fmtARS(arsAmount);
+}
+
+function fmtSmartUSD(usdAmount){
+  if(currentCurrency==='ARS'&&dolarBlue>0){
+    return fmtARS(usdAmount*dolarBlue);
+  }
+  return fmtUSD(usdAmount);
 }
 
 function go(name,el){
@@ -1183,13 +1329,14 @@ function renderChart(){
 
 function buildMovRow(m,showUnit,showDel){
   var ingHtml='',egrHtml='';
+  var isPureUSD=m.metodo==='USD'&&m.metodo.indexOf('|')===-1;
   if(m.ingreso){
     ingHtml='<span class="ing">'+fmtMov(m.ingreso,m.metodo)+'</span>';
-    if(m.metodo==='USD'&&dolarBlue)ingHtml+='<span class="usd-cell">'+fmtARS(m.ingreso*dolarBlue)+'</span>';
+    if(isPureUSD&&dolarBlue)ingHtml+='<span class="usd-cell">'+fmtARS(m.ingreso*dolarBlue)+'</span>';
   }
   if(m.egreso){
     egrHtml='<span class="egr">'+fmtMov(m.egreso,m.metodo)+'</span>';
-    if(m.metodo==='USD'&&dolarBlue)egrHtml+='<span class="usd-cell">'+fmtARS(m.egreso*dolarBlue)+'</span>';
+    if(isPureUSD&&dolarBlue)egrHtml+='<span class="usd-cell">'+fmtARS(m.egreso*dolarBlue)+'</span>';
   }
   var delBtn=showDel?'<button class="btn-del" onclick="askDelete(\''+m.id+'\',\''+m.desc.replace(/'/g,'')+'\')" title="Eliminar">x</button>':'';
   var unitCell=showUnit?'<td style="font-size:11px;color:var(--text2)">'+m.unidad+'</td>':'';
@@ -1201,7 +1348,7 @@ function buildMovRow(m,showUnit,showDel){
     '<td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)" title="'+m.desc+'">'+m.desc+'</td>'+
     '<td>'+ingHtml+'</td>'+
     '<td>'+egrHtml+'</td>'+
-    '<td><span class="badge '+(BMET[m.metodo]||'')+'">'+m.metodo+'</span></td>'+
+    '<td>'+metodoBadge(m.metodo)+'</td>'+
     (showDel?'<td>'+delBtn+'</td>':'')+
     '</tr>';
 }
@@ -1212,7 +1359,7 @@ function renderDash(){
   var tEgr=nonDeuda.reduce(function(s,m){return s+m.egreso;},0);
   var cajaTot=movs.filter(function(m){return m.metodo!=='DEUDA'&&m.metodo!=='USD';}).reduce(function(s,m){return s+m.ingreso-m.egreso;},0);
   var cajaUSD=movs.filter(function(m){return m.metodo==='USD';}).reduce(function(s,m){return s+m.ingreso-m.egreso;},0);
-  document.getElementById('d-caja-ars').textContent=fmtARS(cajaTot);
+  document.getElementById('d-caja-ars').textContent=fmtSmart(cajaTot);
   var usdEl=document.getElementById('d-caja-usd');
   usdEl.textContent=fmtUSD(cajaUSD);
   usdEl.dataset.raw=cajaUSD;
@@ -1225,8 +1372,8 @@ function renderDash(){
   dEl.className='mc-val '+(saldoDeuda>=0?'pos':'neg');
   document.getElementById('d-deuda-label').textContent=saldoDeuda>=0?'a favor (deudores)':'en contra (deuda)';
   document.getElementById('d-deuda-label').style.color=saldoDeuda>=0?'var(--green)':'var(--red)';
-  document.getElementById('d-ing').textContent=fmtARS(tIng);
-  document.getElementById('d-egr').textContent=fmtARS(tEgr);
+  document.getElementById('d-ing').textContent=fmtSmart(tIng);
+  document.getElementById('d-egr').textContent=fmtSmart(tEgr);
   renderChart();
   var unidades=['CELULARES','TIENDAS','SERVICIO TECNICO'];
   document.getElementById('dash-units').innerHTML=unidades.map(function(u){
@@ -1237,9 +1384,9 @@ function renderDash(){
     var col=UCOLORS[u]||'#fff';
     return'<div class="uu" style="--uc:'+col+'">'+
       '<div class="uu-name">'+u+'</div>'+
-      '<div class="uu-row"><span>Ingresos</span><span class="ing">'+fmtARS(ing)+'</span></div>'+
-      '<div class="uu-row"><span>Egresos</span><span class="egr">'+fmtARS(egr)+'</span></div>'+
-      '<div class="uu-saldo" style="color:'+(sal>=0?'var(--green)':'var(--red)')+'">'+fmtARS(sal)+'</div>'+
+      '<div class="uu-row"><span>Ingresos</span><span class="ing">'+fmtSmart(ing)+'</span></div>'+
+      '<div class="uu-row"><span>Egresos</span><span class="egr">'+fmtSmart(egr)+'</span></div>'+
+      '<div class="uu-saldo" style="color:'+(sal>=0?'var(--green)':'var(--red)')+'">'+fmtSmart(sal)+'</div>'+
       '</div>';
   }).join('');
   var rec=movs.slice(0,6);
@@ -1252,39 +1399,91 @@ function renderCaja(){
   var saldos={};
   var metodosCaja=cfg.metodos.filter(function(m){return m!=='DEUDA';});
   metodosCaja.forEach(function(m){saldos[m]={ing:0,egr:0};});
-  movs.forEach(function(m){var met=m.metodo;if(saldos[met]!==undefined){saldos[met].ing+=m.ingreso;saldos[met].egr+=m.egreso;}});
+  movs.forEach(function(m){
+    var met=m.metodo&&m.metodo.indexOf('|')>-1?null:m.metodo;
+    if(met&&saldos[met]!==undefined){saldos[met].ing+=m.ingreso;saldos[met].egr+=m.egreso;}
+    // For mixed: split by method
+    if(m.metodo&&m.metodo.indexOf('|')>-1){
+      m.metodo.split('|').forEach(function(p){
+        var parts=p.split(':');var mn=parts[0].trim();var mv=parseFloat(parts[1])||0;
+        if(saldos[mn]!==undefined){
+          if(m.ingreso>0)saldos[mn].ing+=mv;
+          else saldos[mn].egr+=mv;
+        }
+      });
+    }
+  });
 
   var saldosReales=JSON.parse(localStorage.getItem('dm_saldo_real')||'{}');
 
+  // Total unificado
+  var totalARS=metodosCaja.filter(function(m){return m!=='USD';}).reduce(function(s,m){
+    var calc=saldos[m].ing-saldos[m].egr;
+    var real=saldosReales[m]!==undefined?parseFloat(saldosReales[m]):calc;
+    return s+real;
+  },0);
+  var totalUSD=saldos['USD']?(saldos['USD'].ing-saldos['USD'].egr):0;
+  var realUSD=saldosReales['USD']!==undefined?parseFloat(saldosReales['USD']):totalUSD;
+  var totalUnif=currentCurrency==='USD'?
+    (totalARS/dolarBlue+realUSD):
+    (totalARS+realUSD*dolarBlue);
+  var unifEl=document.getElementById('caja-total-unif');
+  if(unifEl){
+    unifEl.textContent=currentCurrency==='USD'?fmtUSD(totalUnif):fmtARS(totalUnif);
+    unifEl.style.color=totalUnif>=0?'var(--green)':'var(--red)';
+  }
+  var subEl=document.getElementById('caja-total-sub');
+  if(subEl)subEl.textContent=currentCurrency==='USD'?
+    'ARS: '+fmtARS(totalARS)+' + USD: '+fmtUSD(realUSD):
+    'ARS: '+fmtARS(totalARS)+' + USD equivalente: '+fmtARS(realUSD*dolarBlue);
+
+  // Proyeccion fin de mes
+  var hoy=new Date();
+  var diasMes=new Date(hoy.getFullYear(),hoy.getMonth()+1,0).getDate();
+  var diaActual=hoy.getDate();
+  var diasRestantes=diasMes-diaActual;
+  var inicioMes=new Date(hoy.getFullYear(),hoy.getMonth(),1).toISOString().slice(0,10);
+  var movsMes=movs.filter(function(m){return m.fecha>=inicioMes&&m.metodo!=='DEUDA';});
+  var ingMes=movsMes.reduce(function(s,m){return s+m.ingreso;},0);
+  var egrMes=movsMes.reduce(function(s,m){return s+m.egreso;},0);
+  var netoMes=ingMes-egrMes;
+  var promDiario=diaActual>0?netoMes/diaActual:0;
+  var proyeccion=totalUnif+(promDiario*diasRestantes/(currentCurrency==='USD'&&dolarBlue>0?dolarBlue:1));
+  if(currentCurrency==='ARS')proyeccion=totalUnif+promDiario*diasRestantes;
+  var proyEl=document.getElementById('caja-proyeccion');
+  if(proyEl){
+    proyEl.textContent=currentCurrency==='USD'?fmtUSD(proyeccion):fmtARS(proyeccion);
+    proyEl.style.color=proyeccion>=0?'var(--green)':'var(--red)';
+  }
+  var proySubEl=document.getElementById('caja-proy-sub');
+  if(proySubEl)proySubEl.textContent='Promedio diario: '+(currentCurrency==='USD'?fmtUSD(promDiario/Math.max(dolarBlue,1)):fmtARS(promDiario))+' — '+diasRestantes+' dias restantes';
+
+  // Metodos cards
   document.getElementById('caja-methods').innerHTML=metodosCaja.map(function(met){
     var calc=saldos[met].ing-saldos[met].egr;
     var real=saldosReales[met]!==undefined?parseFloat(saldosReales[met]):null;
     var diff=real!==null?real-calc:null;
     var isUSD=met==='USD';
-    var fmtFn=isUSD?fmtUSD:fmtARS;
-
-    var arsLine=isUSD&&dolarBlue&&real!==null?'<div class="cm-ars-line">= '+fmtARS(real*dolarBlue)+'</div>':'';
-    var realStr=real!==null?fmtFn(real):'—';
+    var fmtFn=function(n){return isUSD?(currentCurrency==='ARS'&&dolarBlue?fmtARS(n*dolarBlue):fmtUSD(n)):(currentCurrency==='USD'&&dolarBlue?fmtUSD(n/dolarBlue):fmtARS(n));};
     var diffStr=diff!==null?(diff>=0?'+':'')+fmtFn(diff):'—';
-    var diffColor=diff===null?'var(--text3)':diff>=0?'var(--green)':'var(--red)';
-
+    var diffColor=diff===null?'var(--text3)':Math.abs(diff)<1000?'var(--green)':diff>=0?'var(--amber)':'var(--red)';
     return'<div class="cm">'+
       '<div class="cm-name">'+met+'</div>'+
       '<div class="cm-row-label">Calculado</div>'+
       '<div class="cm-val-sm '+(calc>=0?'pos':'neg')+'">'+fmtFn(calc)+'</div>'+
       '<div class="cm-row-label" style="margin-top:8px;">Saldo real</div>'+
       '<input class="cm-input" type="number" id="real-'+met+'" value="'+(real!==null?real:'')+'" placeholder="Ingresar..." step="0.01" data-met="'+met+'" onchange="saveReal(this.dataset.met)" onclick="this.select()">'+
-      arsLine+
       '<div class="cm-divider-line"></div>'+
       '<div class="cm-row-label">Diferencia</div>'+
-      '<div class="cm-val '+(calc>=0?'pos':'neg')+'" style="font-size:20px;color:'+diffColor+'">'+diffStr+'</div>'+
+      '<div class="cm-val" style="font-size:18px;color:'+diffColor+'">'+diffStr+'</div>'+
       '</div>';
   }).join('');
 
+  // Distribution chart
   if(cCaja)cCaja.destroy();
   var totales=metodosCaja.map(function(met){
     var r=saldosReales[met];
-    return r!==undefined?Math.max(0,parseFloat(r)):Math.max(0,saldos[met].ing-saldos[met].egr);
+    return Math.max(0,r!==undefined?parseFloat(r):saldos[met].ing-saldos[met].egr);
   });
   if(totales.some(function(v){return v>0;})){
     cCaja=new Chart(document.getElementById('chartCaja').getContext('2d'),{
@@ -1293,16 +1492,61 @@ function renderCaja(){
       options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:8}}}}
     });
   }
+
+  // History chart - daily net balance
+  if(window.cCajaHist)window.cCajaHist.destroy();
+  var dias={};
+  movs.filter(function(m){return m.metodo!=='DEUDA';}).forEach(function(m){
+    var k=String(m.fecha).slice(0,10);if(!k||k.length<10)return;
+    if(!dias[k])dias[k]={ing:0,egr:0};
+    dias[k].ing+=m.ingreso;dias[k].egr+=m.egreso;
+  });
+  // Last 30 days
+  var histKeys=Object.keys(dias).sort().slice(-30);
+  var cumulative=0;
+  var histData=histKeys.map(function(k){cumulative+=dias[k].ing-dias[k].egr;return Math.round(cumulative);});
+  if(histKeys.length){
+    window.cCajaHist=new Chart(document.getElementById('chartCajaHist').getContext('2d'),{
+      type:'line',
+      data:{labels:histKeys.map(function(k){var p=k.split('-');return p[2]+'/'+p[1];}),
+        datasets:[{label:'Saldo acumulado',data:histData,borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.08)',borderWidth:2,pointRadius:2,fill:true,tension:0.3}]},
+      options:{responsive:true,plugins:{legend:{display:false}},
+        scales:{x:{ticks:{font:{size:9},maxTicksLimit:10},grid:{display:false}},
+          y:{ticks:{font:{size:9},callback:function(v){return fmtShort(v);}},grid:{color:'rgba(255,255,255,0.04)'}}}}
+    });
+  }
+
+  // Conciliation table - last 30 days
+  var concilData=JSON.parse(localStorage.getItem('dm_concil')||'{}');
+  var concilRows=histKeys.slice().reverse().map(function(k){
+    var d=dias[k]||{ing:0,egr:0};
+    var neto=d.ing-d.egr;
+    var concilado=concilData[k]||false;
+    // Running balance up to this day
+    var bal=histData[histKeys.indexOf(k)];
+    return'<tr>'+
+      '<td class="mono" style="font-size:11px;">'+fd(k)+'</td>'+
+      '<td class="ing">'+fmtSmart(d.ing)+'</td>'+
+      '<td class="egr">'+fmtSmart(d.egr)+'</td>'+
+      '<td class="mono" style="color:'+(neto>=0?'var(--green)':'var(--red)')+';">'+fmtSmart(neto)+'</td>'+
+      '<td class="mono" style="color:'+(bal>=0?'var(--green)':'var(--red)')+';">'+fmtSmart(bal)+'</td>'+
+      '<td><label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;">'+
+        '<input type="checkbox" '+(concilado?'checked':'')+' data-fecha="'+k+'" onchange="toggleConcil(this.dataset.fecha,this.checked)">'+
+        '<span style="color:'+(concilado?'var(--green)':'var(--text3)')+'">'+( concilado?'Conciliado':'Pendiente')+'</span>'+
+      '</label></td>'+
+      '</tr>';
+  }).join('');
+  var cb=document.getElementById('caja-concil-body');
+  if(cb)cb.innerHTML=concilRows||'<tr><td colspan="6" class="empty-row">Sin datos</td></tr>';
 }
 
-function saveReal(met){
-  var val=document.getElementById('real-'+met).value;
-  var saldosReales=JSON.parse(localStorage.getItem('dm_saldo_real')||'{}');
-  if(val===''){delete saldosReales[met];}
-  else{saldosReales[met]=parseFloat(val)||0;}
-  localStorage.setItem('dm_saldo_real',JSON.stringify(saldosReales));
+function toggleConcil(fecha,checked){
+  var concilData=JSON.parse(localStorage.getItem('dm_concil')||'{}');
+  if(checked)concilData[fecha]=true;else delete concilData[fecha];
+  localStorage.setItem('dm_concil',JSON.stringify(concilData));
   renderCaja();
 }
+
 
 function renderConfig(){
   var sections=[{key:'unidades',label:'Unidades de negocio'},{key:'operaciones',label:'Operaciones'},{key:'metodos',label:'Metodos de pago'}];
@@ -1333,9 +1577,9 @@ function renderU(){
   var ing=um.reduce(function(s,m){return s+m.ingreso;},0);
   var egr=um.reduce(function(s,m){return s+m.egreso;},0);
   var sal=ing-egr;
-  document.getElementById('u-ing').textContent=fmtARS(ing);
-  document.getElementById('u-egr').textContent=fmtARS(egr);
-  var sEl=document.getElementById('u-sal');sEl.textContent=fmtARS(sal);sEl.className='mc-val '+(sal>=0?'pos':'neg');
+  document.getElementById('u-ing').textContent=fmtSmart(ing);
+  document.getElementById('u-egr').textContent=fmtSmart(egr);
+  var sEl=document.getElementById('u-sal');sEl.textContent=fmtSmart(sal);sEl.className='mc-val '+(sal>=0?'pos':'neg');
   document.getElementById('u-title').textContent=u;
   var meses={};
   um.forEach(function(m){var k=String(m.fecha).slice(0,7);if(!k||k.length<7)return;if(!meses[k])meses[k]={ing:0,egr:0};meses[k].ing+=m.ingreso;meses[k].egr+=m.egreso;});
@@ -1372,7 +1616,7 @@ function renderU(){
         '<td style="font-size:11px;color:var(--text2)">'+m.categoria+'</td>'+
         '<td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)" title="'+m.desc+'">'+m.desc+'</td>'+
         '<td>'+ingHtml+'</td><td>'+egrHtml+'</td>'+
-        '<td><span class="badge '+(BMET[m.metodo]||'')+'">'+m.metodo+'</span></td>'+
+        '<td>'+metodoBadge(m.metodo)+'</td>'+
         '</tr>';
     }).join('')
     :'<tr><td colspan="7" class="empty-row">Sin movimientos</td></tr>';
@@ -1442,16 +1686,60 @@ function celCostoTotal(cel){
 
 function celRenderResumen(){
   var st=celulares.filter(function(c){return c.estado==='EN STOCK';});
-  var vd=celulares.filter(function(c){return c.estado==='VENDIDO';});
+  var vd=celulares.filter(function(c){return c.estado==='VENDIDO';}).sort(function(a,b){return(b.fecha_venta||'').localeCompare(a.fecha_venta||'');});
   var rp=celulares.filter(function(c){return c.estado==='EN REPARACION';});
   var gan=vd.reduce(function(s,c){return s+(parseFloat(c.precio_venta)||0)-celCostoTotal(c);},0);
   var inv=st.reduce(function(s,c){return s+celCostoTotal(c);},0);
   document.getElementById('cr-stock').textContent=st.length;
   document.getElementById('cr-vendidos').textContent=vd.length;
   document.getElementById('cr-rep').textContent=rp.length;
-  document.getElementById('cr-gan').textContent=fmtARS(gan);
+  document.getElementById('cr-gan').textContent=fmtSmart(gan);
   document.getElementById('cr-gan').className='mc-val '+(gan>=0?'pos':'neg');
-  document.getElementById('cr-inv').textContent=fmtARS(inv);
+  document.getElementById('cr-inv').textContent=fmtSmart(inv);
+
+  // Ventas por mes chart
+  var meses={};
+  vd.forEach(function(c){
+    var k=String(c.fecha_venta||'').slice(0,7);if(!k||k.length<7)return;
+    if(!meses[k])meses[k]={ventas:0,gan:0};
+    meses[k].ventas+=(parseFloat(c.precio_venta)||0);
+    meses[k].gan+=(parseFloat(c.precio_venta)||0)-celCostoTotal(c);
+  });
+  var labs=Object.keys(meses).sort();
+  if(window.cCelMes)window.cCelMes.destroy();
+  if(window.cCelGan)window.cCelGan.destroy();
+  if(labs.length){
+    window.cCelMes=new Chart(document.getElementById('chartCelMes').getContext('2d'),{
+      type:'bar',
+      data:{labels:labs.map(function(l){var p=l.split('-');return NOM[parseInt(p[1])-1]+' '+p[0].slice(2);}),
+        datasets:[{label:'Ingresos ventas',data:labs.map(function(l){return Math.round(meses[l].ventas);}),backgroundColor:'rgba(29,158,117,0.75)',borderRadius:3}]},
+      options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10}},grid:{display:false}},y:{ticks:{font:{size:10},callback:function(v){return fmtShort(v);}}}}}
+    });
+    window.cCelGan=new Chart(document.getElementById('chartCelGan').getContext('2d'),{
+      type:'bar',
+      data:{labels:labs.map(function(l){var p=l.split('-');return NOM[parseInt(p[1])-1]+' '+p[0].slice(2);}),
+        datasets:[{label:'Ganancia',data:labs.map(function(l){return Math.round(meses[l].gan);}),backgroundColor:labs.map(function(l){return meses[l].gan>=0?'rgba(29,158,117,0.75)':'rgba(216,90,48,0.75)';}),borderRadius:3}]},
+      options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10}},grid:{display:false}},y:{ticks:{font:{size:10},callback:function(v){return fmtShort(v);}}}}}
+    });
+  }
+
+  // Recent sales table
+  var tbody=document.getElementById('cr-ventas-body');
+  if(tbody){
+    tbody.innerHTML=vd.slice(0,10).map(function(c){
+      var ct=celCostoTotal(c);
+      var g=(parseFloat(c.precio_venta)||0)-ct;
+      return'<tr>'+
+        '<td class="mono" style="font-size:11px;">'+fd(c.fecha_venta)+'</td>'+
+        '<td class="mono" style="font-size:11px;">'+c.imei+'</td>'+
+        '<td><strong>'+c.marca+'</strong> '+c.modelo+'</td>'+
+        '<td class="mono">'+fmtSmart(ct)+'</td>'+
+        '<td class="mono">'+fmtSmart(parseFloat(c.precio_venta)||0)+'</td>'+
+        '<td class="mono" style="color:'+(g>=0?'var(--green)':'var(--red)')+'"><strong>'+fmtSmart(g)+'</strong></td>'+
+        '<td style="color:var(--text2);">'+(c.cliente||'-')+'</td>'+
+        '</tr>';
+    }).join('') || '<tr><td colspan="7" class="empty-row">Sin ventas</td></tr>';
+  }
 }
 
 function celRenderTabla(tipo){
@@ -1490,10 +1778,10 @@ function celRenderTabla(tipo){
         '<td>'+(c.capacidad||'-')+'</td>'+
         '<td>'+(c.bateria?c.bateria+'%':'-')+'</td>'+
         '<td><span class="badge b-stock">STOCK</span></td>'+
-        '<td class="mono">'+fmtARS(c.precio_compra)+'</td>'+
-        '<td class="mono" style="color:var(--red)">'+( arrCost?fmtARS(arrCost):'-')+'</td>'+
-        '<td class="mono"><strong>'+fmtARS(ct)+'</strong></td>'+
-        '<td class="mono" style="color:var(--green)">'+fmtARS(c.precio_lista)+'</td>'+
+        '<td class="mono">'+fmtSmart(c.precio_compra)+'</td>'+
+        '<td class="mono" style="color:var(--red)">'+( arrCost?fmtSmart(arrCost):'-')+'</td>'+
+        '<td class="mono"><strong>'+fmtSmart(ct)+'</strong></td>'+
+        '<td class="mono" style="color:var(--green)">'+fmtSmart(c.precio_lista)+'</td>'+
         '<td style="font-size:11px;">'+gtia+'</td>'+
         '<td><button class="btn btn-sm" data-cid="'+c.id+'" onclick="event.stopPropagation();celAbrirDetalle(this.dataset.cid)">Ver</button></td>'+
         '</tr>';
@@ -1503,9 +1791,9 @@ function celRenderTabla(tipo){
         '<td><strong>'+c.marca+'</strong> '+c.modelo+'</td>'+
         '<td>'+(c.color||'-')+'</td>'+
         '<td>'+(c.capacidad||'-')+'</td>'+
-        '<td class="mono">'+fmtARS(ct)+'</td>'+
-        '<td class="mono">'+fmtARS(c.precio_venta)+'</td>'+
-        '<td class="mono" style="color:'+(gan>=0?'var(--green)':'var(--red)')+'"><strong>'+fmtARS(gan)+'</strong></td>'+
+        '<td class="mono">'+fmtSmart(ct)+'</td>'+
+        '<td class="mono">'+fmtSmart(c.precio_venta)+'</td>'+
+        '<td class="mono" style="color:'+(gan>=0?'var(--green)':'var(--red)')+'"><strong>'+fmtSmart(gan)+'</strong></td>'+
         '<td>'+fd(c.fecha_venta)+'</td>'+
         '<td>'+(c.cliente||'-')+'</td>'+
         '<td>'+(c.metodo_pago_venta||'-')+'</td>'+
@@ -1518,9 +1806,9 @@ function celRenderTabla(tipo){
         '<td><strong>'+c.marca+'</strong> '+c.modelo+'</td>'+
         '<td>'+(c.color||'-')+'</td>'+
         '<td>'+(c.capacidad||'-')+'</td>'+
-        '<td class="mono">'+fmtARS(c.precio_compra)+'</td>'+
-        '<td class="mono" style="color:var(--red)">'+fmtARS(arrCost)+'</td>'+
-        '<td class="mono"><strong>'+fmtARS(ct)+'</strong></td>'+
+        '<td class="mono">'+fmtSmart(c.precio_compra)+'</td>'+
+        '<td class="mono" style="color:var(--red)">'+fmtSmart(arrCost)+'</td>'+
+        '<td class="mono"><strong>'+fmtSmart(ct)+'</strong></td>'+
         '<td><button class="btn btn-sm" data-imei="'+c.imei+'" data-cid="'+c.id+'" onclick="event.stopPropagation();celAbrirRepFromTable(this.dataset.imei)">+ Rep</button></td>'+
         '</tr>';
     }
@@ -1559,10 +1847,45 @@ function celAbrirOp(op, imeiPre){
 
 function celAbrirDetalle(id){
   var cel=celulares.find(function(c){return String(c.id)===String(id);});
-  if(!cel)return;
-  // Show quick detail - for now open as edit or show op options
-  var op=cel.estado==='VENDIDO'?'venta':cel.estado==='EN REPARACION'?'reparacion':'venta';
-  celAbrirOp('venta',cel.imei);
+  if(!cel){showToast('No se encontro el celular',true);return;}
+  if(cel.estado==='VENDIDO'){
+    // Show sold detail modal
+    celMostrarDetalle(cel);
+  }else if(cel.estado==='EN REPARACION'){
+    celAbrirOp('reparacion',cel.imei);
+  }else{
+    celAbrirOp('venta',cel.imei);
+  }
+}
+
+function celMostrarDetalle(cel){
+  var ct=celCostoTotal(cel);
+  var gan=(parseFloat(cel.precio_venta)||0)-ct;
+  var arrs=cel.celulares_arreglos||[];
+  var html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">IMEI</div><div style="font-size:13px;font-weight:600;font-family:monospace;">'+cel.imei+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">MODELO</div><div style="font-size:13px;font-weight:600;">'+cel.marca+' '+cel.modelo+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">COLOR / GB</div><div style="font-size:13px;">'+(cel.color||'-')+' / '+(cel.capacidad||'-')+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">ESTADO EQUIPO</div><div style="font-size:13px;">'+cel.estado_equipo+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">PRECIO COMPRA</div><div style="font-size:13px;color:var(--red);font-weight:600;">'+fmtSmart(cel.precio_compra)+'</div></div>'+
+    (arrs.length?'<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">REP/REP ACUM.</div><div style="font-size:13px;color:var(--red);">'+fmtSmart(arrs.reduce(function(s,a){return s+(parseFloat(a.costo)||0);},0))+'</div></div>':'')+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">COSTO TOTAL</div><div style="font-size:13px;color:var(--red);font-weight:700;">'+fmtSmart(ct)+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">PRECIO VENTA</div><div style="font-size:13px;color:var(--green);font-weight:700;">'+fmtSmart(cel.precio_venta)+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">GANANCIA</div><div style="font-size:16px;font-weight:700;color:'+(gan>=0?'var(--green)':'var(--red)')+';">'+fmtSmart(gan)+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">FECHA VENTA</div><div style="font-size:13px;">'+fd(cel.fecha_venta)+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">CLIENTE</div><div style="font-size:13px;">'+(cel.cliente||'-')+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">METODO PAGO</div><div>'+metodoBadge(cel.metodo_pago_venta)+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">GARANTIA</div><div style="font-size:13px;">'+(cel.garantia_venta?cel.garantia_venta+'m':'-')+'</div></div>'+
+    '</div>';
+  if(arrs.length){
+    html+='<div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:8px;text-transform:uppercase;">Reparaciones / Repuestos</div>';
+    html+=arrs.map(function(a){return'<div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--bg3);border-radius:var(--r);margin-bottom:4px;font-size:12px;"><span style="color:var(--text2);">'+fd(a.fecha)+' — '+a.descripcion+'</span><span style="color:var(--red);font-family:monospace;">'+fmtARS(a.costo)+'</span></div>';}).join('');
+  }
+  if(cel.notas){
+    html+='<div style="margin-top:12px;font-size:11px;color:var(--text3);">Notas: '+cel.notas+'</div>';
+  }
+  document.getElementById('cel-det-body').innerHTML=html;
+  document.getElementById('cel-det-modal').classList.add('show');
 }
 
 function celCerrarModal(){
@@ -1576,8 +1899,10 @@ function compraAgregarCelular(){
   var modelo=document.getElementById('nc-modelo').value.trim();
   // Validate IMEI: exactly 15 digits
   if(!imei){showToast('IMEI es obligatorio',true);return;}
-  if(!/^\d{15}$/.test(imei)){showToast('El IMEI debe tener exactamente 15 digitos',true);return;}
+  if(!/^\d{15}$/.test(imei)){showToast('El IMEI debe tener exactamente 15 digitos numericos',true);return;}
   if(!modelo){showToast('El modelo es obligatorio',true);return;}
+  var costoCheck=document.getElementById('nc-costo').value;
+  if(!costoCheck||parseFloat(costoCheck)<=0){showToast('El precio de costo es obligatorio',true);return;}
   // Check IMEI not duplicate
   var existing=celulares.find(function(c){return c.imei===imei;});
   if(existing){showToast('IMEI ya existe en el sistema',true);return;}
@@ -1649,11 +1974,31 @@ function ventaBuscarIMEI(){
   document.getElementById('venta-info-modelo').textContent=cel.marca+' '+cel.modelo;
   document.getElementById('venta-info-detalle').textContent=(cel.color||'-')+' / '+(cel.capacidad||'-');
   document.getElementById('venta-info-bat').textContent=cel.bateria?cel.bateria+'%':'-';
-  document.getElementById('venta-info-costo').textContent=fmtARS(ct);
-  document.getElementById('venta-info-lista').textContent=fmtARS(cel.precio_lista);
+  document.getElementById('venta-info-costo').textContent=fmtSmart(ct);
+  document.getElementById('venta-info-lista').textContent=fmtSmart(cel.precio_lista);
   document.getElementById('venta-precio').value=cel.precio_lista||'';
   document.getElementById('venta-cel-info').style.display='block';
   document.getElementById('venta-form-ext').style.display='block';
+  ventaCalcGanancia();
+}
+
+function ventaUpdateMixto(){
+  var m1=document.getElementById('venta-metodo1').value;
+  var v1=parseFloat(document.getElementById('venta-monto1').value)||0;
+  var m2=document.getElementById('venta-metodo2').value;
+  var v2=parseFloat(document.getElementById('venta-monto2').value)||0;
+  var m3=document.getElementById('venta-metodo3').value;
+  var v3=parseFloat(document.getElementById('venta-monto3').value)||0;
+  var total=v1+v2+v3;
+  var parts=[];
+  if(m1&&v1)parts.push(m1+': '+fmtARS(v1));
+  if(m2&&v2)parts.push(m2+': '+fmtARS(v2));
+  if(m3&&v3)parts.push(m3+': '+fmtARS(v3));
+  var info=document.getElementById('venta-mixto-info');
+  if(info)info.textContent=parts.length?'Total: '+fmtARS(total)+' ('+parts.join(' + ')+')'  :'';
+  // Auto-fill precio if empty
+  var precioEl=document.getElementById('venta-precio');
+  if(total>0&&precioEl)precioEl.value=total;
   ventaCalcGanancia();
 }
 
@@ -1705,7 +2050,7 @@ function renderPPLista(){
     var label=p.tipo==='nuevo'?(p.marca+' '+p.modelo):(p.cel.marca+' '+p.cel.modelo);
     return'<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
       '<span style="flex:1">'+label+'</span>'+
-      '<input type="number" placeholder="Valor recibido $" style="width:130px;padding:5px 8px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg);color:var(--text);font-size:12px;" value="'+(p.valor||'')+'" data-idx="'+i+'" onchange="ppUpdateValor(this.dataset.idx,this.value)">'+
+      '<input type="number" placeholder="Precio de costo (valor recibido) $" style="width:130px;padding:5px 8px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg);color:var(--text);font-size:12px;" value="'+(p.valor||'')+'" data-idx="'+i+'" onchange="ppUpdateValor(this.dataset.idx,this.value)">'+
       '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;" data-idx="'+i+'" onclick="ppQuitarCelular(this.dataset.idx)">x</button>'+
       '</div>';
   }).join('');
@@ -1725,12 +2070,12 @@ function celAbrirRepFromTable(imei){
 
 function repBuscarIMEI(){
   var imei=document.getElementById('rep-imei-input').value.trim();
-  var cel=celulares.find(function(c){return c.imei===imei&&(c.estado==='EN STOCK'||c.estado==='EN REPARACION');});
-  if(!cel){showToast('IMEI no encontrado',true);document.getElementById('rep-cel-info').style.display='none';document.getElementById('rep-form-ext').style.display='none';return;}
+  var cel=celulares.find(function(c){return c.imei===imei&&c.estado!=='VENDIDO';});
+  if(!cel){showToast('IMEI no encontrado en stock o reparacion',true);document.getElementById('rep-cel-info').style.display='none';document.getElementById('rep-form-ext').style.display='none';return;}
   repImeiActual=cel;
   var ct=celCostoTotal(cel);
   document.getElementById('rep-info-modelo').textContent=cel.marca+' '+cel.modelo;
-  document.getElementById('rep-info-costo').textContent=fmtARS(ct);
+  document.getElementById('rep-info-costo').textContent=fmtSmart(ct);
   document.getElementById('rep-info-estado').textContent=cel.estado;
   document.getElementById('rep-cel-info').style.display='block';
   document.getElementById('rep-form-ext').style.display='block';
@@ -1765,6 +2110,17 @@ async function celGuardarDesdeForm(op){
   await celGuardarOp();
   // After save, clear and go to relevant cel screen
   clearForm();
+}
+
+function ventaGetMetodoStr(){
+  var parts=[];
+  var m1=document.getElementById('venta-metodo1');var v1=document.getElementById('venta-monto1');
+  var m2=document.getElementById('venta-metodo2');var v2=document.getElementById('venta-monto2');
+  var m3=document.getElementById('venta-metodo3');var v3=document.getElementById('venta-monto3');
+  if(m1&&m1.value&&v1&&parseFloat(v1.value))parts.push(m1.value+':'+parseFloat(v1.value));
+  if(m2&&m2.value&&v2&&parseFloat(v2.value))parts.push(m2.value+':'+parseFloat(v2.value));
+  if(m3&&m3.value&&v3&&parseFloat(v3.value))parts.push(m3.value+':'+parseFloat(v3.value));
+  return parts.length?parts.join('|'):(document.getElementById('venta-metodo1')?document.getElementById('venta-metodo1').value||'EFECTIVO':'EFECTIVO');
 }
 
 async function celGuardarOp(){
@@ -1822,38 +2178,56 @@ async function celGuardarOp(){
     }
 
     else if(op==='venta'){
-      if(!ventaImeiActual){showToast('Buscá el IMEI primero',true);return;}
+      if(!ventaImeiActual){showToast('Busca el IMEI primero',true);return;}
       var precio=parseFloat(document.getElementById('venta-precio').value)||0;
-      if(!precio){showToast('Ingresá el precio de venta',true);return;}
+      if(!precio){showToast('Ingresa el precio de venta',true);return;}
+      var ventaFecha=document.getElementById('venta-fecha').value||document.getElementById('f-fecha').value||new Date().toISOString().slice(0,10);
+      var ventaGtia=document.getElementById('venta-gtia').value;
       var updPayload={
         estado:'VENDIDO',
-        fecha_venta:document.getElementById('venta-fecha').value,
+        fecha_venta:ventaFecha||null,
         precio_venta:precio,
-        cliente:document.getElementById('venta-cliente').value,
-        metodo_pago_venta:document.getElementById('venta-metodo').value,
-        garantia_venta:parseInt(document.getElementById('venta-gtia').value)||0
+        cliente:document.getElementById('venta-cliente').value||null,
+        metodo_pago_venta:ventaGetMetodoStr(),
+        garantia_venta:ventaGtia?parseInt(ventaGtia):null
       };
       var res=await fetch(SUPA_URL+'/rest/v1/celulares?id=eq.'+ventaImeiActual.id,{
         method:'PATCH',
         headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
         body:JSON.stringify(updPayload)
       });
-      if(!res.ok){var e=await res.text();showToast('Error: '+e.slice(0,60),true);return;}
-      // Register movimiento
-      var ct=celCostoTotal(ventaImeiActual);
+      if(!res.ok){
+        var eBody=await res.text();
+        var eMsg='';try{var eJson=JSON.parse(eBody);eMsg=eJson.message||eBody.slice(0,80);}catch(ex){eMsg=eBody.slice(0,80);}
+        showToast('Error venta: '+eMsg,true);return;
+      }
       await guardarMovimientoInterno({
-        fecha:updPayload.fecha_venta,unidad:'CELULARES',operacion:'VENTAS',
+        fecha:ventaFecha,unidad:'CELULARES',operacion:'VENTAS',
         categoria:'DIRECTA',descripcion:ventaImeiActual.marca+' '+ventaImeiActual.modelo+' IMEI:'+ventaImeiActual.imei,
-        ingreso:precio,egreso:0,metodo:updPayload.metodo_pago_venta,mensaje:updPayload.cliente
+        ingreso:precio,egreso:0,metodo:updPayload.metodo_pago_venta,mensaje:updPayload.cliente||''
       });
-      // Parte de pago
+      // Parte de pago - add to stock
       for(var i=0;i<ppListaTemp.length;i++){
         var pp=ppListaTemp[i];
         if(pp.tipo==='nuevo'){
+          var ppPayload={
+            imei:pp.imei,
+            marca:pp.marca||'SIN MARCA',
+            modelo:pp.modelo||'SIN MODELO',
+            color:pp.color||null,
+            capacidad:pp.capacidad||null,
+            bateria:pp.bateria?parseInt(pp.bateria):null,
+            estado_equipo:pp.estado_equipo||'USADO',
+            precio_compra:parseFloat(pp.valor)||0,
+            precio_lista:0,
+            estado:'EN STOCK',
+            fecha_compra:ventaFecha||null,
+            notas:'Parte de pago — venta IMEI:'+ventaImeiActual.imei
+          };
           await fetch(SUPA_URL+'/rest/v1/celulares',{
             method:'POST',
             headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
-            body:JSON.stringify({imei:pp.imei,marca:pp.marca,modelo:pp.modelo,color:pp.color,capacidad:pp.capacidad,bateria:pp.bateria,estado_equipo:pp.estado_equipo,precio_compra:pp.valor,precio_lista:0,estado:'EN STOCK',fecha_compra:updPayload.fecha_venta,notas:'Parte de pago — '+ventaImeiActual.imei})
+            body:JSON.stringify(ppPayload)
           });
         }
       }
@@ -1874,12 +2248,14 @@ async function celGuardarOp(){
         body:JSON.stringify({imei:repImeiActual.imei,descripcion:tipo+': '+desc,costo:costo,fecha:document.getElementById('rep-fecha').value})
       });
       if(!arrRes.ok){var e=await arrRes.text();showToast('Error: '+e.slice(0,60),true);return;}
-      // Update estado
-      await fetch(SUPA_URL+'/rest/v1/celulares?id=eq.'+repImeiActual.id,{
+      // Update estado del equipo
+      var repEstadoUpdate={estado:nuevoEstado};
+      var repEstadoRes=await fetch(SUPA_URL+'/rest/v1/celulares?id=eq.'+repImeiActual.id,{
         method:'PATCH',
         headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
-        body:JSON.stringify({estado:nuevoEstado})
+        body:JSON.stringify(repEstadoUpdate)
       });
+      if(!repEstadoRes.ok){var re=await repEstadoRes.text();showToast('Error estado: '+re.slice(0,60),true);return;}
       // Movimiento de egreso
       await guardarMovimientoInterno({
         fecha:document.getElementById('rep-fecha').value,unidad:'CELULARES',operacion:'GASTOS',
@@ -1919,6 +2295,27 @@ async function guardarMovimientoInterno(data){
 }
 
 // Add rep-costo listener
+function ventaToggleCuotas(){
+  var checked=document.getElementById('venta-cuotas-check').checked;
+  document.getElementById('venta-cuotas-form').style.display=checked?'block':'none';
+  if(checked&&!document.getElementById('vc-inicio').value){
+    document.getElementById('vc-inicio').value=new Date().toISOString().slice(0,10);
+  }
+}
+
+function ventaCalcCuota(){
+  var cant=parseInt(document.getElementById('vc-cantidad').value)||0;
+  var monto=parseFloat(document.getElementById('vc-monto').value)||0;
+  var total=cant*monto;
+  var info=document.getElementById('vc-info');
+  if(info&&cant&&monto){
+    info.textContent='Total en cuotas: '+fmtARS(total)+' ('+cant+' x '+fmtARS(monto)+')';
+    // Auto-fill precio venta
+    if(total>0)document.getElementById('venta-precio').value=total;
+    ventaCalcGanancia();
+  }
+}
+
 document.addEventListener('DOMContentLoaded',function(){
   var repCostoEl=document.getElementById('rep-costo');
   if(repCostoEl)repCostoEl.addEventListener('input',repCalcNuevoCosto);
