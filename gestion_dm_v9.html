@@ -257,8 +257,21 @@ tr:hover td{background:var(--bg3);}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Resumen
       </div>
     </div>
-    <div class="nav-item" onclick="go('unidad',this);setU('TIENDAS')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Tiendas
+    <div class="nav-item" id="nav-tiendas-toggle" onclick="toggleTieSubMenu()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span style="flex:1">Tiendas</span>
+      <svg id="tie-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;transition:transform 0.2s;opacity:0.5;"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div id="tie-submenu" style="display:none;">
+      <div class="nav-subitem" onclick="goTie('tie-stock',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 3H8l-2 4h12l-2-4z"/></svg>Stock
+      </div>
+      <div class="nav-subitem" onclick="goTie('tie-ventas',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="20 6 9 17 4 12"/></svg>Ventas
+      </div>
+      <div class="nav-subitem" onclick="goTie('tie-resumen',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Resumen
+      </div>
     </div>
     <div class="nav-item" onclick="go('unidad',this);setU('SERVICIO TECNICO')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Serv. Tecnico
@@ -591,6 +604,84 @@ tr:hover td{background:var(--bg3);}
           </div>
         </div>
 
+        <!-- TIENDAS: VENTAS (carrito por codigo) -->
+        <div id="f-tie-venta" style="display:none;">
+          <div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Agregar productos por codigo</div>
+          <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <input type="text" id="ftventa-codigo-input" placeholder="Codigo del producto..." style="flex:1;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;text-transform:uppercase;">
+            <input type="number" id="ftventa-cantidad-input" placeholder="Cant." min="1" value="1" style="width:80px;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+            <button class="btn" onclick="ftventaAgregarProducto()">+ Agregar</button>
+          </div>
+          <div id="ftventa-carrito" style="margin-bottom:14px;"></div>
+          <div class="ganancia-box" style="margin-bottom:14px;">
+            <div><div class="ganancia-label">Total de la venta</div></div>
+            <div class="ganancia-val" id="ftventa-total" style="color:var(--green);">$0</div>
+          </div>
+          <div class="cel-form-grid">
+            <div class="cel-fgroup"><label>Cliente</label><input type="text" id="ftventa-cliente" placeholder="Nombre (opcional)"></div>
+            <div class="cel-fgroup cel-form-full">
+              <label>Metodo de pago (podes dividir en hasta 3 metodos)</label>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">
+                <select id="ftventa-metodo1" onchange="ftventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select>
+                <input type="number" id="ftventa-monto1" placeholder="Monto 1" min="0" step="0.01" oninput="ftventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+                <select id="ftventa-metodo2" onchange="ftventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select>
+                <input type="number" id="ftventa-monto2" placeholder="Monto 2 (opcional)" min="0" step="0.01" oninput="ftventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+                <select id="ftventa-metodo3" onchange="ftventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select>
+                <input type="number" id="ftventa-monto3" placeholder="Monto 3 (opcional)" min="0" step="0.01" oninput="ftventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+              </div>
+              <div id="ftventa-mixto-info" style="font-size:11px;color:var(--text3);margin-top:5px;font-family:monospace;"></div>
+            </div>
+          </div>
+          <div class="fa">
+            <button class="btn" onclick="clearForm()">Limpiar</button>
+            <button class="btn btn-p" onclick="tieGuardarDesdeForm('venta')">Guardar venta</button>
+          </div>
+        </div>
+
+        <!-- TIENDAS: COMPRAS (por codigo) -->
+        <div id="f-tie-compra" style="display:none;">
+          <div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Buscar producto existente por codigo</div>
+          <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <input type="text" id="ftcompra-codigo-input" placeholder="Codigo del producto (ej: FUSIL)..." style="flex:1;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;text-transform:uppercase;">
+            <button class="btn" onclick="ftcompraBuscarCodigo()">Buscar</button>
+          </div>
+          <div id="ftcompra-prod-info" style="display:none;background:var(--bg3);border-radius:var(--r);padding:14px;margin-bottom:14px;">
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+              <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">DESCRIPCION</div><div style="font-size:13px;font-weight:600;" id="ftcompra-info-desc">-</div></div>
+              <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">STOCK ACTUAL</div><div style="font-size:13px;font-weight:600;color:var(--amber);" id="ftcompra-info-stock">-</div></div>
+              <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">COSTO USD</div><div style="font-size:13px;" id="ftcompra-info-costo">-</div></div>
+              <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">PRECIO VENTA</div><div style="font-size:13px;color:var(--green);" id="ftcompra-info-venta">-</div></div>
+            </div>
+          </div>
+          <div id="ftcompra-form-existing" style="display:none;margin-bottom:14px;">
+            <div class="cel-form-grid">
+              <div class="cel-fgroup"><label>Cantidad a agregar al stock *</label><input type="number" id="ftcompra-cantidad" placeholder="0" min="1"></div>
+              <div class="cel-fgroup"><label>Costo total de esta compra (ARS)</label><input type="number" id="ftcompra-costo-total" placeholder="0" min="0"></div>
+            </div>
+          </div>
+          <div style="margin:14px 0;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;font-family:monospace;">— o crear producto nuevo —</div>
+          <div style="background:var(--bg3);border-radius:var(--r);padding:14px;margin-bottom:10px;">
+            <div class="cel-form-grid">
+              <div class="cel-fgroup"><label>Codigo *</label><input type="text" id="ftnp-codigo" placeholder="ej: FUSIL" style="text-transform:uppercase;"></div>
+              <div class="cel-fgroup"><label>Categoria</label><input type="text" id="ftnp-categoria" placeholder="FUNDA, CARGADORES..."></div>
+              <div class="cel-fgroup cel-form-full"><label>Descripcion *</label><input type="text" id="ftnp-descripcion" placeholder="Descripcion del producto"></div>
+              <div class="cel-fgroup"><label>Precio costo USD</label><input type="number" id="ftnp-costo-usd" placeholder="0" min="0" step="0.01"></div>
+              <div class="cel-fgroup"><label>Precio venta (ARS) *</label><input type="number" id="ftnp-venta-ars" placeholder="0" min="0"></div>
+              <div class="cel-fgroup"><label>Cantidad inicial *</label><input type="number" id="ftnp-cantidad" placeholder="0" min="1"></div>
+            </div>
+            <button class="btn btn-sm" onclick="ftnpCrearProducto()" style="margin-top:4px;">+ Crear y agregar al stock</button>
+          </div>
+          <div id="ftnp-lista" style="margin-bottom:10px;"></div>
+          <div class="cel-form-grid">
+            <div class="cel-fgroup"><label>Metodo de pago</label>
+              <select id="ftcompra-metodo"><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select></div>
+          </div>
+          <div class="fa">
+            <button class="btn" onclick="clearForm()">Limpiar</button>
+            <button class="btn btn-p" onclick="tieGuardarDesdeForm('compra')">Guardar compra</button>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -701,8 +792,165 @@ tr:hover td{background:var(--bg3);}
 
     <!-- CEL OPERACION MODAL TRIGGER SCREEN (not visible, just for ops) -->
 
+    <!-- TIE STOCK -->
+    <div class="screen" id="screen-tie-stock">
+      <div class="cel-filters">
+        <input type="text" id="tie-search" placeholder="Buscar codigo, descripcion..." oninput="tieRenderTabla('stock')">
+        <select id="tie-fil-cat" onchange="tieRenderTabla('stock')">
+          <option value="">Todas las categorias</option>
+        </select>
+        <button class="btn btn-p btn-sm" onclick="tieAbrirOp('compra')">+ Compra / Nuevo producto</button>
+        <button class="btn btn-sm" onclick="tieAbrirOp('ajuste')">Ajuste de stock</button>
+      </div>
+      <div class="tw"><div class="tw-head"><div class="tw-title">Productos en stock</div></div>
+        <table><thead><tr>
+          <th>Codigo</th><th>Categoria</th><th>Descripcion</th><th>Costo USD</th><th>Costo ARS</th><th>Precio venta</th><th>Margen</th><th>Stock</th><th></th>
+        </tr></thead><tbody id="tie-tbody-stock"></tbody></table>
+      </div>
+    </div>
+
+    <!-- TIE VENTAS -->
+    <div class="screen" id="screen-tie-ventas">
+      <div class="cel-filters">
+        <input type="text" id="tie-search-v" placeholder="Buscar..." oninput="tieRenderTabla('ventas')">
+        <button class="btn btn-p btn-sm" onclick="tieAbrirOp('venta')">+ Nueva venta</button>
+      </div>
+      <div class="tw"><div class="tw-head"><div class="tw-title">Historial de ventas</div></div>
+        <table><thead><tr>
+          <th>Fecha</th><th>Producto(s)</th><th>Cantidad</th><th>Total</th><th>Metodo</th><th>Cliente</th><th></th>
+        </tr></thead><tbody id="tie-tbody-ventas"></tbody></table>
+      </div>
+    </div>
+
+    <!-- TIE RESUMEN -->
+    <div class="screen" id="screen-tie-resumen">
+      <div class="u-metrics" style="grid-template-columns:repeat(6,1fr);">
+        <div class="mc"><div class="mc-label">Productos distintos</div><div class="mc-val" id="tr-productos">0</div><div class="mc-sub">en catalogo</div></div>
+        <div class="mc"><div class="mc-label">Unidades en stock</div><div class="mc-val amber" id="tr-stock">0</div><div class="mc-sub">unidades totales</div></div>
+        <div class="mc"><div class="mc-label">Ventas totales</div><div class="mc-val" id="tr-ventas">0</div><div class="mc-sub">operaciones</div></div>
+        <div class="mc"><div class="mc-label">Ingresos por ventas</div><div class="mc-val pos" id="tr-ingresos">-</div><div class="mc-sub">total facturado</div></div>
+        <div class="mc"><div class="mc-label">Valor stock (costo)</div><div class="mc-val neg" id="tr-valorstock">-</div><div class="mc-sub">inversion actual</div></div>
+        <div class="mc"><div class="mc-label">Valor stock (venta)</div><div class="mc-val pos" id="tr-valorventa">-</div><div class="mc-sub">venta potencial</div></div>
+      </div>
+      <div class="u-detail">
+        <div class="chart-box" style="margin-bottom:0"><div class="chart-title" style="margin-bottom:13px;">Ventas por mes</div><canvas id="chartTieMes" height="180"></canvas></div>
+        <div class="chart-box" style="margin-bottom:0"><div class="chart-title" style="margin-bottom:13px;">Top productos vendidos</div><canvas id="chartTieTop" height="180"></canvas></div>
+      </div>
+      <div style="margin-top:14px;" class="tw">
+        <div class="tw-head"><div class="tw-title">Ultimas ventas</div></div>
+        <table><thead><tr>
+          <th>Fecha</th><th>Producto</th><th>Cantidad</th><th>Total</th><th>Cliente</th>
+        </tr></thead><tbody id="tr-ventas-body"></tbody></table>
+      </div>
+    </div>
+
   </div>
 </div>
+</div>
+
+<!-- MODAL TIENDAS OPERACIONES -->
+<div class="cel-modal-bg" id="tie-modal-bg">
+  <div class="cel-modal" style="max-width:700px;">
+    <h3 id="tie-modal-title">Operacion</h3>
+
+    <!-- OP: COMPRA / NUEVO PRODUCTO -->
+    <div id="tie-op-compra" style="display:none;">
+      <div class="cel-modal-section" style="margin-top:0;padding-top:0;border-top:none;">Buscar producto existente por codigo</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <input type="text" id="tcompra-codigo-input" placeholder="Codigo del producto (ej: FUSIL)..." style="flex:1;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;text-transform:uppercase;">
+        <button class="btn" onclick="tcompraBuscarCodigo()">Buscar</button>
+      </div>
+      <div id="tcompra-prod-info" style="display:none;background:var(--bg3);border-radius:var(--r);padding:14px;margin-bottom:14px;">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+          <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">DESCRIPCION</div><div style="font-size:13px;font-weight:600;" id="tcompra-info-desc">-</div></div>
+          <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">STOCK ACTUAL</div><div style="font-size:13px;font-weight:600;color:var(--amber);" id="tcompra-info-stock">-</div></div>
+          <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">COSTO USD</div><div style="font-size:13px;" id="tcompra-info-costo">-</div></div>
+          <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">PRECIO VENTA</div><div style="font-size:13px;color:var(--green);" id="tcompra-info-venta">-</div></div>
+        </div>
+      </div>
+      <div id="tcompra-form-existing" style="display:none;margin-bottom:14px;">
+        <div class="cel-form-grid">
+          <div class="cel-fgroup"><label>Cantidad a agregar al stock *</label><input type="number" id="tcompra-cantidad" placeholder="0" min="1"></div>
+          <div class="cel-fgroup"><label>Costo total de esta compra (ARS)</label><input type="number" id="tcompra-costo-total" placeholder="0" min="0"></div>
+        </div>
+      </div>
+      <div style="margin:14px 0;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;font-family:monospace;">— o crear producto nuevo —</div>
+      <div style="background:var(--bg3);border-radius:var(--r);padding:14px;margin-bottom:10px;">
+        <div class="cel-form-grid">
+          <div class="cel-fgroup"><label>Codigo *</label><input type="text" id="tnp-codigo" placeholder="ej: FUSIL" style="text-transform:uppercase;"></div>
+          <div class="cel-fgroup"><label>Categoria</label><input type="text" id="tnp-categoria" placeholder="FUNDA, CARGADORES..."></div>
+          <div class="cel-fgroup cel-form-full"><label>Descripcion *</label><input type="text" id="tnp-descripcion" placeholder="Descripcion del producto"></div>
+          <div class="cel-fgroup"><label>Precio costo USD</label><input type="number" id="tnp-costo-usd" placeholder="0" min="0" step="0.01"></div>
+          <div class="cel-fgroup"><label>Precio venta (ARS) *</label><input type="number" id="tnp-venta-ars" placeholder="0" min="0"></div>
+          <div class="cel-fgroup"><label>Cantidad inicial *</label><input type="number" id="tnp-cantidad" placeholder="0" min="1"></div>
+        </div>
+        <button class="btn btn-sm" onclick="tnpCrearProducto()" style="margin-top:4px;">+ Crear y agregar al stock</button>
+      </div>
+      <div id="tnp-lista" style="margin-bottom:10px;"></div>
+      <div class="cel-form-grid">
+        <div class="cel-fgroup"><label>Fecha compra</label><input type="date" id="tcompra-fecha"></div>
+        <div class="cel-fgroup"><label>Metodo de pago</label>
+          <select id="tcompra-metodo"><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select></div>
+      </div>
+    </div>
+
+    <!-- OP: VENTA (carrito multi-producto) -->
+    <div id="tie-op-venta" style="display:none;">
+      <div class="cel-modal-section" style="margin-top:0;padding-top:0;border-top:none;">Agregar productos a la venta</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <input type="text" id="tventa-codigo-input" placeholder="Codigo del producto..." style="flex:1;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;text-transform:uppercase;">
+        <input type="number" id="tventa-cantidad-input" placeholder="Cant." min="1" value="1" style="width:80px;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+        <button class="btn" onclick="tventaAgregarProducto()">+ Agregar</button>
+      </div>
+      <div id="tventa-carrito" style="margin-bottom:14px;"></div>
+      <div class="ganancia-box" style="margin-bottom:14px;">
+        <div><div class="ganancia-label">Total de la venta</div></div>
+        <div class="ganancia-val" id="tventa-total" style="color:var(--green);">$0</div>
+      </div>
+      <div class="cel-form-grid">
+        <div class="cel-fgroup"><label>Fecha</label><input type="date" id="tventa-fecha"></div>
+        <div class="cel-fgroup"><label>Cliente</label><input type="text" id="tventa-cliente" placeholder="Nombre (opcional)"></div>
+        <div class="cel-fgroup cel-form-full">
+          <label>Metodo de pago (podes dividir en hasta 3 metodos)</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">
+            <select id="tventa-metodo1" onchange="tventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select>
+            <input type="number" id="tventa-monto1" placeholder="Monto 1" min="0" step="0.01" oninput="tventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+            <select id="tventa-metodo2" onchange="tventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select>
+            <input type="number" id="tventa-monto2" placeholder="Monto 2 (opcional)" min="0" step="0.01" oninput="tventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+            <select id="tventa-metodo3" onchange="tventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select>
+            <input type="number" id="tventa-monto3" placeholder="Monto 3 (opcional)" min="0" step="0.01" oninput="tventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+          </div>
+          <div id="tventa-mixto-info" style="font-size:11px;color:var(--text3);margin-top:5px;font-family:monospace;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OP: AJUSTE DE STOCK -->
+    <div id="tie-op-ajuste" style="display:none;">
+      <div class="cel-modal-section" style="margin-top:0;padding-top:0;border-top:none;">Buscar producto por codigo</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <input type="text" id="tajuste-codigo-input" placeholder="Codigo del producto..." style="flex:1;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;text-transform:uppercase;">
+        <button class="btn" onclick="tajusteBuscarCodigo()">Buscar</button>
+      </div>
+      <div id="tajuste-prod-info" style="display:none;background:var(--bg3);border-radius:var(--r);padding:14px;margin-bottom:14px;">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
+          <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">PRODUCTO</div><div style="font-size:13px;font-weight:600;" id="tajuste-info-desc">-</div></div>
+          <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">STOCK ACTUAL</div><div style="font-size:16px;font-weight:700;color:var(--amber);" id="tajuste-info-stock">-</div></div>
+        </div>
+      </div>
+      <div id="tajuste-form-ext" style="display:none;">
+        <div class="cel-form-grid">
+          <div class="cel-fgroup"><label>Nuevo stock real *</label><input type="number" id="tajuste-nuevo-stock" placeholder="0" min="0"></div>
+          <div class="cel-fgroup cel-form-full"><label>Motivo del ajuste</label><input type="text" id="tajuste-motivo" placeholder="Rotura, perdida, conteo fisico..."></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cel-modal-actions">
+      <button class="btn" onclick="tieCerrarModal()">Cancelar</button>
+      <button class="btn btn-p" onclick="tieGuardarOp()">Guardar</button>
+    </div>
+  </div>
 </div>
 
 <!-- MODAL CELULARES OPERACIONES -->
@@ -1002,6 +1250,9 @@ function refreshCurrentScreen(){
   else if(id==='cel-stock')celRenderTabla('stock');
   else if(id==='cel-vendidos')celRenderTabla('vendidos');
   else if(id==='cel-reparacion')celRenderTabla('reparacion');
+  else if(id==='tie-resumen')tieRenderResumen();
+  else if(id==='tie-stock')tieRenderTabla('stock');
+  else if(id==='tie-ventas')tieRenderTabla('ventas');
   else if(id==='unidad')renderU();
   else if(id==='movimientos')renderMovs();
 }
@@ -1050,6 +1301,8 @@ function populateSelects(){
 
 var CEL_OPS=['VENTAS','COMPRA','REPARACION','REPUESTO','GASTOS'];
 var CEL_OP_MAP={VENTAS:'venta',COMPRA:'compra',REPARACION:'reparacion',REPUESTO:'reparacion',GASTOS:'gastos'};
+var TIE_OPS=['VENTAS','COMPRA'];
+var TIE_OP_MAP={VENTAS:'venta',COMPRA:'compra'};
 
 function onUnidadChange(){
   var unidad=document.getElementById('f-unidad').value;
@@ -1060,7 +1313,7 @@ function onUnidadChange(){
   document.getElementById('f-op-row').style.display='block';
   // Populate operaciones based on unidad
   var so=document.getElementById('f-operacion');
-  var ops=unidad==='CELULARES'?CEL_OPS:cfg.operaciones;
+  var ops=unidad==='CELULARES'?CEL_OPS:(unidad==='TIENDAS'?TIE_OPS:cfg.operaciones);
   so.innerHTML='<option value="">Selecciona...</option>'+ops.map(function(o){return'<option>'+o+'</option>';}).join('');
   document.getElementById('f-categoria').innerHTML='<option value="">Selecciona operacion primero</option>';
 }
@@ -1072,11 +1325,19 @@ function hideAllFormSections(){
     var el=document.getElementById('f-cel-'+op);
     if(el)el.style.display='none';
   });
+  ['venta','compra'].forEach(function(op){
+    var el=document.getElementById('f-tie-'+op);
+    if(el)el.style.display='none';
+  });
   // Reset cel info panels
   var panels=['venta-cel-info','venta-form-ext','rep-cel-info','rep-form-ext','pp-form-new'];
   panels.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});
   ventaImeiActual=null;repImeiActual=null;
   compraListaTemp=[];ppListaTemp=[];
+  // Reset tie info panels
+  var tiePanels=['ftcompra-prod-info','ftcompra-form-existing'];
+  tiePanels.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});
+  ftventaCarritoTemp=[];ftnpListaTemp=[];ftcompraProdActual=null;
 }
 
 function onOperacionChange(){
@@ -1086,6 +1347,10 @@ function onOperacionChange(){
   document.getElementById('f-general').style.display='none';
   ['compra','venta','reparacion','gastos'].forEach(function(o){
     var el=document.getElementById('f-cel-'+o);
+    if(el)el.style.display='none';
+  });
+  ['venta','compra'].forEach(function(o){
+    var el=document.getElementById('f-tie-'+o);
     if(el)el.style.display='none';
   });
   if(!op)return;
@@ -1100,6 +1365,16 @@ function onOperacionChange(){
         if(celOp==='compra'&&document.getElementById('compra-fecha'))document.getElementById('compra-fecha').value=document.getElementById('f-fecha').value||today;
         if(celOp==='reparacion'&&document.getElementById('rep-fecha'))document.getElementById('rep-fecha').value=document.getElementById('f-fecha').value||today;
         if(celOp==='compra')renderCompraLista();
+      }
+    }
+  }else if(unidad==='TIENDAS'){
+    var tieOp=TIE_OP_MAP[op];
+    if(tieOp){
+      var el=document.getElementById('f-tie-'+tieOp);
+      if(el){
+        el.style.display='block';
+        if(tieOp==='venta'){ftventaCarritoTemp=[];renderFtventaCarrito();}
+        if(tieOp==='compra'){ftnpListaTemp=[];renderFtnpLista();}
       }
     }
   }else{
@@ -2321,13 +2596,739 @@ document.addEventListener('DOMContentLoaded',function(){
   if(repCostoEl)repCostoEl.addEventListener('input',repCalcNuevoCosto);
 });
 
+// ============ TIENDAS ============
+var productosTiendas=[];
+var ventasTiendas=[];
+var tieSubMenuOpen=false;
+var tieCurrentOp='';
+var tventaCarritoTemp=[];
+var tnpListaTemp=[];
+var tcompraProdActual=null;
+var tajusteProdActual=null;
+
+function toggleTieSubMenu(){
+  tieSubMenuOpen=!tieSubMenuOpen;
+  document.getElementById('tie-submenu').style.display=tieSubMenuOpen?'block':'none';
+  document.getElementById('tie-arrow').style.transform=tieSubMenuOpen?'rotate(180deg)':'';
+}
+
+function goTie(name,el){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.nav-item,.nav-subitem').forEach(function(n){n.classList.remove('active');});
+  document.getElementById('screen-'+name).classList.add('active');
+  if(el)el.classList.add('active');
+  var titles={'tie-stock':'Tiendas — Stock','tie-ventas':'Tiendas — Ventas','tie-resumen':'Tiendas — Resumen'};
+  document.getElementById('page-title').textContent=titles[name]||name;
+  if(name==='tie-resumen')tieRenderResumen();
+  else tieRenderTabla(name.replace('tie-',''));
+}
+
+async function tieCargarDatos(){
+  try{
+    var res1=await fetch(SUPA_URL+'/rest/v1/productos_tiendas?select=*&order=codigo.asc',{
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    });
+    var data1=await res1.json();
+    if(Array.isArray(data1))productosTiendas=data1;
+
+    var res2=await fetch(SUPA_URL+'/rest/v1/ventas_tiendas?select=*&order=fecha.desc',{
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    });
+    var data2=await res2.json();
+    if(Array.isArray(data2))ventasTiendas=data2;
+
+    // Populate category filter
+    var cats=[];
+    productosTiendas.forEach(function(p){if(p.categoria&&cats.indexOf(p.categoria)===-1)cats.push(p.categoria);});
+    var catSel=document.getElementById('tie-fil-cat');
+    if(catSel)catSel.innerHTML='<option value="">Todas las categorias</option>'+cats.map(function(c){return'<option>'+c+'</option>';}).join('');
+
+    var active=document.querySelector('.screen.active');
+    if(active){
+      var id=active.id;
+      if(id==='screen-tie-resumen')tieRenderResumen();
+      else if(id.startsWith('screen-tie-'))tieRenderTabla(id.replace('screen-tie-',''));
+    }
+  }catch(e){console.log('Tie load error',e);}
+}
+
+function tieMargen(p){
+  var costoArs=parseFloat(p.precio_costo_usd||0)*(dolarBlue||1);
+  var venta=parseFloat(p.precio_venta_ars||0);
+  if(!costoArs)return 0;
+  return((venta-costoArs)/costoArs)*100;
+}
+
+function tieRenderTabla(tipo){
+  if(tipo==='stock'){
+    var search=document.getElementById('tie-search')?document.getElementById('tie-search').value.toLowerCase():'';
+    var cat=document.getElementById('tie-fil-cat')?document.getElementById('tie-fil-cat').value:'';
+    var filtrado=productosTiendas.filter(function(p){
+      var matchSearch=!search||(p.codigo+' '+p.descripcion).toLowerCase().includes(search);
+      var matchCat=!cat||p.categoria===cat;
+      return matchSearch&&matchCat;
+    });
+    var tbody=document.getElementById('tie-tbody-stock');
+    if(!tbody)return;
+    if(!filtrado.length){tbody.innerHTML='<tr><td colspan="9" class="empty-row">No hay productos</td></tr>';return;}
+    tbody.innerHTML=filtrado.map(function(p){
+      var costoArs=parseFloat(p.precio_costo_usd||0)*(dolarBlue||1);
+      var margen=tieMargen(p);
+      var stockColor=p.stock<=0?'var(--red)':p.stock<5?'var(--amber)':'var(--green)';
+      return'<tr>'+
+        '<td class="mono" style="font-size:11px;font-weight:600;">'+p.codigo+'</td>'+
+        '<td style="font-size:11px;color:var(--text2)">'+(p.categoria||'-')+'</td>'+
+        '<td>'+(p.descripcion||'-')+'</td>'+
+        '<td class="mono">'+fmtUSD(p.precio_costo_usd||0)+'</td>'+
+        '<td class="mono" style="color:var(--red)">'+fmtARS(costoArs)+'</td>'+
+        '<td class="mono" style="color:var(--green)">'+fmtARS(p.precio_venta_ars||0)+'</td>'+
+        '<td class="mono" style="font-size:11px;">'+(margen?margen.toFixed(0)+'%':'-')+'</td>'+
+        '<td class="mono" style="color:'+stockColor+';font-weight:700;">'+(p.stock||0)+'</td>'+
+        '<td><button class="btn btn-sm" data-cod="'+p.codigo+'" onclick="tieAbrirOp(\'ajuste\',this.dataset.cod)">Ajustar</button></td>'+
+        '</tr>';
+    }).join('');
+  }else if(tipo==='ventas'){
+    var search=document.getElementById('tie-search-v')?document.getElementById('tie-search-v').value.toLowerCase():'';
+    var filtrado=ventasTiendas.filter(function(v){
+      return!search||(v.descripcion+' '+(v.cliente||'')).toLowerCase().includes(search);
+    });
+    var tbody=document.getElementById('tie-tbody-ventas');
+    if(!tbody)return;
+    if(!filtrado.length){tbody.innerHTML='<tr><td colspan="7" class="empty-row">Sin ventas registradas</td></tr>';return;}
+    tbody.innerHTML=filtrado.map(function(v){
+      return'<tr>'+
+        '<td class="mono" style="font-size:11px;">'+fd(v.fecha)+'</td>'+
+        '<td>'+(v.descripcion||'-')+'</td>'+
+        '<td class="mono">'+(v.cantidad||1)+'</td>'+
+        '<td class="mono" style="color:var(--green);font-weight:600;">'+fmtSmart(v.total||0)+'</td>'+
+        '<td>'+metodoBadge(v.metodo_pago)+'</td>'+
+        '<td>'+(v.cliente||'-')+'</td>'+
+        '<td><button class="btn-del" data-id="'+v.id+'" onclick="tieEliminarVenta(this.dataset.id)" title="Eliminar">x</button></td>'+
+        '</tr>';
+    }).join('');
+  }
+}
+
+function tieRenderResumen(){
+  var totalProductos=productosTiendas.length;
+  var totalStock=productosTiendas.reduce(function(s,p){return s+(parseInt(p.stock)||0);},0);
+  var totalVentas=ventasTiendas.length;
+  var ingresos=ventasTiendas.reduce(function(s,v){return s+(parseFloat(v.total)||0);},0);
+  var valorStock=productosTiendas.reduce(function(s,p){
+    var costoArs=parseFloat(p.precio_costo_usd||0)*(dolarBlue||1);
+    return s+costoArs*(parseInt(p.stock)||0);
+  },0);
+  var valorStockVenta=productosTiendas.reduce(function(s,p){
+    return s+(parseFloat(p.precio_venta_ars)||0)*(parseInt(p.stock)||0);
+  },0);
+  document.getElementById('tr-productos').textContent=totalProductos;
+  document.getElementById('tr-stock').textContent=totalStock;
+  document.getElementById('tr-ventas').textContent=totalVentas;
+  document.getElementById('tr-ingresos').textContent=fmtSmart(ingresos);
+  document.getElementById('tr-valorstock').textContent=fmtSmart(valorStock);
+  document.getElementById('tr-valorventa').textContent=fmtSmart(valorStockVenta);
+
+  // Ventas por mes
+  var meses={};
+  ventasTiendas.forEach(function(v){
+    var k=String(v.fecha||'').slice(0,7);if(!k||k.length<7)return;
+    if(!meses[k])meses[k]=0;
+    meses[k]+=(parseFloat(v.total)||0);
+  });
+  var labs=Object.keys(meses).sort();
+  if(window.cTieMes)window.cTieMes.destroy();
+  if(labs.length){
+    window.cTieMes=new Chart(document.getElementById('chartTieMes').getContext('2d'),{
+      type:'bar',
+      data:{labels:labs.map(function(l){var p=l.split('-');return NOM[parseInt(p[1])-1]+' '+p[0].slice(2);}),
+        datasets:[{label:'Ventas',data:labs.map(function(l){return Math.round(meses[l]);}),backgroundColor:'rgba(29,158,117,0.75)',borderRadius:3}]},
+      options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10}},grid:{display:false}},y:{ticks:{font:{size:10},callback:function(v){return fmtShort(v);}}}}}
+    });
+  }
+
+  // Top productos vendidos
+  var porProducto={};
+  ventasTiendas.forEach(function(v){
+    var k=v.codigo||v.descripcion||'?';
+    if(!porProducto[k])porProducto[k]=0;
+    porProducto[k]+=(parseInt(v.cantidad)||1);
+  });
+  var topKeys=Object.keys(porProducto).sort(function(a,b){return porProducto[b]-porProducto[a];}).slice(0,8);
+  if(window.cTieTop)window.cTieTop.destroy();
+  if(topKeys.length){
+    window.cTieTop=new Chart(document.getElementById('chartTieTop').getContext('2d'),{
+      type:'doughnut',
+      data:{labels:topKeys,datasets:[{data:topKeys.map(function(k){return porProducto[k];}),backgroundColor:CATC,borderWidth:0}]},
+      options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:8}}}}
+    });
+  }
+
+  var tbody=document.getElementById('tr-ventas-body');
+  if(tbody){
+    tbody.innerHTML=ventasTiendas.slice(0,10).map(function(v){
+      return'<tr>'+
+        '<td class="mono" style="font-size:11px;">'+fd(v.fecha)+'</td>'+
+        '<td>'+(v.descripcion||'-')+'</td>'+
+        '<td class="mono">'+(v.cantidad||1)+'</td>'+
+        '<td class="mono" style="color:var(--green);">'+fmtSmart(v.total||0)+'</td>'+
+        '<td>'+(v.cliente||'-')+'</td>'+
+        '</tr>';
+    }).join('') || '<tr><td colspan="5" class="empty-row">Sin ventas</td></tr>';
+  }
+}
+
+// ── ABRIR OPERACIONES ──
+function tieAbrirOp(op,codigoPre){
+  tieCurrentOp=op;
+  tventaCarritoTemp=[];tnpListaTemp=[];tcompraProdActual=null;tajusteProdActual=null;
+  ['compra','venta','ajuste'].forEach(function(o){
+    var el=document.getElementById('tie-op-'+o);
+    if(el)el.style.display='none';
+  });
+  var titles={compra:'Compra / Agregar producto',venta:'Nueva venta',ajuste:'Ajuste de stock'};
+  document.getElementById('tie-modal-title').textContent=titles[op]||op;
+  var opEl=document.getElementById('tie-op-'+op);
+  if(opEl)opEl.style.display='block';
+  var today=new Date().toISOString().slice(0,10);
+  if(op==='compra'){
+    document.getElementById('tcompra-fecha').value=today;
+    document.getElementById('tcompra-prod-info').style.display='none';
+    document.getElementById('tcompra-form-existing').style.display='none';
+    document.getElementById('tnp-lista').innerHTML='';
+  }
+  if(op==='venta'){
+    document.getElementById('tventa-fecha').value=today;
+    document.getElementById('tventa-carrito').innerHTML='';
+    tventaUpdateTotal();
+  }
+  if(op==='ajuste'){
+    document.getElementById('tajuste-prod-info').style.display='none';
+    document.getElementById('tajuste-form-ext').style.display='none';
+    if(codigoPre){
+      document.getElementById('tajuste-codigo-input').value=codigoPre;
+      tajusteBuscarCodigo();
+    }
+  }
+  document.getElementById('tie-modal-bg').classList.add('show');
+}
+
+function tieCerrarModal(){
+  document.getElementById('tie-modal-bg').classList.remove('show');
+  tventaCarritoTemp=[];tnpListaTemp=[];tcompraProdActual=null;tajusteProdActual=null;
+}
+
+// ── COMPRA: buscar producto existente ──
+function tcompraBuscarCodigo(){
+  var cod=document.getElementById('tcompra-codigo-input').value.trim().toUpperCase();
+  var p=productosTiendas.find(function(x){return x.codigo===cod;});
+  if(!p){
+    showToast('Codigo no encontrado, podes crearlo como nuevo abajo',true);
+    document.getElementById('tcompra-prod-info').style.display='none';
+    document.getElementById('tcompra-form-existing').style.display='none';
+    return;
+  }
+  tcompraProdActual=p;
+  document.getElementById('tcompra-info-desc').textContent=p.descripcion;
+  document.getElementById('tcompra-info-stock').textContent=p.stock||0;
+  document.getElementById('tcompra-info-costo').textContent=fmtUSD(p.precio_costo_usd||0);
+  document.getElementById('tcompra-info-venta').textContent=fmtARS(p.precio_venta_ars||0);
+  document.getElementById('tcompra-prod-info').style.display='block';
+  document.getElementById('tcompra-form-existing').style.display='block';
+}
+
+// ── COMPRA: crear producto nuevo ──
+function tnpCrearProducto(){
+  var codigo=document.getElementById('tnp-codigo').value.trim().toUpperCase();
+  var descripcion=document.getElementById('tnp-descripcion').value.trim();
+  var cantidad=parseInt(document.getElementById('tnp-cantidad').value)||0;
+  if(!codigo){showToast('El codigo es obligatorio',true);return;}
+  if(!descripcion){showToast('La descripcion es obligatoria',true);return;}
+  if(!cantidad||cantidad<1){showToast('La cantidad inicial es obligatoria',true);return;}
+  var existing=productosTiendas.find(function(p){return p.codigo===codigo;});
+  if(existing){showToast('Ese codigo ya existe, busca y agrega stock arriba',true);return;}
+  var dup=tnpListaTemp.find(function(p){return p.codigo===codigo;});
+  if(dup){showToast('Codigo ya en la lista',true);return;}
+  tnpListaTemp.push({
+    codigo:codigo,
+    categoria:document.getElementById('tnp-categoria').value.trim().toUpperCase()||null,
+    descripcion:descripcion,
+    precio_costo_usd:parseFloat(document.getElementById('tnp-costo-usd').value)||0,
+    precio_venta_ars:parseFloat(document.getElementById('tnp-venta-ars').value)||0,
+    stock:cantidad
+  });
+  ['tnp-codigo','tnp-categoria','tnp-descripcion','tnp-costo-usd','tnp-venta-ars','tnp-cantidad'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
+  renderTnpLista();
+  showToast('Producto agregado a la lista');
+}
+
+function renderTnpLista(){
+  var el=document.getElementById('tnp-lista');
+  if(!el)return;
+  if(!tnpListaTemp.length){el.innerHTML='';return;}
+  el.innerHTML='<div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:6px;">'+tnpListaTemp.length+' producto(s) nuevo(s) a crear:</div>'+
+    tnpListaTemp.map(function(p,i){
+      return'<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
+        '<span class="mono" style="color:var(--text3);font-size:10px;">'+p.codigo+'</span>'+
+        '<span style="flex:1">'+p.descripcion+' — Stock inicial: '+p.stock+'</span>'+
+        '<span style="color:var(--green);font-family:monospace;">'+fmtARS(p.precio_venta_ars)+'</span>'+
+        '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;" data-idx="'+i+'" onclick="tnpQuitar(this.dataset.idx)">x</button>'+
+        '</div>';
+    }).join('');
+}
+function tnpQuitar(idx){tnpListaTemp.splice(parseInt(idx),1);renderTnpLista();}
+
+// ── VENTA: carrito ──
+function tventaAgregarProducto(){
+  var cod=document.getElementById('tventa-codigo-input').value.trim().toUpperCase();
+  var cant=parseInt(document.getElementById('tventa-cantidad-input').value)||1;
+  var p=productosTiendas.find(function(x){return x.codigo===cod;});
+  if(!p){showToast('Codigo no encontrado',true);return;}
+  if((p.stock||0)<cant){showToast('Stock insuficiente. Disponible: '+(p.stock||0),true);return;}
+  var existing=tventaCarritoTemp.find(function(c){return c.codigo===cod;});
+  if(existing){
+    if((p.stock||0)<existing.cantidad+cant){showToast('Stock insuficiente para esa cantidad total',true);return;}
+    existing.cantidad+=cant;
+  }else{
+    tventaCarritoTemp.push({codigo:p.codigo,descripcion:p.descripcion,precio_unitario:parseFloat(p.precio_venta_ars||0),cantidad:cant,stockDisponible:p.stock||0});
+  }
+  document.getElementById('tventa-codigo-input').value='';
+  document.getElementById('tventa-cantidad-input').value='1';
+  renderTventaCarrito();
+}
+
+function renderTventaCarrito(){
+  var el=document.getElementById('tventa-carrito');
+  if(!tventaCarritoTemp.length){el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:8px 0;">Agrega productos arriba por codigo.</div>';tventaUpdateTotal();return;}
+  el.innerHTML=tventaCarritoTemp.map(function(c,i){
+    var subtotal=c.precio_unitario*c.cantidad;
+    return'<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
+      '<span class="mono" style="color:var(--text3);font-size:10px;">'+c.codigo+'</span>'+
+      '<span style="flex:1">'+c.descripcion+'</span>'+
+      '<span style="color:var(--text2);">x'+c.cantidad+'</span>'+
+      '<span style="color:var(--green);font-family:monospace;font-weight:600;">'+fmtARS(subtotal)+'</span>'+
+      '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;" data-idx="'+i+'" onclick="tventaQuitarProducto(this.dataset.idx)">x</button>'+
+      '</div>';
+  }).join('');
+  tventaUpdateTotal();
+}
+function tventaQuitarProducto(idx){tventaCarritoTemp.splice(parseInt(idx),1);renderTventaCarrito();}
+
+function tventaUpdateTotal(){
+  var total=tventaCarritoTemp.reduce(function(s,c){return s+c.precio_unitario*c.cantidad;},0);
+  var el=document.getElementById('tventa-total');
+  if(el)el.textContent=fmtARS(total);
+  return total;
+}
+
+function tventaUpdateMixto(){
+  var m1=document.getElementById('tventa-metodo1').value;
+  var v1=parseFloat(document.getElementById('tventa-monto1').value)||0;
+  var m2=document.getElementById('tventa-metodo2').value;
+  var v2=parseFloat(document.getElementById('tventa-monto2').value)||0;
+  var m3=document.getElementById('tventa-metodo3').value;
+  var v3=parseFloat(document.getElementById('tventa-monto3').value)||0;
+  var totalIngresado=v1+v2+v3;
+  var parts=[];
+  if(m1&&v1)parts.push(m1+': '+fmtARS(v1));
+  if(m2&&v2)parts.push(m2+': '+fmtARS(v2));
+  if(m3&&v3)parts.push(m3+': '+fmtARS(v3));
+  var info=document.getElementById('tventa-mixto-info');
+  var totalVenta=tventaUpdateTotal();
+  if(info)info.textContent=parts.length?'Pago: '+fmtARS(totalIngresado)+' de '+fmtARS(totalVenta)+' ('+parts.join(' + ')+')':'';
+}
+
+function tventaGetMetodoStr(){
+  var parts=[];
+  var m1=document.getElementById('tventa-metodo1');var v1=document.getElementById('tventa-monto1');
+  var m2=document.getElementById('tventa-metodo2');var v2=document.getElementById('tventa-monto2');
+  var m3=document.getElementById('tventa-metodo3');var v3=document.getElementById('tventa-monto3');
+  if(m1&&m1.value&&v1&&parseFloat(v1.value))parts.push(m1.value+':'+parseFloat(v1.value));
+  if(m2&&m2.value&&v2&&parseFloat(v2.value))parts.push(m2.value+':'+parseFloat(v2.value));
+  if(m3&&m3.value&&v3&&parseFloat(v3.value))parts.push(m3.value+':'+parseFloat(v3.value));
+  return parts.length?parts.join('|'):(m1&&m1.value?m1.value:'EFECTIVO');
+}
+
+// ── AJUSTE: buscar producto ──
+function tajusteBuscarCodigo(){
+  var cod=document.getElementById('tajuste-codigo-input').value.trim().toUpperCase();
+  var p=productosTiendas.find(function(x){return x.codigo===cod;});
+  if(!p){showToast('Codigo no encontrado',true);document.getElementById('tajuste-prod-info').style.display='none';document.getElementById('tajuste-form-ext').style.display='none';return;}
+  tajusteProdActual=p;
+  document.getElementById('tajuste-info-desc').textContent=p.codigo+' — '+p.descripcion;
+  document.getElementById('tajuste-info-stock').textContent=p.stock||0;
+  document.getElementById('tajuste-nuevo-stock').value=p.stock||0;
+  document.getElementById('tajuste-prod-info').style.display='block';
+  document.getElementById('tajuste-form-ext').style.display='block';
+}
+
+// ── GUARDAR OPERACION ──
+async function tieGuardarOp(){
+  var op=tieCurrentOp;
+  try{
+    if(op==='compra'){
+      var fecha=document.getElementById('tcompra-fecha').value||new Date().toISOString().slice(0,10);
+      var metodo=document.getElementById('tcompra-metodo').value;
+      var totalCosto=0;
+      var resumenItems=[];
+
+      // Existing product restock
+      if(tcompraProdActual){
+        var cant=parseInt(document.getElementById('tcompra-cantidad').value)||0;
+        var costoTot=parseFloat(document.getElementById('tcompra-costo-total').value)||0;
+        if(cant>0){
+          var nuevoStock=(parseInt(tcompraProdActual.stock)||0)+cant;
+          var res=await fetch(SUPA_URL+'/rest/v1/productos_tiendas?id=eq.'+tcompraProdActual.id,{
+            method:'PATCH',
+            headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+            body:JSON.stringify({stock:nuevoStock})
+          });
+          if(!res.ok){var e=await res.text();showToast('Error: '+e.slice(0,80),true);return;}
+          totalCosto+=costoTot;
+          resumenItems.push(tcompraProdActual.codigo+' (+'+cant+')');
+        }
+      }
+
+      // New products
+      for(var i=0;i<tnpListaTemp.length;i++){
+        var np=tnpListaTemp[i];
+        var res2=await fetch(SUPA_URL+'/rest/v1/productos_tiendas',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+          body:JSON.stringify(np)
+        });
+        if(!res2.ok){var e2=await res2.text();showToast('Error en '+np.codigo+': '+e2.slice(0,60),true);return;}
+        totalCosto+=(np.precio_costo_usd||0)*(dolarBlue||1)*np.stock;
+        resumenItems.push(np.codigo+' (nuevo, +'+np.stock+')');
+      }
+
+      if(!resumenItems.length){showToast('Agrega un producto existente o crea uno nuevo',true);return;}
+
+      if(totalCosto>0){
+        await guardarMovimientoInterno({
+          fecha:fecha,unidad:'TIENDAS',operacion:'COMPRA',
+          categoria:'MERCADERIA',descripcion:'Compra: '+resumenItems.join(', '),
+          ingreso:0,egreso:totalCosto,metodo:metodo,mensaje:''
+        });
+      }
+      showToast('Stock actualizado: '+resumenItems.join(', '));
+    }
+
+    else if(op==='venta'){
+      if(!tventaCarritoTemp.length){showToast('Agrega al menos un producto',true);return;}
+      var fecha=document.getElementById('tventa-fecha').value||new Date().toISOString().slice(0,10);
+      var cliente=document.getElementById('tventa-cliente').value||null;
+      var metodoStr=tventaGetMetodoStr();
+      var total=tventaUpdateTotal();
+      var descGeneral=tventaCarritoTemp.map(function(c){return c.codigo+' x'+c.cantidad;}).join(', ');
+
+      // Update stock for each item
+      for(var i=0;i<tventaCarritoTemp.length;i++){
+        var item=tventaCarritoTemp[i];
+        var prod=productosTiendas.find(function(p){return p.codigo===item.codigo;});
+        if(!prod)continue;
+        var nuevoStock=(parseInt(prod.stock)||0)-item.cantidad;
+        if(nuevoStock<0)nuevoStock=0;
+        var resStock=await fetch(SUPA_URL+'/rest/v1/productos_tiendas?id=eq.'+prod.id,{
+          method:'PATCH',
+          headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+          body:JSON.stringify({stock:nuevoStock})
+        });
+        if(!resStock.ok){var eS=await resStock.text();showToast('Error stock '+item.codigo+': '+eS.slice(0,60),true);return;}
+
+        // Register individual venta row
+        await fetch(SUPA_URL+'/rest/v1/ventas_tiendas',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+          body:JSON.stringify({
+            fecha:fecha,codigo:item.codigo,descripcion:item.descripcion,cantidad:item.cantidad,
+            precio_unitario:item.precio_unitario,total:item.precio_unitario*item.cantidad,
+            metodo_pago:metodoStr,cliente:cliente
+          })
+        });
+      }
+
+      // Register single movimiento for the whole sale
+      await guardarMovimientoInterno({
+        fecha:fecha,unidad:'TIENDAS',operacion:'VENTAS',
+        categoria:'DIRECTA',descripcion:descGeneral,
+        ingreso:total,egreso:0,metodo:metodoStr,mensaje:cliente||''
+      });
+      showToast('Venta registrada: '+fmtARS(total));
+    }
+
+    else if(op==='ajuste'){
+      if(!tajusteProdActual){showToast('Busca el producto primero',true);return;}
+      var nuevoStock=parseInt(document.getElementById('tajuste-nuevo-stock').value);
+      if(isNaN(nuevoStock)||nuevoStock<0){showToast('Ingresa un stock valido',true);return;}
+      var motivo=document.getElementById('tajuste-motivo').value||'Ajuste manual';
+      var res=await fetch(SUPA_URL+'/rest/v1/productos_tiendas?id=eq.'+tajusteProdActual.id,{
+        method:'PATCH',
+        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+        body:JSON.stringify({stock:nuevoStock})
+      });
+      if(!res.ok){var e=await res.text();showToast('Error: '+e.slice(0,80),true);return;}
+      showToast('Stock de '+tajusteProdActual.codigo+' actualizado a '+nuevoStock+' ('+motivo+')');
+    }
+
+    tieCerrarModal();
+    await tieCargarDatos();
+    await cargarDatos();
+  }catch(e){showToast('Error de conexion',true);console.log(e);}
+}
+
+async function tieEliminarVenta(id){
+  if(!confirm('Eliminar este registro de venta? No revierte el stock automaticamente.'))return;
+  try{
+    var res=await fetch(SUPA_URL+'/rest/v1/ventas_tiendas?id=eq.'+id,{
+      method:'DELETE',
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    });
+    if(res.ok){showToast('Registro eliminado');await tieCargarDatos();}
+    else showToast('Error al eliminar',true);
+  }catch(e){showToast('Error de conexion',true);}
+}
+
+// ============ TIENDAS — carrito embebido en Cargar Movimiento ============
+var ftventaCarritoTemp=[];
+var ftnpListaTemp=[];
+var ftcompraProdActual=null;
+
+function ftventaAgregarProducto(){
+  var cod=document.getElementById('ftventa-codigo-input').value.trim().toUpperCase();
+  var cant=parseInt(document.getElementById('ftventa-cantidad-input').value)||1;
+  var p=productosTiendas.find(function(x){return x.codigo===cod;});
+  if(!p){showToast('Codigo no encontrado',true);return;}
+  if((p.stock||0)<cant){showToast('Stock insuficiente. Disponible: '+(p.stock||0),true);return;}
+  var existing=ftventaCarritoTemp.find(function(c){return c.codigo===cod;});
+  if(existing){
+    if((p.stock||0)<existing.cantidad+cant){showToast('Stock insuficiente para esa cantidad total',true);return;}
+    existing.cantidad+=cant;
+  }else{
+    ftventaCarritoTemp.push({codigo:p.codigo,descripcion:p.descripcion,precio_unitario:parseFloat(p.precio_venta_ars||0),cantidad:cant,stockDisponible:p.stock||0});
+  }
+  document.getElementById('ftventa-codigo-input').value='';
+  document.getElementById('ftventa-cantidad-input').value='1';
+  renderFtventaCarrito();
+}
+
+function renderFtventaCarrito(){
+  var el=document.getElementById('ftventa-carrito');
+  if(!el)return;
+  if(!ftventaCarritoTemp.length){el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:8px 0;">Agrega productos por codigo arriba.</div>';ftventaUpdateTotal();return;}
+  el.innerHTML=ftventaCarritoTemp.map(function(c,i){
+    var subtotal=c.precio_unitario*c.cantidad;
+    return'<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
+      '<span class="mono" style="color:var(--text3);font-size:10px;">'+c.codigo+'</span>'+
+      '<span style="flex:1">'+c.descripcion+'</span>'+
+      '<span style="color:var(--text2);">x'+c.cantidad+'</span>'+
+      '<span style="color:var(--green);font-family:monospace;font-weight:600;">'+fmtARS(subtotal)+'</span>'+
+      '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;" data-idx="'+i+'" onclick="ftventaQuitarProducto(this.dataset.idx)">x</button>'+
+      '</div>';
+  }).join('');
+  ftventaUpdateTotal();
+}
+function ftventaQuitarProducto(idx){ftventaCarritoTemp.splice(parseInt(idx),1);renderFtventaCarrito();}
+
+function ftventaUpdateTotal(){
+  var total=ftventaCarritoTemp.reduce(function(s,c){return s+c.precio_unitario*c.cantidad;},0);
+  var el=document.getElementById('ftventa-total');
+  if(el)el.textContent=fmtARS(total);
+  return total;
+}
+
+function ftventaUpdateMixto(){
+  var m1=document.getElementById('ftventa-metodo1').value;
+  var v1=parseFloat(document.getElementById('ftventa-monto1').value)||0;
+  var m2=document.getElementById('ftventa-metodo2').value;
+  var v2=parseFloat(document.getElementById('ftventa-monto2').value)||0;
+  var m3=document.getElementById('ftventa-metodo3').value;
+  var v3=parseFloat(document.getElementById('ftventa-monto3').value)||0;
+  var totalIngresado=v1+v2+v3;
+  var parts=[];
+  if(m1&&v1)parts.push(m1+': '+fmtARS(v1));
+  if(m2&&v2)parts.push(m2+': '+fmtARS(v2));
+  if(m3&&v3)parts.push(m3+': '+fmtARS(v3));
+  var info=document.getElementById('ftventa-mixto-info');
+  var totalVenta=ftventaUpdateTotal();
+  if(info)info.textContent=parts.length?'Pago: '+fmtARS(totalIngresado)+' de '+fmtARS(totalVenta)+' ('+parts.join(' + ')+')':'';
+}
+
+function ftventaGetMetodoStr(){
+  var parts=[];
+  var m1=document.getElementById('ftventa-metodo1');var v1=document.getElementById('ftventa-monto1');
+  var m2=document.getElementById('ftventa-metodo2');var v2=document.getElementById('ftventa-monto2');
+  var m3=document.getElementById('ftventa-metodo3');var v3=document.getElementById('ftventa-monto3');
+  if(m1&&m1.value&&v1&&parseFloat(v1.value))parts.push(m1.value+':'+parseFloat(v1.value));
+  if(m2&&m2.value&&v2&&parseFloat(v2.value))parts.push(m2.value+':'+parseFloat(v2.value));
+  if(m3&&m3.value&&v3&&parseFloat(v3.value))parts.push(m3.value+':'+parseFloat(v3.value));
+  return parts.length?parts.join('|'):(m1&&m1.value?m1.value:'EFECTIVO');
+}
+
+function ftcompraBuscarCodigo(){
+  var cod=document.getElementById('ftcompra-codigo-input').value.trim().toUpperCase();
+  var p=productosTiendas.find(function(x){return x.codigo===cod;});
+  if(!p){
+    showToast('Codigo no encontrado, podes crearlo como nuevo abajo',true);
+    document.getElementById('ftcompra-prod-info').style.display='none';
+    document.getElementById('ftcompra-form-existing').style.display='none';
+    ftcompraProdActual=null;
+    return;
+  }
+  ftcompraProdActual=p;
+  document.getElementById('ftcompra-info-desc').textContent=p.descripcion;
+  document.getElementById('ftcompra-info-stock').textContent=p.stock||0;
+  document.getElementById('ftcompra-info-costo').textContent=fmtUSD(p.precio_costo_usd||0);
+  document.getElementById('ftcompra-info-venta').textContent=fmtARS(p.precio_venta_ars||0);
+  document.getElementById('ftcompra-prod-info').style.display='block';
+  document.getElementById('ftcompra-form-existing').style.display='block';
+}
+
+function ftnpCrearProducto(){
+  var codigo=document.getElementById('ftnp-codigo').value.trim().toUpperCase();
+  var descripcion=document.getElementById('ftnp-descripcion').value.trim();
+  var cantidad=parseInt(document.getElementById('ftnp-cantidad').value)||0;
+  if(!codigo){showToast('El codigo es obligatorio',true);return;}
+  if(!descripcion){showToast('La descripcion es obligatoria',true);return;}
+  if(!cantidad||cantidad<1){showToast('La cantidad inicial es obligatoria',true);return;}
+  var existing=productosTiendas.find(function(p){return p.codigo===codigo;});
+  if(existing){showToast('Ese codigo ya existe, busca y agrega stock arriba',true);return;}
+  var dup=ftnpListaTemp.find(function(p){return p.codigo===codigo;});
+  if(dup){showToast('Codigo ya en la lista',true);return;}
+  ftnpListaTemp.push({
+    codigo:codigo,
+    categoria:document.getElementById('ftnp-categoria').value.trim().toUpperCase()||null,
+    descripcion:descripcion,
+    precio_costo_usd:parseFloat(document.getElementById('ftnp-costo-usd').value)||0,
+    precio_venta_ars:parseFloat(document.getElementById('ftnp-venta-ars').value)||0,
+    stock:cantidad
+  });
+  ['ftnp-codigo','ftnp-categoria','ftnp-descripcion','ftnp-costo-usd','ftnp-venta-ars','ftnp-cantidad'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
+  renderFtnpLista();
+  showToast('Producto agregado a la lista');
+}
+
+function renderFtnpLista(){
+  var el=document.getElementById('ftnp-lista');
+  if(!el)return;
+  if(!ftnpListaTemp.length){el.innerHTML='';return;}
+  el.innerHTML='<div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:6px;">'+ftnpListaTemp.length+' producto(s) nuevo(s) a crear:</div>'+
+    ftnpListaTemp.map(function(p,i){
+      return'<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
+        '<span class="mono" style="color:var(--text3);font-size:10px;">'+p.codigo+'</span>'+
+        '<span style="flex:1">'+p.descripcion+' — Stock inicial: '+p.stock+'</span>'+
+        '<span style="color:var(--green);font-family:monospace;">'+fmtARS(p.precio_venta_ars)+'</span>'+
+        '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;" data-idx="'+i+'" onclick="ftnpQuitar(this.dataset.idx)">x</button>'+
+        '</div>';
+    }).join('');
+}
+function ftnpQuitar(idx){ftnpListaTemp.splice(parseInt(idx),1);renderFtnpLista();}
+
+async function tieGuardarDesdeForm(op){
+  var fecha=document.getElementById('f-fecha').value||new Date().toISOString().slice(0,10);
+  try{
+    if(op==='venta'){
+      if(!ftventaCarritoTemp.length){showToast('Agrega al menos un producto',true);return;}
+      var cliente=document.getElementById('ftventa-cliente').value||null;
+      var metodoStr=ftventaGetMetodoStr();
+      var total=ftventaUpdateTotal();
+      var descGeneral=ftventaCarritoTemp.map(function(c){return c.codigo+' x'+c.cantidad;}).join(', ');
+
+      for(var i=0;i<ftventaCarritoTemp.length;i++){
+        var item=ftventaCarritoTemp[i];
+        var prod=productosTiendas.find(function(p){return p.codigo===item.codigo;});
+        if(!prod)continue;
+        var nuevoStock=(parseInt(prod.stock)||0)-item.cantidad;
+        if(nuevoStock<0)nuevoStock=0;
+        var resStock=await fetch(SUPA_URL+'/rest/v1/productos_tiendas?id=eq.'+prod.id,{
+          method:'PATCH',
+          headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+          body:JSON.stringify({stock:nuevoStock})
+        });
+        if(!resStock.ok){var eS=await resStock.text();showToast('Error stock '+item.codigo+': '+eS.slice(0,60),true);return;}
+
+        await fetch(SUPA_URL+'/rest/v1/ventas_tiendas',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+          body:JSON.stringify({
+            fecha:fecha,codigo:item.codigo,descripcion:item.descripcion,cantidad:item.cantidad,
+            precio_unitario:item.precio_unitario,total:item.precio_unitario*item.cantidad,
+            metodo_pago:metodoStr,cliente:cliente
+          })
+        });
+      }
+
+      await guardarMovimientoInterno({
+        fecha:fecha,unidad:'TIENDAS',operacion:'VENTAS',
+        categoria:'DIRECTA',descripcion:descGeneral,
+        ingreso:total,egreso:0,metodo:metodoStr,mensaje:cliente||''
+      });
+      showToast('Venta registrada: '+fmtARS(total));
+    }
+
+    else if(op==='compra'){
+      var metodo=document.getElementById('ftcompra-metodo').value;
+      var totalCosto=0;
+      var resumenItems=[];
+
+      if(ftcompraProdActual){
+        var cant=parseInt(document.getElementById('ftcompra-cantidad').value)||0;
+        var costoTot=parseFloat(document.getElementById('ftcompra-costo-total').value)||0;
+        if(cant>0){
+          var nuevoStock=(parseInt(ftcompraProdActual.stock)||0)+cant;
+          var res=await fetch(SUPA_URL+'/rest/v1/productos_tiendas?id=eq.'+ftcompraProdActual.id,{
+            method:'PATCH',
+            headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+            body:JSON.stringify({stock:nuevoStock})
+          });
+          if(!res.ok){var e=await res.text();showToast('Error: '+e.slice(0,80),true);return;}
+          totalCosto+=costoTot;
+          resumenItems.push(ftcompraProdActual.codigo+' (+'+cant+')');
+        }
+      }
+
+      for(var i=0;i<ftnpListaTemp.length;i++){
+        var np=ftnpListaTemp[i];
+        var res2=await fetch(SUPA_URL+'/rest/v1/productos_tiendas',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+          body:JSON.stringify(np)
+        });
+        if(!res2.ok){var e2=await res2.text();showToast('Error en '+np.codigo+': '+e2.slice(0,60),true);return;}
+        totalCosto+=(np.precio_costo_usd||0)*(dolarBlue||1)*np.stock;
+        resumenItems.push(np.codigo+' (nuevo, +'+np.stock+')');
+      }
+
+      if(!resumenItems.length){showToast('Agrega un producto existente o crea uno nuevo',true);return;}
+
+      if(totalCosto>0){
+        await guardarMovimientoInterno({
+          fecha:fecha,unidad:'TIENDAS',operacion:'COMPRA',
+          categoria:'MERCADERIA',descripcion:'Compra: '+resumenItems.join(', '),
+          ingreso:0,egreso:totalCosto,metodo:metodo,mensaje:''
+        });
+      }
+      showToast('Stock actualizado: '+resumenItems.join(', '));
+    }
+
+    clearForm();
+    await tieCargarDatos();
+    await cargarDatos();
+  }catch(e){showToast('Error de conexion',true);console.log(e);}
+}
+
 window.addEventListener('DOMContentLoaded',function(){
   document.getElementById('f-fecha').value=new Date().toISOString().slice(0,10);
   populateSelects();
   fetchDolar(false);
   cargarDatos();
   celCargarDatos();
+  tieCargarDatos();
 });
 </script>
+
 </body>
 </html>
