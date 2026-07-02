@@ -3468,6 +3468,25 @@ function tventaUpdateTotal(){
   return total;
 }
 
+// Si se ingreso un monto de pago distinto al total (precio de lista) del carrito,
+// ese monto ingresado pasa a ser el valor real de venta y la diferencia es descuento.
+// Se reparte proporcionalmente entre los items del carrito (el ultimo absorbe el redondeo).
+function tventaAplicarDescuentoPorPago(carrito,montoIngresado){
+  if(!(montoIngresado>0)||!carrito.length)return false;
+  var totalActual=carrito.reduce(function(s,c){return s+c.precio_cobrado*c.cantidad;},0);
+  if(!totalActual||Math.abs(totalActual-montoIngresado)<0.01)return false;
+  var acumulado=0;
+  for(var i=0;i<carrito.length;i++){
+    var c=carrito[i];
+    var subtotalActual=c.precio_cobrado*c.cantidad;
+    var esUltimo=i===carrito.length-1;
+    var nuevoSubtotal=esUltimo?(montoIngresado-acumulado):Math.round((subtotalActual/totalActual)*montoIngresado*100)/100;
+    acumulado+=nuevoSubtotal;
+    c.precio_cobrado=Math.round((nuevoSubtotal/c.cantidad)*100)/100;
+  }
+  return true;
+}
+
 function tventaUpdateMixto(){
   var m1=document.getElementById('tventa-metodo1').value;
   var v1=parseFloat(document.getElementById('tventa-monto1').value)||0;
@@ -3615,6 +3634,8 @@ async function tieGuardarOp(){
       if(!canalVenta){showToast('Selecciona el Canal de venta',true);return;}
       var fecha=document.getElementById('tventa-fecha').value||new Date().toISOString().slice(0,10);
       var cliente=document.getElementById('tventa-cliente').value||null;
+      var montoIngresado=(parseFloat(document.getElementById('tventa-monto1').value)||0)+(parseFloat(document.getElementById('tventa-monto2').value)||0)+(parseFloat(document.getElementById('tventa-monto3').value)||0);
+      tventaAplicarDescuentoPorPago(tventaCarritoTemp,montoIngresado);
       var metodoStr=tventaGetMetodoStr();
       var total=tventaUpdateTotal();
       var descGeneral=tventaCarritoTemp.map(function(c){var d=c.precio_lista>c.precio_cobrado?' (desc.)':'';return c.codigo+' x'+c.cantidad+d;}).join(', ');
@@ -4177,6 +4198,8 @@ async function tieGuardarDesdeForm(op){
       var canalVenta=document.getElementById('f-canal-venta').value;
       if(!canalVenta){showToast('Selecciona el Canal de venta',true);return;}
       var cliente=document.getElementById('ftventa-cliente').value||null;
+      var montoIngresado=(parseFloat(document.getElementById('ftventa-monto1').value)||0)+(parseFloat(document.getElementById('ftventa-monto2').value)||0)+(parseFloat(document.getElementById('ftventa-monto3').value)||0);
+      tventaAplicarDescuentoPorPago(ftventaCarritoTemp,montoIngresado);
       var metodoStr=ftventaGetMetodoStr();
       var total=ftventaUpdateTotal();
       var descGeneral=ftventaCarritoTemp.map(function(c){var d=c.precio_lista>c.precio_cobrado?' (desc.)':'';return c.codigo+' x'+c.cantidad+d;}).join(', ');
