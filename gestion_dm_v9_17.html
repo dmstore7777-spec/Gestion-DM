@@ -1237,6 +1237,17 @@ tr:hover td{background:var(--bg3);}
   </div>
 </div>
 
+<!-- DETALLE DE MOVIMIENTO -->
+<div class="cel-modal-bg" id="mov-det-modal">
+  <div class="cel-modal" style="max-width:640px;">
+    <h3 style="display:flex;justify-content:space-between;align-items:center;">
+      Detalle del movimiento
+      <button class="btn btn-sm" onclick="document.getElementById('mov-det-modal').classList.remove('show')">Cerrar</button>
+    </h3>
+    <div id="mov-det-body" style="margin-top:16px;"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1585,6 +1596,7 @@ async function cargarDatos(){
         metodo:String(r.metodo||'').trim().toUpperCase(),
         nota:String(r.mensaje||'').trim(),
         canal:String(r.canal_venta||'').trim(),
+        createdAt:r.created_at||'',
         id:String(r.id||'')
       };});
       ss('ok',movs.length+' REG');
@@ -1747,9 +1759,9 @@ function buildMovRow(m,showUnit,showDel){
     egrHtml='<span class="egr">'+fmtMov(m.egreso,m.metodo)+'</span>';
     if(isPureUSD&&dolarBlue)egrHtml+='<span class="usd-cell">'+fmtARS(m.egreso*dolarBlue)+'</span>';
   }
-  var delBtn=showDel?'<button class="btn-del" onclick="askDelete(\''+m.id+'\',\''+m.desc.replace(/'/g,'')+'\')" title="Eliminar">x</button>':'';
+  var delBtn=showDel?'<button class="btn-del" onclick="event.stopPropagation();askDelete(\''+m.id+'\',\''+m.desc.replace(/'/g,'')+'\')" title="Eliminar">x</button>':'';
   var unitCell=showUnit?'<td style="font-size:11px;color:var(--text2)">'+m.unidad+'</td>':'';
-  return'<tr>'+
+  return'<tr style="cursor:pointer" data-mid="'+m.id+'" onclick="abrirDetalleMov(this.dataset.mid)">'+
     '<td class="mono" style="font-size:11px;">'+fd(m.fecha)+'</td>'+
     unitCell+
     '<td><span class="badge '+(BOP[m.operacion]||'')+'">'+m.operacion+'</span></td>'+
@@ -2020,7 +2032,7 @@ function renderU(){
     ?um.map(function(m){
       var ingHtml=m.ingreso?'<span class="ing">'+fmtMov(m.ingreso,m.metodo)+'</span>'+(m.metodo==='USD'&&dolarBlue?'<span class="usd-cell">'+fmtARS(m.ingreso*dolarBlue)+'</span>':''):'';
       var egrHtml=m.egreso?'<span class="egr">'+fmtMov(m.egreso,m.metodo)+'</span>'+(m.metodo==='USD'&&dolarBlue?'<span class="usd-cell">'+fmtARS(m.egreso*dolarBlue)+'</span>':''):'';
-      return'<tr>'+
+      return'<tr style="cursor:pointer" data-mid="'+m.id+'" onclick="abrirDetalleMov(this.dataset.mid)">'+
         '<td class="mono" style="font-size:11px;">'+fd(m.fecha)+'</td>'+
         '<td><span class="badge '+(BOP[m.operacion]||'')+'">'+m.operacion+'</span></td>'+
         '<td style="font-size:11px;color:var(--text2)">'+m.categoria+'</td>'+
@@ -2043,6 +2055,113 @@ function renderMovs(){
     :'<tr><td colspan="10" class="empty-row">Sin movimientos</td></tr>';
 }
 
+// ============ DETALLE DE MOVIMIENTO ============
+// Los items de linea (ventas_tiendas, compras_tiendas, celulares) no tienen FK al
+// movimiento que los genero, asi que se correlacionan por fecha+metodo(+cliente)
+// y cercania de created_at (siempre se crean segundos antes que su movimiento).
+function movDetPickByTime(candidatos,totalObjetivo,refCreatedAt,getTotal,getCreatedAt){
+  var ref=new Date(refCreatedAt).getTime();
+  var conTiempo=candidatos.map(function(c){return{item:c,t:new Date(getCreatedAt(c)).getTime()};})
+    .filter(function(x){return!isNaN(x.t)&&x.t<=ref+5000;})
+    .sort(function(a,b){return b.t-a.t;});
+  var acc=0,out=[];
+  for(var i=0;i<conTiempo.length;i++){
+    if(totalObjetivo>0&&acc>=totalObjetivo-0.5)break;
+    out.push(conTiempo[i].item);
+    acc+=getTotal(conTiempo[i].item)||0;
+  }
+  return out.reverse();
+}
+
+function movDetCorrelacionar(m){
+  var res={items:[],clienteLabel:'Cliente / Proveedor',cliente:'-',garantia:null,observaciones:'-'};
+  var imeiMatch=m.desc.match(/IMEI:(\S+)/);
+
+  if(m.unidad==='CELULARES'&&m.operacion==='VENTAS'&&imeiMatch){
+    var cel=celulares.find(function(c){return c.imei===imeiMatch[1];});
+    res.clienteLabel='Cliente';
+    res.cliente=m.nota||'-';
+    if(cel){
+      res.items=[{producto:cel.marca+' '+cel.modelo+(cel.color?' '+cel.color:'')+(cel.capacidad?' '+cel.capacidad:''),cantidad:1,precioUnit:parseFloat(cel.precio_venta)||0,subtotal:parseFloat(cel.precio_venta)||0}];
+      res.garantia=cel.garantia_venta?cel.garantia_venta+' meses':'Sin garantia';
+      res.observaciones=cel.notas||'-';
+    }
+  }else if(m.unidad==='CELULARES'&&m.operacion==='COMPRA'){
+    var nMatch=m.desc.match(/^(\d+)\s+celular/);
+    var n=nMatch?parseInt(nMatch[1]):null;
+    var candidatos=celulares.filter(function(c){return c.fecha_compra===m.fecha&&(c.metodo_pago_compra||'')===m.metodo;});
+    // Sin total de referencia confiable (el egreso puede incluir envio), usamos las N unidades mas cercanas en el tiempo
+    var conTiempo=candidatos.map(function(c){return{item:c,t:new Date(c.created_at).getTime()};})
+      .filter(function(x){return!isNaN(x.t)&&x.t<=new Date(m.createdAt).getTime()+5000;})
+      .sort(function(a,b){return b.t-a.t;});
+    var matched=(n?conTiempo.slice(0,n):conTiempo).map(function(x){return x.item;}).reverse();
+    res.clienteLabel='Proveedor';
+    res.cliente=(matched.length&&matched[0].proveedor)?matched[0].proveedor:'-';
+    res.items=matched.map(function(c){return{producto:c.marca+' '+c.modelo+' IMEI:'+c.imei,cantidad:1,precioUnit:parseFloat(c.precio_compra)||0,subtotal:parseFloat(c.precio_compra)||0};});
+    res.garantia=matched.length&&matched[0].garantia_proveedor?matched[0].garantia_proveedor+' meses (proveedor)':null;
+  }else if(m.unidad==='CELULARES'&&m.operacion==='GASTOS'&&(m.categoria==='REPARACION'||m.categoria==='REPUESTO')&&imeiMatch){
+    var celR=celulares.find(function(c){return c.imei===imeiMatch[1];});
+    res.clienteLabel='Equipo';
+    res.cliente=celR?celR.marca+' '+celR.modelo+' (IMEI:'+celR.imei+')':imeiMatch[1];
+    res.items=[{producto:m.desc.replace(' IMEI:'+imeiMatch[1],''),cantidad:1,precioUnit:m.egreso,subtotal:m.egreso}];
+  }else if(m.unidad==='TIENDAS'&&m.operacion==='VENTAS'){
+    var candV=ventasTiendas.filter(function(v){return v.fecha===m.fecha&&(v.cliente||'')===(m.nota||'')&&(v.metodo_pago||'').toUpperCase()===m.metodo;});
+    var matchedV=movDetPickByTime(candV,m.ingreso,m.createdAt,function(v){return parseFloat(v.total)||0;},function(v){return v.created_at;});
+    if(!matchedV.length)matchedV=candV;
+    res.clienteLabel='Cliente';
+    res.cliente=m.nota||'-';
+    res.items=matchedV.map(function(v){return{producto:v.codigo+(v.descripcion?' - '+v.descripcion:''),cantidad:v.cantidad||1,precioUnit:parseFloat(v.precio_unitario)||0,subtotal:parseFloat(v.total)||0};});
+  }else if(m.unidad==='TIENDAS'&&m.operacion==='COMPRA'){
+    var candC=comprasTiendas.filter(function(c){return c.fecha===m.fecha&&(c.metodo_pago||'').toUpperCase()===m.metodo;});
+    var matchedC=movDetPickByTime(candC,m.egreso,m.createdAt,function(c){return parseFloat(c.total_ars)||0;},function(c){return c.created_at;});
+    if(!matchedC.length)matchedC=candC;
+    res.clienteLabel='Proveedor';
+    res.cliente='-';
+    res.items=matchedC.map(function(c){return{producto:c.codigo+(c.descripcion?' - '+c.descripcion:'')+(c.modelo_celular?' ('+c.modelo_celular+')':''),cantidad:c.cantidad||1,precioUnit:parseFloat(c.precio_unitario_ars)||0,subtotal:parseFloat(c.total_ars)||0};});
+  }else{
+    res.observaciones=m.nota||'-';
+  }
+  return res;
+}
+
+function abrirDetalleMov(id){
+  var m=movs.find(function(x){return String(x.id)===String(id);});
+  if(!m){showToast('No se encontro el movimiento',true);return;}
+  var d=movDetCorrelacionar(m);
+  var total=m.ingreso||m.egreso||0;
+  var itemsHtml=d.items.length
+    ?'<table style="width:100%;font-size:12px;margin-top:6px;"><thead><tr>'+
+      '<th style="text-align:left;padding:6px 4px;color:var(--text3);font-size:10px;text-transform:uppercase;font-family:monospace;">Producto</th>'+
+      '<th style="text-align:right;padding:6px 4px;color:var(--text3);font-size:10px;text-transform:uppercase;font-family:monospace;">Cant.</th>'+
+      '<th style="text-align:right;padding:6px 4px;color:var(--text3);font-size:10px;text-transform:uppercase;font-family:monospace;">P. unitario</th>'+
+      '<th style="text-align:right;padding:6px 4px;color:var(--text3);font-size:10px;text-transform:uppercase;font-family:monospace;">Subtotal</th>'+
+      '</tr></thead><tbody>'+
+      d.items.map(function(it){return'<tr>'+
+        '<td style="padding:6px 4px;border-top:1px solid var(--border);">'+it.producto+'</td>'+
+        '<td style="padding:6px 4px;border-top:1px solid var(--border);text-align:right;font-family:monospace;">'+it.cantidad+'</td>'+
+        '<td style="padding:6px 4px;border-top:1px solid var(--border);text-align:right;font-family:monospace;">'+fmtARS(it.precioUnit)+'</td>'+
+        '<td style="padding:6px 4px;border-top:1px solid var(--border);text-align:right;font-family:monospace;">'+fmtARS(it.subtotal)+'</td>'+
+        '</tr>';}).join('')+
+      '</tbody></table>'
+    :'<div style="font-size:12px;color:var(--text3);margin-top:6px;">Sin detalle de productos disponible para este movimiento.</div>';
+  var garantiaRow=d.garantia?'<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">GARANTIA</div><div style="font-size:13px;">'+d.garantia+'</div></div>':'';
+  var html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">FECHA</div><div style="font-size:13px;font-weight:600;">'+fd(m.fecha)+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">UNIDAD DE NEGOCIO</div><div style="font-size:13px;font-weight:600;">'+m.unidad+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">TIPO DE OPERACION</div><div style="font-size:13px;"><span class="badge '+(BOP[m.operacion]||'')+'">'+m.operacion+'</span> '+(m.categoria?'— '+m.categoria:'')+'</div></div>'+
+    (m.canal?'<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">CANAL DE VENTA</div><div style="font-size:13px;">'+m.canal+'</div></div>':'')+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">'+d.clienteLabel.toUpperCase()+'</div><div style="font-size:13px;">'+d.cliente+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">METODO DE PAGO</div><div>'+metodoBadge(m.metodo)+'</div></div>'+
+    garantiaRow+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">TOTAL</div><div style="font-size:16px;font-weight:700;color:'+(m.ingreso?'var(--green)':'var(--red)')+';">'+fmtMov(total,m.metodo)+'</div></div>'+
+    '</div>'+
+    '<div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:4px;text-transform:uppercase;">Productos</div>'+
+    itemsHtml+
+    '<div style="margin-top:14px;font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;text-transform:uppercase;">Observaciones</div>'+
+    '<div style="font-size:12px;color:var(--text2);">'+(d.observaciones||'-')+'</div>';
+  document.getElementById('mov-det-body').innerHTML=html;
+  document.getElementById('mov-det-modal').classList.add('show');
+}
 
 // ============ CELULARES ============
 var celulares=[];
@@ -2741,6 +2860,7 @@ document.addEventListener('DOMContentLoaded',function(){
 // ============ TIENDAS ============
 var productosTiendas=[];
 var ventasTiendas=[];
+var comprasTiendas=[];
 var tieSubMenuOpen=false;
 var tieCurrentOp='';
 var tventaCarritoTemp=[];
@@ -2851,6 +2971,12 @@ async function tieCargarDatos(){
     });
     var data2=await res2.json();
     if(Array.isArray(data2))ventasTiendas=data2;
+
+    var res3=await fetch(SUPA_URL+'/rest/v1/compras_tiendas?select=*&order=fecha.desc',{
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    });
+    var data3=await res3.json();
+    if(Array.isArray(data3))comprasTiendas=data3;
 
     // Populate category filter
     var cats=[];
