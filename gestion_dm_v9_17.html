@@ -438,6 +438,18 @@ tr:hover td{background:var(--bg3);}
           </div>
         </div>
 
+        <!-- PASO 3b: Info del equipo - aparece solo para Servicios -->
+        <div id="f-equipo-row" style="display:none;">
+          <div class="fg">
+            <div class="fgroup"><label>Marca del celular *</label>
+              <input type="text" id="f-marca" placeholder="Samsung, Motorola, Apple, Xiaomi...">
+            </div>
+            <div class="fgroup"><label>Modelo del celular *</label>
+              <input type="text" id="f-modelo" placeholder="A55, Moto G84, iPhone 13, Redmi Note 13...">
+            </div>
+          </div>
+        </div>
+
         <!-- FORMULARIO GENERAL (no celulares) -->
         <div id="f-general" style="display:none;">
           <div class="fg">
@@ -747,6 +759,8 @@ tr:hover td{background:var(--bg3);}
         <select id="fil-o" onchange="onFilOp()"><option value="">Todas las operaciones</option></select>
         <select id="fil-c" onchange="renderMovs()"><option value="">Todas las categorias</option></select>
         <select id="fil-m" onchange="renderMovs()"><option value="">Todos los metodos</option></select>
+        <select id="fil-marca" onchange="renderMovs()"><option value="">Todas las marcas</option></select>
+        <select id="fil-modelo" onchange="renderMovs()"><option value="">Todos los modelos</option></select>
       </div>
       <div class="tw"><table><thead><tr>
         <th>Fecha</th><th>Unidad</th><th>Operacion</th><th>Categoria</th><th>Canal</th><th>Descripcion</th><th>Ingreso</th><th>Egreso</th><th>Metodo</th><th></th>
@@ -1504,6 +1518,9 @@ function hideAllFormSections(){
   document.getElementById('f-op-row').style.display='none';
   document.getElementById('f-canal-row').style.display='none';
   document.getElementById('f-canal-venta').value='';
+  document.getElementById('f-equipo-row').style.display='none';
+  document.getElementById('f-marca').value='';
+  document.getElementById('f-modelo').value='';
   document.getElementById('f-desc-label').textContent='Cliente';
   document.getElementById('f-general').style.display='none';
   ['compra','venta','reparacion','gastos'].forEach(function(op){
@@ -1569,6 +1586,7 @@ function onOperacionChange(){
     if(el)el.style.display='none';
   });
   document.getElementById('f-canal-row').style.display=op==='VENTAS'?'block':'none';
+  document.getElementById('f-equipo-row').style.display=op==='SERVICIOS'?'block':'none';
   if(!op)return;
   if(unidad==='CELULARES'){
     var celOp=CEL_OP_MAP[op];
@@ -1662,6 +1680,20 @@ function populateAnios(){
   if(!cur){var ty=new Date().getFullYear().toString();if(anios[ty])sel.value=ty;}
 }
 
+// Marcas y modelos de equipo que aparecen en los servicios registrados, para filtrarlos en Movimientos.
+function populateEquipoFiltros(){
+  var marcas=[],modelos=[];
+  movs.forEach(function(m){
+    if(m.marcaEquipo&&marcas.indexOf(m.marcaEquipo)===-1)marcas.push(m.marcaEquipo);
+    if(m.modeloEquipo&&modelos.indexOf(m.modeloEquipo)===-1)modelos.push(m.modeloEquipo);
+  });
+  marcas.sort();modelos.sort();
+  var selM=document.getElementById('fil-marca');
+  if(selM){var curM=selM.value;selM.innerHTML='<option value="">Todas las marcas</option>'+marcas.map(function(m){return'<option>'+m+'</option>';}).join('');if(curM)selM.value=curM;}
+  var selMo=document.getElementById('fil-modelo');
+  if(selMo){var curMo=selMo.value;selMo.innerHTML='<option value="">Todos los modelos</option>'+modelos.map(function(m){return'<option>'+m+'</option>';}).join('');if(curMo)selMo.value=curMo;}
+}
+
 async function cargarDatos(){
   ss('loading','SINCRONIZANDO...');
   try{
@@ -1681,11 +1713,14 @@ async function cargarDatos(){
         metodo:String(r.metodo||'').trim().toUpperCase(),
         nota:String(r.mensaje||'').trim(),
         canal:String(r.canal_venta||'').trim(),
+        marcaEquipo:String(r.marca_equipo||'').trim(),
+        modeloEquipo:String(r.modelo_equipo||'').trim(),
         createdAt:r.created_at||'',
         id:String(r.id||'')
       };});
       ss('ok',movs.length+' REG');
       populateAnios();
+      populateEquipoFiltros();
       var active=document.querySelector('.screen.active');
       if(active){
         var id=active.id.replace('screen-','');
@@ -1709,10 +1744,13 @@ async function guardar(){
   var metodo=document.getElementById('f-metodo').value;
   var mensaje=document.getElementById('f-nota').value;
   var canalVenta=document.getElementById('f-canal-venta').value;
+  var marcaEquipo=document.getElementById('f-marca').value.trim();
+  var modeloEquipo=document.getElementById('f-modelo').value.trim();
   var meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   var fdate=new Date(fecha+'T12:00:00');
   if(!fecha||!unidad||!operacion||!metodo){showToast('Completa Fecha, Unidad, Operacion y Metodo',true);return;}
   if(operacion==='VENTAS'&&!canalVenta){showToast('Selecciona el Canal de venta',true);return;}
+  if(operacion==='SERVICIOS'&&(!marcaEquipo||!modeloEquipo)){showToast('Completa Marca y Modelo del celular',true);return;}
   if(ingreso>0&&egreso>0){showToast('No puede tener ingreso Y egreso a la vez',true);return;}
   if(!ingreso&&!egreso){showToast('Ingresa al menos un monto',true);return;}
   var btn=document.getElementById('btn-guardar');
@@ -1721,7 +1759,7 @@ async function guardar(){
     var res=await fetch(SUPA_URL+'/rest/v1/movimientos',{
       method:'POST',
       headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
-      body:JSON.stringify({fecha:fecha,unidad:unidad,operacion:operacion,categoria:categoria,descripcion:desc,ingreso:ingreso,egreso:egreso,metodo:metodo,mensaje:mensaje,canal_venta:operacion==='VENTAS'?canalVenta:null,mes:meses[fdate.getMonth()],anio:fdate.getFullYear()})
+      body:JSON.stringify({fecha:fecha,unidad:unidad,operacion:operacion,categoria:categoria,descripcion:desc,ingreso:ingreso,egreso:egreso,metodo:metodo,mensaje:mensaje,canal_venta:operacion==='VENTAS'?canalVenta:null,marca_equipo:operacion==='SERVICIOS'?marcaEquipo:null,modelo_equipo:operacion==='SERVICIOS'?modeloEquipo:null,mes:meses[fdate.getMonth()],anio:fdate.getFullYear()})
     });
     if(res.ok){
       if(operacion==='COMPRA'&&desc)await ensureProveedor(unidad,desc);
@@ -2137,7 +2175,9 @@ function renderMovs(){
   var fo=document.getElementById('fil-o').value;
   var fc=document.getElementById('fil-c').value;
   var fm=document.getElementById('fil-m').value;
-  var f=movs.filter(function(m){return(!fo||m.operacion===fo)&&(!fc||m.categoria===fc)&&(!fm||m.metodo===fm);});
+  var fMarca=document.getElementById('fil-marca').value;
+  var fModelo=document.getElementById('fil-modelo').value;
+  var f=movs.filter(function(m){return(!fo||m.operacion===fo)&&(!fc||m.categoria===fc)&&(!fm||m.metodo===fm)&&(!fMarca||m.marcaEquipo===fMarca)&&(!fModelo||m.modeloEquipo===fModelo);});
   document.getElementById('movs-body').innerHTML=f.length
     ?f.map(function(m){return buildMovRow(m,true,true);}).join('')
     :'<tr><td colspan="10" class="empty-row">Sin movimientos</td></tr>';
@@ -2162,7 +2202,7 @@ function movDetPickByTime(candidatos,totalObjetivo,refCreatedAt,getTotal,getCrea
 }
 
 function movDetCorrelacionar(m){
-  var res={items:[],clienteLabel:'Cliente / Proveedor',cliente:'-',garantia:null,observaciones:'-'};
+  var res={items:[],clienteLabel:'Cliente / Proveedor',cliente:'-',garantia:null,equipo:null,observaciones:'-'};
   var imeiMatch=m.desc.match(/IMEI:(\S+)/);
 
   if(m.unidad==='CELULARES'&&m.operacion==='VENTAS'&&imeiMatch){
@@ -2212,6 +2252,7 @@ function movDetCorrelacionar(m){
     res.cliente=m.desc||'-';
     res.observaciones=m.nota||'-';
   }
+  if(m.marcaEquipo||m.modeloEquipo)res.equipo=(m.marcaEquipo||'-')+' '+(m.modeloEquipo||'-');
   return res;
 }
 
@@ -2236,11 +2277,13 @@ function abrirDetalleMov(id){
       '</tbody></table>'
     :'<div style="font-size:12px;color:var(--text3);margin-top:6px;">Sin detalle de productos disponible para este movimiento.</div>';
   var garantiaRow=d.garantia?'<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">GARANTIA</div><div style="font-size:13px;">'+d.garantia+'</div></div>':'';
+  var equipoRow=d.equipo?'<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">EQUIPO</div><div style="font-size:13px;">'+d.equipo+'</div></div>':'';
   var html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">'+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">FECHA</div><div style="font-size:13px;font-weight:600;">'+fd(m.fecha)+'</div></div>'+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">UNIDAD DE NEGOCIO</div><div style="font-size:13px;font-weight:600;">'+m.unidad+'</div></div>'+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">TIPO DE OPERACION</div><div style="font-size:13px;"><span class="badge '+(BOP[m.operacion]||'')+'">'+m.operacion+'</span> '+(m.categoria?'— '+m.categoria:'')+'</div></div>'+
     (m.canal?'<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">CANAL DE VENTA</div><div style="font-size:13px;">'+m.canal+'</div></div>':'')+
+    equipoRow+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">'+d.clienteLabel.toUpperCase()+'</div><div style="font-size:13px;">'+d.cliente+'</div></div>'+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">METODO DE PAGO</div><div>'+metodoBadge(m.metodo)+'</div></div>'+
     garantiaRow+
