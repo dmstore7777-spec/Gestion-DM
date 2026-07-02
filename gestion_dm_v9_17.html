@@ -466,6 +466,12 @@ tr:hover td{background:var(--bg3);}
             <div class="fgroup"><label>Nota</label>
               <input type="text" id="f-nota" placeholder="Opcional"></div>
           </div>
+          <div class="fg" id="f-garantia-row" style="display:none;">
+            <div class="fgroup"><label>¿Tiene garantia? *</label>
+              <select id="f-tiene-garantia" onchange="garantiaToggle('f')"><option value="NO">No</option><option value="SI">Si</option></select></div>
+            <div class="fgroup" id="f-dias-garantia-wrap" style="display:none;"><label>Dias de garantia</label>
+              <input type="number" id="f-dias-garantia" value="30" min="1"></div>
+          </div>
           <div class="fa">
             <button class="btn" onclick="clearForm()">Limpiar</button>
             <button class="btn btn-p" id="btn-guardar" onclick="guardar()">Guardar movimiento</button>
@@ -537,7 +543,6 @@ tr:hover td{background:var(--bg3);}
                 </div>
                 <div id="venta-mixto-info" style="font-size:11px;color:var(--text3);margin-top:5px;font-family:monospace;"></div>
               </div>
-              <div class="cel-fgroup"><label>Garantia venta (meses)</label><input type="number" id="venta-gtia" placeholder="3" min="0"></div>
             </div>
             <div style="margin-top:10px;">
               <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);cursor:pointer;">
@@ -580,6 +585,12 @@ tr:hover td{background:var(--bg3);}
                 <div class="cel-fgroup"><label>Valor recibido (ARS)</label><input type="number" id="pp-valor" placeholder="0"></div>
               </div>
               <button class="btn btn-sm" onclick="ppConfirmarNuevo()">Confirmar parte de pago</button>
+            </div>
+            <div class="cel-form-grid" style="margin-top:10px;">
+              <div class="cel-fgroup"><label>¿Tiene garantia? *</label>
+                <select id="venta-tiene-garantia" onchange="garantiaToggle('venta')"><option value="NO">No</option><option value="SI">Si</option></select></div>
+              <div class="cel-fgroup" id="venta-dias-garantia-wrap" style="display:none;"><label>Dias de garantia</label>
+                <input type="number" id="venta-dias-garantia" value="30" min="1"></div>
             </div>
             <div class="fa">
               <button class="btn" onclick="clearForm()">Limpiar</button>
@@ -669,6 +680,12 @@ tr:hover td{background:var(--bg3);}
               </div>
               <div id="ftventa-mixto-info" style="font-size:11px;color:var(--text3);margin-top:5px;font-family:monospace;"></div>
             </div>
+          </div>
+          <div class="cel-form-grid" style="margin-top:10px;">
+            <div class="cel-fgroup"><label>¿Tiene garantia? *</label>
+              <select id="ftventa-tiene-garantia" onchange="garantiaToggle('ftventa')"><option value="NO">No</option><option value="SI">Si</option></select></div>
+            <div class="cel-fgroup" id="ftventa-dias-garantia-wrap" style="display:none;"><label>Dias de garantia</label>
+              <input type="number" id="ftventa-dias-garantia" value="30" min="1"></div>
           </div>
           <div class="fa">
             <button class="btn" onclick="clearForm()">Limpiar</button>
@@ -763,7 +780,7 @@ tr:hover td{background:var(--bg3);}
         <select id="fil-modelo" onchange="renderMovs()"><option value="">Todos los modelos</option></select>
       </div>
       <div class="tw"><table><thead><tr>
-        <th>Fecha</th><th>Unidad</th><th>Operacion</th><th>Categoria</th><th>Canal</th><th>Descripcion</th><th>Ingreso</th><th>Egreso</th><th>Metodo</th><th></th>
+        <th>Fecha</th><th>Unidad</th><th>Operacion</th><th>Categoria</th><th>Canal</th><th>Descripcion</th><th>Ingreso</th><th>Egreso</th><th>Metodo</th><th>Estado de garantia</th><th></th>
       </tr></thead><tbody id="movs-body"></tbody></table></div>
     </div>
 
@@ -803,7 +820,7 @@ tr:hover td{background:var(--bg3);}
       </div>
       <div style="margin-top:11px" class="tw">
         <div class="tw-head"><div class="tw-title" id="u-title">Movimientos</div></div>
-        <table><thead><tr><th>Fecha</th><th>Operacion</th><th>Categoria</th><th>Canal</th><th>Descripcion</th><th>Ingreso</th><th>Egreso</th><th>Metodo</th></tr></thead>
+        <table><thead><tr><th>Fecha</th><th>Operacion</th><th>Categoria</th><th>Canal</th><th>Descripcion</th><th>Ingreso</th><th>Egreso</th><th>Metodo</th><th>Garantia</th></tr></thead>
         <tbody id="u-body"></tbody></table>
       </div>
     </div>
@@ -1043,6 +1060,12 @@ tr:hover td{background:var(--bg3);}
           </div>
           <div id="tventa-mixto-info" style="font-size:11px;color:var(--text3);margin-top:5px;font-family:monospace;"></div>
         </div>
+      </div>
+      <div class="cel-form-grid" style="margin-top:10px;">
+        <div class="cel-fgroup"><label>¿Tiene garantia? *</label>
+          <select id="tventa-tiene-garantia" onchange="garantiaToggle('tventa')"><option value="NO">No</option><option value="SI">Si</option></select></div>
+        <div class="cel-fgroup" id="tventa-dias-garantia-wrap" style="display:none;"><label>Dias de garantia</label>
+          <input type="number" id="tventa-dias-garantia" value="30" min="1"></div>
       </div>
     </div>
 
@@ -1408,6 +1431,38 @@ function fmtShort(n){
   return n<0?'-'+s:s;
 }
 function fd(d){if(!d)return'-';var s=String(d).slice(0,10);var p=s.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
+
+// ============ GARANTIA (compartido por todos los formularios de venta/servicio) ============
+function garantiaToggle(prefix){
+  var val=document.getElementById(prefix+'-tiene-garantia').value;
+  var wrap=document.getElementById(prefix+'-dias-garantia-wrap');
+  wrap.style.display=val==='SI'?'block':'none';
+  var dias=document.getElementById(prefix+'-dias-garantia');
+  if(val==='SI'&&!dias.value)dias.value=30;
+}
+function garantiaResetForm(prefix){
+  var tg=document.getElementById(prefix+'-tiene-garantia');if(tg)tg.value='NO';
+  var wrap=document.getElementById(prefix+'-dias-garantia-wrap');if(wrap)wrap.style.display='none';
+  var dias=document.getElementById(prefix+'-dias-garantia');if(dias)dias.value='30';
+}
+function garantiaCalcVencimiento(fecha,dias){
+  var d=new Date((fecha||new Date().toISOString().slice(0,10))+'T12:00:00');
+  d.setDate(d.getDate()+parseInt(dias));
+  return d.toISOString().slice(0,10);
+}
+// Lee los campos de garantia de un formulario y valida. Devuelve null si es invalido, o el payload para el movimiento.
+function garantiaLeer(prefix,fecha){
+  var tieneGarantia=document.getElementById(prefix+'-tiene-garantia').value==='SI';
+  if(!tieneGarantia)return{tiene_garantia:false,dias_garantia:null,fecha_vencimiento_garantia:null,valido:true};
+  var dias=parseInt(document.getElementById(prefix+'-dias-garantia').value);
+  if(!dias||dias<1)return{valido:false};
+  return{tiene_garantia:true,dias_garantia:dias,fecha_vencimiento_garantia:garantiaCalcVencimiento(fecha,dias),valido:true};
+}
+function garantiaEstadoTexto(m){
+  if(!m.tieneGarantia)return'-';
+  var hoy=new Date().toISOString().slice(0,10);
+  return m.fechaVencimientoGarantia&&m.fechaVencimientoGarantia>=hoy?'🟢 Vigente':'🔴 Caducada';
+}
 function ss(st,txt){document.getElementById('s-dot').className='dot '+st;document.getElementById('s-txt').textContent=txt;}
 function showToast(msg,err){var t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(err?' err':'')+' show';setTimeout(function(){t.className='toast';},3500);}
 
@@ -1521,6 +1576,8 @@ function hideAllFormSections(){
   document.getElementById('f-equipo-row').style.display='none';
   document.getElementById('f-marca').value='';
   document.getElementById('f-modelo').value='';
+  document.getElementById('f-garantia-row').style.display='none';
+  garantiaResetForm('f');
   document.getElementById('f-desc-label').textContent='Cliente';
   document.getElementById('f-general').style.display='none';
   ['compra','venta','reparacion','gastos'].forEach(function(op){
@@ -1547,7 +1604,7 @@ function hideAllFormSections(){
 // Limpia por completo el formulario de venta de Celulares (Cargar movimiento):
 // importes, cliente, metodos de pago, cuotas y parte de pago quedan como estaban antes de cargar cualquier venta.
 function ventaResetForm(){
-  ['venta-imei-input','venta-precio','venta-cliente','venta-monto1','venta-monto2','venta-monto3','venta-gtia',
+  ['venta-imei-input','venta-precio','venta-cliente','venta-monto1','venta-monto2','venta-monto3',
     'vc-cantidad','vc-monto','vc-inicio','vc-limite','pp-imei-input'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.value='';
   });
@@ -1558,6 +1615,7 @@ function ventaResetForm(){
   var vcInfo=document.getElementById('vc-info');if(vcInfo)vcInfo.textContent='';
   var ganancia=document.getElementById('venta-ganancia');if(ganancia){ganancia.textContent='$0';ganancia.style.color='';}
   var ppLista=document.getElementById('pp-lista');if(ppLista)ppLista.innerHTML='';
+  garantiaResetForm('venta');
 }
 
 // Limpia por completo el formulario de venta de Tiendas dentro de Cargar movimiento (ftventa-*).
@@ -1570,6 +1628,7 @@ function ftventaResetForm(){
   var cant=document.getElementById('ftventa-cantidad-input');if(cant)cant.value='1';
   var mixtoInfo=document.getElementById('ftventa-mixto-info');if(mixtoInfo)mixtoInfo.textContent='';
   var carrito=document.getElementById('ftventa-carrito');if(carrito)carrito.innerHTML='';
+  garantiaResetForm('ftventa');
 }
 
 function onOperacionChange(){
@@ -1587,6 +1646,8 @@ function onOperacionChange(){
   });
   document.getElementById('f-canal-row').style.display=op==='VENTAS'?'block':'none';
   document.getElementById('f-equipo-row').style.display=op==='SERVICIOS'?'block':'none';
+  document.getElementById('f-garantia-row').style.display=(op==='VENTAS'||op==='SERVICIOS')?'block':'none';
+  if(!(op==='VENTAS'||op==='SERVICIOS'))garantiaResetForm('f');
   if(!op)return;
   if(unidad==='CELULARES'){
     var celOp=CEL_OP_MAP[op];
@@ -1715,6 +1776,9 @@ async function cargarDatos(){
         canal:String(r.canal_venta||'').trim(),
         marcaEquipo:String(r.marca_equipo||'').trim(),
         modeloEquipo:String(r.modelo_equipo||'').trim(),
+        tieneGarantia:!!r.tiene_garantia,
+        diasGarantia:r.dias_garantia||null,
+        fechaVencimientoGarantia:r.fecha_vencimiento_garantia||null,
         createdAt:r.created_at||'',
         id:String(r.id||'')
       };});
@@ -1751,6 +1815,11 @@ async function guardar(){
   if(!fecha||!unidad||!operacion||!metodo){showToast('Completa Fecha, Unidad, Operacion y Metodo',true);return;}
   if(operacion==='VENTAS'&&!canalVenta){showToast('Selecciona el Canal de venta',true);return;}
   if(operacion==='SERVICIOS'&&(!marcaEquipo||!modeloEquipo)){showToast('Completa Marca y Modelo del celular',true);return;}
+  var garantiaGen={valido:true,tiene_garantia:false,dias_garantia:null,fecha_vencimiento_garantia:null};
+  if(operacion==='VENTAS'||operacion==='SERVICIOS'){
+    garantiaGen=garantiaLeer('f',fecha);
+    if(!garantiaGen.valido){showToast('Ingresa una cantidad valida de dias de garantia',true);return;}
+  }
   if(ingreso>0&&egreso>0){showToast('No puede tener ingreso Y egreso a la vez',true);return;}
   if(!ingreso&&!egreso){showToast('Ingresa al menos un monto',true);return;}
   var btn=document.getElementById('btn-guardar');
@@ -1759,7 +1828,7 @@ async function guardar(){
     var res=await fetch(SUPA_URL+'/rest/v1/movimientos',{
       method:'POST',
       headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
-      body:JSON.stringify({fecha:fecha,unidad:unidad,operacion:operacion,categoria:categoria,descripcion:desc,ingreso:ingreso,egreso:egreso,metodo:metodo,mensaje:mensaje,canal_venta:operacion==='VENTAS'?canalVenta:null,marca_equipo:operacion==='SERVICIOS'?marcaEquipo:null,modelo_equipo:operacion==='SERVICIOS'?modeloEquipo:null,mes:meses[fdate.getMonth()],anio:fdate.getFullYear()})
+      body:JSON.stringify({fecha:fecha,unidad:unidad,operacion:operacion,categoria:categoria,descripcion:desc,ingreso:ingreso,egreso:egreso,metodo:metodo,mensaje:mensaje,canal_venta:operacion==='VENTAS'?canalVenta:null,marca_equipo:operacion==='SERVICIOS'?marcaEquipo:null,modelo_equipo:operacion==='SERVICIOS'?modeloEquipo:null,tiene_garantia:garantiaGen.tiene_garantia,dias_garantia:garantiaGen.dias_garantia,fecha_vencimiento_garantia:garantiaGen.fecha_vencimiento_garantia,mes:meses[fdate.getMonth()],anio:fdate.getFullYear()})
     });
     if(res.ok){
       if(operacion==='COMPRA'&&desc)await ensureProveedor(unidad,desc);
@@ -1897,6 +1966,7 @@ function buildMovRow(m,showUnit,showDel){
     '<td>'+ingHtml+'</td>'+
     '<td>'+egrHtml+'</td>'+
     '<td>'+metodoBadge(m.metodo)+'</td>'+
+    (showDel?'<td style="font-size:12px;">'+garantiaEstadoTexto(m)+'</td>':'')+
     (showDel?'<td>'+delBtn+'</td>':'')+
     '</tr>';
 }
@@ -2166,9 +2236,10 @@ function renderU(){
         '<td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)" title="'+m.desc+'">'+m.desc+'</td>'+
         '<td>'+ingHtml+'</td><td>'+egrHtml+'</td>'+
         '<td>'+metodoBadge(m.metodo)+'</td>'+
+        '<td style="font-size:12px;">'+garantiaEstadoTexto(m)+'</td>'+
         '</tr>';
     }).join('')
-    :'<tr><td colspan="8" class="empty-row">Sin movimientos</td></tr>';
+    :'<tr><td colspan="9" class="empty-row">Sin movimientos</td></tr>';
 }
 
 function renderMovs(){
@@ -2180,7 +2251,7 @@ function renderMovs(){
   var f=movs.filter(function(m){return(!fo||m.operacion===fo)&&(!fc||m.categoria===fc)&&(!fm||m.metodo===fm)&&(!fMarca||m.marcaEquipo===fMarca)&&(!fModelo||m.modeloEquipo===fModelo);});
   document.getElementById('movs-body').innerHTML=f.length
     ?f.map(function(m){return buildMovRow(m,true,true);}).join('')
-    :'<tr><td colspan="10" class="empty-row">Sin movimientos</td></tr>';
+    :'<tr><td colspan="11" class="empty-row">Sin movimientos</td></tr>';
 }
 
 // ============ DETALLE DE MOVIMIENTO ============
@@ -2202,7 +2273,7 @@ function movDetPickByTime(candidatos,totalObjetivo,refCreatedAt,getTotal,getCrea
 }
 
 function movDetCorrelacionar(m){
-  var res={items:[],clienteLabel:'Cliente / Proveedor',cliente:'-',garantia:null,equipo:null,observaciones:'-'};
+  var res={items:[],clienteLabel:'Cliente / Proveedor',cliente:'-',equipo:null,observaciones:'-'};
   var imeiMatch=m.desc.match(/IMEI:(\S+)/);
 
   if(m.unidad==='CELULARES'&&m.operacion==='VENTAS'&&imeiMatch){
@@ -2211,7 +2282,6 @@ function movDetCorrelacionar(m){
     res.cliente=m.nota||'-';
     if(cel){
       res.items=[{producto:cel.marca+' '+cel.modelo+(cel.color?' '+cel.color:'')+(cel.capacidad?' '+cel.capacidad:''),cantidad:1,precioUnit:parseFloat(cel.precio_venta)||0,subtotal:parseFloat(cel.precio_venta)||0}];
-      res.garantia=cel.garantia_venta?cel.garantia_venta+' meses':'Sin garantia';
       res.observaciones=cel.notas||'-';
     }
   }else if(m.unidad==='CELULARES'&&m.operacion==='COMPRA'){
@@ -2226,7 +2296,6 @@ function movDetCorrelacionar(m){
     res.clienteLabel='Proveedor';
     res.cliente=(matched.length&&matched[0].proveedor)?matched[0].proveedor:'-';
     res.items=matched.map(function(c){return{producto:c.marca+' '+c.modelo+' IMEI:'+c.imei,cantidad:1,precioUnit:parseFloat(c.precio_compra)||0,subtotal:parseFloat(c.precio_compra)||0};});
-    res.garantia=matched.length&&matched[0].garantia_proveedor?matched[0].garantia_proveedor+' meses (proveedor)':null;
   }else if(m.unidad==='CELULARES'&&m.operacion==='GASTOS'&&(m.categoria==='REPARACION'||m.categoria==='REPUESTO')&&imeiMatch){
     var celR=celulares.find(function(c){return c.imei===imeiMatch[1];});
     res.clienteLabel='Equipo';
@@ -2276,7 +2345,6 @@ function abrirDetalleMov(id){
         '</tr>';}).join('')+
       '</tbody></table>'
     :'<div style="font-size:12px;color:var(--text3);margin-top:6px;">Sin detalle de productos disponible para este movimiento.</div>';
-  var garantiaRow=d.garantia?'<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">GARANTIA</div><div style="font-size:13px;">'+d.garantia+'</div></div>':'';
   var equipoRow=d.equipo?'<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">EQUIPO</div><div style="font-size:13px;">'+d.equipo+'</div></div>':'';
   var html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">'+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">FECHA</div><div style="font-size:13px;font-weight:600;">'+fd(m.fecha)+'</div></div>'+
@@ -2286,11 +2354,17 @@ function abrirDetalleMov(id){
     equipoRow+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">'+d.clienteLabel.toUpperCase()+'</div><div style="font-size:13px;">'+d.cliente+'</div></div>'+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">METODO DE PAGO</div><div>'+metodoBadge(m.metodo)+'</div></div>'+
-    garantiaRow+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">TOTAL</div><div style="font-size:16px;font-weight:700;color:'+(m.ingreso?'var(--green)':'var(--red)')+';">'+fmtMov(total,m.metodo)+'</div></div>'+
     '</div>'+
     '<div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:4px;text-transform:uppercase;">Productos</div>'+
     itemsHtml+
+    '<div style="margin-top:14px;font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:6px;text-transform:uppercase;">Garantia</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">TIENE GARANTIA</div><div style="font-size:13px;">'+(m.tieneGarantia?'Si':'No')+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">DIAS DE GARANTIA</div><div style="font-size:13px;">'+(m.tieneGarantia?m.diasGarantia+' dias':'-')+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">FECHA DE VENCIMIENTO</div><div style="font-size:13px;">'+(m.tieneGarantia?fd(m.fechaVencimientoGarantia):'-')+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">ESTADO ACTUAL</div><div style="font-size:13px;">'+garantiaEstadoTexto(m)+'</div></div>'+
+    '</div>'+
     '<div style="margin-top:14px;font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;text-transform:uppercase;">Observaciones</div>'+
     '<div style="font-size:12px;color:var(--text2);">'+(d.observaciones||'-')+'</div>';
   document.getElementById('mov-det-body').innerHTML=html;
@@ -3021,14 +3095,14 @@ async function celGuardarOp(){
       var canalVenta=document.getElementById('f-canal-venta').value;
       if(!canalVenta){showToast('Selecciona el Canal de venta',true);return false;}
       var ventaFecha=document.getElementById('venta-fecha').value||document.getElementById('f-fecha').value||new Date().toISOString().slice(0,10);
-      var ventaGtia=document.getElementById('venta-gtia').value;
+      var garantiaVenta=garantiaLeer('venta',ventaFecha);
+      if(!garantiaVenta.valido){showToast('Ingresa una cantidad valida de dias de garantia',true);return false;}
       var updPayload={
         estado:'VENDIDO',
         fecha_venta:ventaFecha||null,
         precio_venta:precio,
         cliente:document.getElementById('venta-cliente').value||null,
         metodo_pago_venta:ventaGetMetodoStr(),
-        garantia_venta:ventaGtia?parseInt(ventaGtia):null,
         canal_venta:canalVenta
       };
       var res=await fetch(SUPA_URL+'/rest/v1/celulares?id=eq.'+ventaImeiActual.id,{
@@ -3044,7 +3118,8 @@ async function celGuardarOp(){
       await guardarMovimientoInterno({
         fecha:ventaFecha,unidad:'CELULARES',operacion:'VENTAS',
         categoria:'DIRECTA',descripcion:ventaImeiActual.marca+' '+ventaImeiActual.modelo+' IMEI:'+ventaImeiActual.imei,
-        ingreso:precio,egreso:0,metodo:updPayload.metodo_pago_venta,mensaje:updPayload.cliente||'',canal_venta:canalVenta
+        ingreso:precio,egreso:0,metodo:updPayload.metodo_pago_venta,mensaje:updPayload.cliente||'',canal_venta:canalVenta,
+        tiene_garantia:garantiaVenta.tiene_garantia,dias_garantia:garantiaVenta.dias_garantia,fecha_vencimiento_garantia:garantiaVenta.fecha_vencimiento_garantia
       });
       // Parte de pago - add to stock
       for(var i=0;i<ppListaTemp.length;i++){
@@ -3478,6 +3553,7 @@ function tventaResetForm(){
   ['tventa-metodo1','tventa-metodo2','tventa-metodo3'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   var cant=document.getElementById('tventa-cantidad-input');if(cant)cant.value='1';
   var mixtoInfo=document.getElementById('tventa-mixto-info');if(mixtoInfo)mixtoInfo.textContent='';
+  garantiaResetForm('tventa');
 }
 
 function tieCerrarModal(){
@@ -3953,6 +4029,8 @@ async function tieGuardarOp(){
       var canalVenta=document.getElementById('tventa-canal').value;
       if(!canalVenta){showToast('Selecciona el Canal de venta',true);return;}
       var fecha=document.getElementById('tventa-fecha').value||new Date().toISOString().slice(0,10);
+      var garantiaVenta=garantiaLeer('tventa',fecha);
+      if(!garantiaVenta.valido){showToast('Ingresa una cantidad valida de dias de garantia',true);return;}
       var cliente=document.getElementById('tventa-cliente').value||null;
       var montoIngresado=(parseFloat(document.getElementById('tventa-monto1').value)||0)+(parseFloat(document.getElementById('tventa-monto2').value)||0)+(parseFloat(document.getElementById('tventa-monto3').value)||0);
       tventaAplicarDescuentoPorPago(tventaCarritoTemp,montoIngresado);
@@ -3989,7 +4067,8 @@ async function tieGuardarOp(){
       await guardarMovimientoInterno({
         fecha:fecha,unidad:'TIENDAS',operacion:'VENTAS',
         categoria:'DIRECTA',descripcion:descGeneral,
-        ingreso:total,egreso:0,metodo:metodoStr,mensaje:cliente||'',canal_venta:canalVenta
+        ingreso:total,egreso:0,metodo:metodoStr,mensaje:cliente||'',canal_venta:canalVenta,
+        tiene_garantia:garantiaVenta.tiene_garantia,dias_garantia:garantiaVenta.dias_garantia,fecha_vencimiento_garantia:garantiaVenta.fecha_vencimiento_garantia
       });
       showToast('Venta registrada: '+fmtARS(total));
     }
@@ -4517,6 +4596,8 @@ async function tieGuardarDesdeForm(op){
       if(!ftventaCarritoTemp.length){showToast('Agrega al menos un producto',true);return;}
       var canalVenta=document.getElementById('f-canal-venta').value;
       if(!canalVenta){showToast('Selecciona el Canal de venta',true);return;}
+      var garantiaVenta=garantiaLeer('ftventa',fecha);
+      if(!garantiaVenta.valido){showToast('Ingresa una cantidad valida de dias de garantia',true);return;}
       var cliente=document.getElementById('ftventa-cliente').value||null;
       var montoIngresado=(parseFloat(document.getElementById('ftventa-monto1').value)||0)+(parseFloat(document.getElementById('ftventa-monto2').value)||0)+(parseFloat(document.getElementById('ftventa-monto3').value)||0);
       tventaAplicarDescuentoPorPago(ftventaCarritoTemp,montoIngresado);
@@ -4550,7 +4631,8 @@ async function tieGuardarDesdeForm(op){
       await guardarMovimientoInterno({
         fecha:fecha,unidad:'TIENDAS',operacion:'VENTAS',
         categoria:'DIRECTA',descripcion:descGeneral,
-        ingreso:total,egreso:0,metodo:metodoStr,mensaje:cliente||'',canal_venta:canalVenta
+        ingreso:total,egreso:0,metodo:metodoStr,mensaje:cliente||'',canal_venta:canalVenta,
+        tiene_garantia:garantiaVenta.tiene_garantia,dias_garantia:garantiaVenta.dias_garantia,fecha_vencimiento_garantia:garantiaVenta.fecha_vencimiento_garantia
       });
       showToast('Venta registrada: '+fmtARS(total));
     }
