@@ -1515,14 +1515,44 @@ function hideAllFormSections(){
     if(el)el.style.display='none';
   });
   // Reset cel info panels
-  var panels=['venta-cel-info','venta-form-ext','rep-cel-info','rep-form-ext','pp-form-new'];
+  var panels=['venta-cel-info','venta-form-ext','rep-cel-info','rep-form-ext','pp-form-new','venta-cuotas-form'];
   panels.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});
   ventaImeiActual=null;repImeiActual=null;
   compraListaTemp=[];ppListaTemp=[];
+  ventaResetForm();
   // Reset tie info panels
   var tiePanels=['ftcompra-prod-info'];
   tiePanels.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});
   ftventaCarritoTemp=[];ftcompraCarritoTemp=[];ftcompraProdActual=null;
+  ftventaResetForm();
+}
+
+// Limpia por completo el formulario de venta de Celulares (Cargar movimiento):
+// importes, cliente, metodos de pago, cuotas y parte de pago quedan como estaban antes de cargar cualquier venta.
+function ventaResetForm(){
+  ['venta-imei-input','venta-precio','venta-cliente','venta-monto1','venta-monto2','venta-monto3','venta-gtia',
+    'vc-cantidad','vc-monto','vc-inicio','vc-limite','pp-imei-input'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
+  ['venta-metodo1','venta-metodo2','venta-metodo3'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  var freq=document.getElementById('vc-frecuencia');if(freq)freq.value='mensual';
+  var cuotasCheck=document.getElementById('venta-cuotas-check');if(cuotasCheck)cuotasCheck.checked=false;
+  var mixtoInfo=document.getElementById('venta-mixto-info');if(mixtoInfo)mixtoInfo.textContent='';
+  var vcInfo=document.getElementById('vc-info');if(vcInfo)vcInfo.textContent='';
+  var ganancia=document.getElementById('venta-ganancia');if(ganancia){ganancia.textContent='$0';ganancia.style.color='';}
+  var ppLista=document.getElementById('pp-lista');if(ppLista)ppLista.innerHTML='';
+}
+
+// Limpia por completo el formulario de venta de Tiendas dentro de Cargar movimiento (ftventa-*).
+function ftventaResetForm(){
+  ftventaCarritoTemp=[];
+  ['ftventa-codigo-input','ftventa-cliente','ftventa-monto1','ftventa-monto2','ftventa-monto3'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
+  ['ftventa-metodo1','ftventa-metodo2','ftventa-metodo3'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  var cant=document.getElementById('ftventa-cantidad-input');if(cant)cant.value='1';
+  var mixtoInfo=document.getElementById('ftventa-mixto-info');if(mixtoInfo)mixtoInfo.textContent='';
+  var carrito=document.getElementById('ftventa-carrito');if(carrito)carrito.innerHTML='';
 }
 
 function onOperacionChange(){
@@ -1551,6 +1581,7 @@ function onOperacionChange(){
         if(celOp==='compra'&&document.getElementById('compra-fecha'))document.getElementById('compra-fecha').value=document.getElementById('f-fecha').value||today;
         if(celOp==='reparacion'&&document.getElementById('rep-fecha'))document.getElementById('rep-fecha').value=document.getElementById('f-fecha').value||today;
         if(celOp==='compra')renderCompraLista();
+        if(celOp==='venta')ventaResetForm();
       }
     }
   }else if(unidad==='TIENDAS'){
@@ -1559,7 +1590,7 @@ function onOperacionChange(){
       var el=document.getElementById('f-tie-'+tieOp);
       if(el){
         el.style.display='block';
-        if(tieOp==='venta'){ftventaCarritoTemp=[];renderFtventaCarrito();}
+        if(tieOp==='venta'){ftventaResetForm();renderFtventaCarrito();}
         if(tieOp==='compra'){ftcompraCarritoTemp=[];renderFtcompraCarrito();}
       }
     }
@@ -3379,8 +3410,7 @@ function tieAbrirOp(op,codigoPre){
   }
   if(op==='venta'){
     document.getElementById('tventa-fecha').value=today;
-    document.getElementById('tventa-carrito').innerHTML='';
-    document.getElementById('tventa-canal').value='';
+    tventaResetForm();
     tventaUpdateTotal();
   }
   if(op==='ajuste'){
@@ -3394,9 +3424,23 @@ function tieAbrirOp(op,codigoPre){
   document.getElementById('tie-modal-bg').classList.add('show');
 }
 
+// Limpia por completo el formulario de venta de Tiendas del modal (Tiendas > Ventas > + Nueva venta).
+function tventaResetForm(){
+  tventaCarritoTemp=[];
+  document.getElementById('tventa-carrito').innerHTML='';
+  document.getElementById('tventa-canal').value='';
+  ['tventa-codigo-input','tventa-cliente','tventa-monto1','tventa-monto2','tventa-monto3'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
+  ['tventa-metodo1','tventa-metodo2','tventa-metodo3'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  var cant=document.getElementById('tventa-cantidad-input');if(cant)cant.value='1';
+  var mixtoInfo=document.getElementById('tventa-mixto-info');if(mixtoInfo)mixtoInfo.textContent='';
+}
+
 function tieCerrarModal(){
   document.getElementById('tie-modal-bg').classList.remove('show');
-  tventaCarritoTemp=[];tcompraCarritoTemp=[];tcompraProdActual=null;tajusteProdActual=null;
+  tventaResetForm();
+  tcompraCarritoTemp=[];tcompraProdActual=null;tajusteProdActual=null;
 }
 
 // ── COMPRA: carrito unificado (existentes + nuevos) ──
