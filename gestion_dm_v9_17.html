@@ -247,6 +247,9 @@ tr:hover td{background:var(--bg3);}
     <div class="nav-item" onclick="go('movimientos',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>Movimientos
     </div>
+    <div class="nav-item" onclick="go('proveedores',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="7" width="16" height="13" rx="1"/><path d="M1 7l3-5h10l3 5"/><line x1="1" y1="12" x2="17" y2="12"/></svg>Proveedores
+    </div>
     <div class="sb-section">Unidades</div>
     <div class="nav-item" id="nav-celulares-toggle" onclick="toggleCelSubMenu()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
@@ -440,8 +443,8 @@ tr:hover td{background:var(--bg3);}
           <div class="fg">
             <div class="fgroup"><label>Categoria</label>
               <select id="f-categoria"><option value="">Selecciona operacion primero</option></select></div>
-            <div class="fgroup"><label>Cliente</label>
-              <input type="text" id="f-desc" placeholder="Nombre del cliente..."></div>
+            <div class="fgroup"><label id="f-desc-label">Cliente</label>
+              <div class="ac-wrap"><input type="text" id="f-desc" placeholder="Nombre del cliente..." autocomplete="off" oninput="onFDescInput()"><div class="ac-dropdown" id="f-desc-ac"></div></div></div>
             <div class="fgroup"><label>Ingreso (ARS)</label>
               <input type="number" id="f-ingreso" placeholder="0.00" min="0" step="0.01"></div>
             <div class="fgroup"><label>Egreso (ARS)</label>
@@ -474,7 +477,8 @@ tr:hover td{background:var(--bg3);}
               <div class="cel-fgroup"><label>Precio costo (ARS)</label><input type="number" id="nc-costo" placeholder="0" min="0"></div>
               <div class="cel-fgroup"><label>Precio lista (ARS)</label><input type="number" id="nc-lista" placeholder="0" min="0"></div>
               <div class="cel-fgroup"><label>Gtia proveedor (m)</label><input type="number" id="nc-gtia" placeholder="0" min="0"></div>
-              <div class="cel-fgroup cel-form-full"><label>Proveedor</label><input type="text" id="nc-proveedor"></div>
+              <div class="cel-fgroup cel-form-full"><label>Proveedor</label>
+                <div class="ac-wrap"><input type="text" id="nc-proveedor" autocomplete="off" oninput="provAutocomplete(this,'CELULARES','nc-proveedor-ac')"><div class="ac-dropdown" id="nc-proveedor-ac"></div></div></div>
               <div class="cel-fgroup cel-form-full"><label>Observaciones</label><input type="text" id="nc-obs" placeholder="Estado del equipo, accesorios incluidos, etc..."></div>
             </div>
             <button class="btn btn-sm" onclick="compraAgregarCelular()" style="margin-top:4px;">+ Agregar a la lista</button>
@@ -725,6 +729,8 @@ tr:hover td{background:var(--bg3);}
           <div class="cel-form-grid">
             <div class="cel-fgroup"><label>Metodo de pago</label>
               <select id="ftcompra-metodo"><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select></div>
+            <div class="cel-fgroup"><label>Proveedor</label>
+              <div class="ac-wrap"><input type="text" id="ftcompra-proveedor" autocomplete="off" oninput="provAutocomplete(this,'TIENDAS','ftcompra-proveedor-ac')"><div class="ac-dropdown" id="ftcompra-proveedor-ac"></div></div></div>
           </div>
           <div class="fa">
             <button class="btn" onclick="clearForm()">Limpiar</button>
@@ -745,6 +751,20 @@ tr:hover td{background:var(--bg3);}
       <div class="tw"><table><thead><tr>
         <th>Fecha</th><th>Unidad</th><th>Operacion</th><th>Categoria</th><th>Canal</th><th>Descripcion</th><th>Ingreso</th><th>Egreso</th><th>Metodo</th><th></th>
       </tr></thead><tbody id="movs-body"></tbody></table></div>
+    </div>
+
+    <!-- PROVEEDORES -->
+    <div class="screen" id="screen-proveedores">
+      <div class="cel-filters">
+        <select id="prov-fil-unidad" onchange="renderProveedores()"><option value="">Todas las unidades</option></select>
+        <input type="text" id="prov-search" placeholder="Buscar proveedor..." oninput="renderProveedores()">
+        <button class="btn btn-p btn-sm" onclick="provAbrirNuevo()">+ Nuevo proveedor</button>
+      </div>
+      <div class="tw"><div class="tw-head"><div class="tw-title">Proveedores</div></div>
+        <table><thead><tr>
+          <th>Nombre</th><th>Unidad</th><th>Direccion</th><th>Telefono</th><th>WhatsApp</th><th>Instagram</th><th></th>
+        </tr></thead><tbody id="prov-tbody"></tbody></table>
+      </div>
     </div>
 
     <!-- CONFIG -->
@@ -969,6 +989,8 @@ tr:hover td{background:var(--bg3);}
         <div class="cel-fgroup"><label>Fecha compra</label><input type="date" id="tcompra-fecha"></div>
         <div class="cel-fgroup"><label>Metodo de pago</label>
           <select id="tcompra-metodo"><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select></div>
+        <div class="cel-fgroup"><label>Proveedor</label>
+          <div class="ac-wrap"><input type="text" id="tcompra-proveedor" autocomplete="off" oninput="provAutocomplete(this,'TIENDAS','tcompra-proveedor-ac')"><div class="ac-dropdown" id="tcompra-proveedor-ac"></div></div></div>
       </div>
     </div>
 
@@ -1248,6 +1270,26 @@ tr:hover td{background:var(--bg3);}
   </div>
 </div>
 
+<!-- ALTA / EDICION DE PROVEEDOR -->
+<div class="cel-modal-bg" id="prov-modal">
+  <div class="cel-modal" style="max-width:520px;">
+    <h3 id="prov-modal-title">Nuevo proveedor</h3>
+    <div class="cel-form-grid" style="margin-top:14px;">
+      <div class="cel-fgroup"><label>Nombre *</label><input type="text" id="prov-nombre" placeholder="Nombre del proveedor"></div>
+      <div class="cel-fgroup"><label>Unidad de negocio *</label>
+        <select id="prov-unidad"></select></div>
+      <div class="cel-fgroup cel-form-full"><label>Direccion</label><input type="text" id="prov-direccion" placeholder="Direccion"></div>
+      <div class="cel-fgroup"><label>Telefono</label><input type="text" id="prov-telefono" placeholder="Telefono"></div>
+      <div class="cel-fgroup"><label>WhatsApp</label><input type="text" id="prov-whatsapp" placeholder="WhatsApp"></div>
+      <div class="cel-fgroup"><label>Instagram</label><input type="text" id="prov-instagram" placeholder="@usuario"></div>
+    </div>
+    <div class="cel-modal-actions">
+      <button class="btn" onclick="provCerrarModal()">Cancelar</button>
+      <button class="btn btn-p" id="prov-btn-guardar" onclick="provGuardar()">Guardar</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1315,7 +1357,7 @@ var METC={MP:'#1D9E75',EFECTIVO:'#EF9F27',USD:'#378ADD','NARANJA X':'#D85A30','A
 var UCOLORS={CELULARES:'#7F77DD',TIENDAS:'#1D9E75','SERVICIO TECNICO':'#378ADD'};
 var NOM=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 var CATC=['#7F77DD','#1D9E75','#378ADD','#EF9F27','#D85A30','#888780','#D4537E','#639922'];
-var TITLES={dashboard:'Dashboard',caja:'Caja',cargar:'Cargar movimiento',movimientos:'Movimientos',config:'Configuracion',unidad:'Unidad'};
+var TITLES={dashboard:'Dashboard',caja:'Caja',cargar:'Cargar movimiento',movimientos:'Movimientos',config:'Configuracion',unidad:'Unidad',proveedores:'Proveedores'};
 var movs=[],cMes=null,cCaja=null,cU=null,cUCat=null,curU='CELULARES';
 var dolarBlue=0,pendingDelId=null,currentCurrency='USD';
 
@@ -1418,6 +1460,7 @@ function go(name,el){
   if(name==='caja')renderCaja();
   if(name==='unidad')renderU();
   if(name==='config')renderConfig();
+  if(name==='proveedores')renderProveedores();
 }
 
 function populateSelects(){
@@ -1461,6 +1504,7 @@ function hideAllFormSections(){
   document.getElementById('f-op-row').style.display='none';
   document.getElementById('f-canal-row').style.display='none';
   document.getElementById('f-canal-venta').value='';
+  document.getElementById('f-desc-label').textContent='Cliente';
   document.getElementById('f-general').style.display='none';
   ['compra','venta','reparacion','gastos'].forEach(function(op){
     var el=document.getElementById('f-cel-'+op);
@@ -1523,7 +1567,17 @@ function onOperacionChange(){
     // General form
     document.getElementById('f-general').style.display='block';
     updateCats();
+    document.getElementById('f-desc-label').textContent=op==='COMPRA'?'Proveedor':'Cliente';
+    document.getElementById('f-desc').placeholder=op==='COMPRA'?'Nombre del proveedor...':'Nombre del cliente...';
+    document.getElementById('f-desc-ac').innerHTML='';
+    document.getElementById('f-desc-ac').classList.remove('show');
   }
+}
+
+function onFDescInput(){
+  var unidad=document.getElementById('f-unidad').value;
+  var op=document.getElementById('f-operacion').value;
+  if(op==='COMPRA')provAutocomplete(document.getElementById('f-desc'),unidad,'f-desc-ac');
 }
 
 function updateCats(){
@@ -1638,7 +1692,10 @@ async function guardar(){
       headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
       body:JSON.stringify({fecha:fecha,unidad:unidad,operacion:operacion,categoria:categoria,descripcion:desc,ingreso:ingreso,egreso:egreso,metodo:metodo,mensaje:mensaje,canal_venta:operacion==='VENTAS'?canalVenta:null,mes:meses[fdate.getMonth()],anio:fdate.getFullYear()})
     });
-    if(res.ok){showToast('Movimiento guardado');clearForm();await cargarDatos();}
+    if(res.ok){
+      if(operacion==='COMPRA'&&desc)await ensureProveedor(unidad,desc);
+      showToast('Movimiento guardado');clearForm();await cargarDatos();
+    }
     else{var e=await res.text();showToast('Error: '+e.slice(0,60),true);ss('err','ERROR');}
   }catch(e){showToast('Error de conexion',true);ss('err','ERROR');}
   finally{btn.disabled=false;btn.textContent='Guardar movimiento';}
@@ -2116,9 +2173,12 @@ function movDetCorrelacionar(m){
     var matchedC=movDetPickByTime(candC,m.egreso,m.createdAt,function(c){return parseFloat(c.total_ars)||0;},function(c){return c.created_at;});
     if(!matchedC.length)matchedC=candC;
     res.clienteLabel='Proveedor';
-    res.cliente='-';
+    res.cliente=m.nota||'-';
     res.items=matchedC.map(function(c){return{producto:c.codigo+(c.descripcion?' - '+c.descripcion:'')+(c.modelo_celular?' ('+c.modelo_celular+')':''),cantidad:c.cantidad||1,precioUnit:parseFloat(c.precio_unitario_ars)||0,subtotal:parseFloat(c.total_ars)||0};});
   }else{
+    // Formulario general (Servicio Tecnico, DM, etc): el nombre va en "descripcion" y la nota en "mensaje"
+    res.clienteLabel=m.operacion==='COMPRA'?'Proveedor':'Cliente';
+    res.cliente=m.desc||'-';
     res.observaciones=m.nota||'-';
   }
   return res;
@@ -2161,6 +2221,174 @@ function abrirDetalleMov(id){
     '<div style="font-size:12px;color:var(--text2);">'+(d.observaciones||'-')+'</div>';
   document.getElementById('mov-det-body').innerHTML=html;
   document.getElementById('mov-det-modal').classList.add('show');
+}
+
+// ============ PROVEEDORES ============
+var proveedores=[];
+var provEditingId=null;
+var provAcActiveIdx=-1;
+
+async function cargarProveedores(){
+  try{
+    var res=await fetch(SUPA_URL+'/rest/v1/proveedores?select=*&order=nombre.asc',{
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    });
+    var data=await res.json();
+    if(Array.isArray(data))proveedores=data;
+    var sel=document.getElementById('prov-fil-unidad');
+    if(sel)sel.innerHTML='<option value="">Todas las unidades</option>'+cfg.unidades.map(function(u){return'<option>'+u+'</option>';}).join('');
+    var selM=document.getElementById('prov-unidad');
+    if(selM)selM.innerHTML=cfg.unidades.map(function(u){return'<option>'+u+'</option>';}).join('');
+    if(document.querySelector('.screen.active')&&document.querySelector('.screen.active').id==='screen-proveedores')renderProveedores();
+  }catch(e){console.log('Proveedores load error',e);}
+}
+
+// Guarda automaticamente un proveedor nuevo (si no existe ya) al cargar una compra.
+async function ensureProveedor(unidad,nombre){
+  nombre=(nombre||'').trim();
+  if(!nombre||!unidad)return;
+  var existe=proveedores.some(function(p){return p.unidad===unidad&&p.nombre.trim().toLowerCase()===nombre.toLowerCase();});
+  if(existe)return;
+  try{
+    var res=await fetch(SUPA_URL+'/rest/v1/proveedores',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=representation'},
+      body:JSON.stringify({unidad:unidad,nombre:nombre})
+    });
+    if(res.ok){
+      var created=await res.json();
+      if(created&&created[0])proveedores.push(created[0]);
+    }
+    // Si falla por duplicado (carrera con otra pestana), no hace falta hacer nada mas.
+  }catch(e){console.log('ensureProveedor error',e);}
+}
+
+function renderProveedores(){
+  var tbody=document.getElementById('prov-tbody');
+  if(!tbody)return;
+  var filU=document.getElementById('prov-fil-unidad')?document.getElementById('prov-fil-unidad').value:'';
+  var search=document.getElementById('prov-search')?document.getElementById('prov-search').value.toLowerCase():'';
+  var filtrado=proveedores.filter(function(p){
+    var matchU=!filU||p.unidad===filU;
+    var matchS=!search||p.nombre.toLowerCase().indexOf(search)>-1;
+    return matchU&&matchS;
+  });
+  if(!filtrado.length){tbody.innerHTML='<tr><td colspan="7" class="empty-row">No hay proveedores</td></tr>';return;}
+  tbody.innerHTML=filtrado.map(function(p){
+    return'<tr style="cursor:pointer" data-id="'+p.id+'" onclick="provAbrirEditar('+p.id+')">'+
+      '<td><strong>'+p.nombre+'</strong></td>'+
+      '<td style="font-size:11px;color:var(--text2)">'+p.unidad+'</td>'+
+      '<td>'+(p.direccion||'-')+'</td>'+
+      '<td>'+(p.telefono||'-')+'</td>'+
+      '<td>'+(p.whatsapp||'-')+'</td>'+
+      '<td>'+(p.instagram||'-')+'</td>'+
+      '<td><button class="btn-del" data-id="'+p.id+'" onclick="event.stopPropagation();provEliminar('+p.id+')" title="Eliminar">x</button></td>'+
+      '</tr>';
+  }).join('');
+}
+
+function provAbrirNuevo(){
+  provEditingId=null;
+  document.getElementById('prov-modal-title').textContent='Nuevo proveedor';
+  document.getElementById('prov-nombre').value='';
+  document.getElementById('prov-unidad').value=cfg.unidades[0]||'';
+  document.getElementById('prov-direccion').value='';
+  document.getElementById('prov-telefono').value='';
+  document.getElementById('prov-whatsapp').value='';
+  document.getElementById('prov-instagram').value='';
+  document.getElementById('prov-modal').classList.add('show');
+}
+
+function provAbrirEditar(id){
+  var p=proveedores.find(function(x){return x.id===id;});
+  if(!p)return;
+  provEditingId=id;
+  document.getElementById('prov-modal-title').textContent='Editar proveedor';
+  document.getElementById('prov-nombre').value=p.nombre||'';
+  document.getElementById('prov-unidad').value=p.unidad||'';
+  document.getElementById('prov-direccion').value=p.direccion||'';
+  document.getElementById('prov-telefono').value=p.telefono||'';
+  document.getElementById('prov-whatsapp').value=p.whatsapp||'';
+  document.getElementById('prov-instagram').value=p.instagram||'';
+  document.getElementById('prov-modal').classList.add('show');
+}
+
+function provCerrarModal(){
+  document.getElementById('prov-modal').classList.remove('show');
+  provEditingId=null;
+}
+
+async function provGuardar(){
+  var nombre=document.getElementById('prov-nombre').value.trim();
+  var unidad=document.getElementById('prov-unidad').value;
+  if(!nombre||!unidad){showToast('Completa nombre y unidad',true);return;}
+  var dup=proveedores.some(function(p){return p.unidad===unidad&&p.nombre.trim().toLowerCase()===nombre.toLowerCase()&&p.id!==provEditingId;});
+  if(dup){showToast('Ya existe un proveedor con ese nombre en esa unidad',true);return;}
+  var payload={
+    nombre:nombre,unidad:unidad,
+    direccion:document.getElementById('prov-direccion').value.trim()||null,
+    telefono:document.getElementById('prov-telefono').value.trim()||null,
+    whatsapp:document.getElementById('prov-whatsapp').value.trim()||null,
+    instagram:document.getElementById('prov-instagram').value.trim()||null
+  };
+  var btn=document.getElementById('prov-btn-guardar');
+  btn.disabled=true;btn.textContent='Guardando...';
+  try{
+    var res;
+    if(provEditingId){
+      res=await fetch(SUPA_URL+'/rest/v1/proveedores?id=eq.'+provEditingId,{
+        method:'PATCH',
+        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+        body:JSON.stringify(payload)
+      });
+    }else{
+      res=await fetch(SUPA_URL+'/rest/v1/proveedores',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+        body:JSON.stringify(payload)
+      });
+    }
+    if(!res.ok){var e=await res.text();showToast('Error: '+e.slice(0,80),true);return;}
+    showToast('Proveedor guardado');
+    provCerrarModal();
+    await cargarProveedores();
+  }catch(e){showToast('Error de conexion',true);}
+  finally{btn.disabled=false;btn.textContent='Guardar';}
+}
+
+async function provEliminar(id){
+  if(!confirm('Eliminar este proveedor?'))return;
+  try{
+    var res=await fetch(SUPA_URL+'/rest/v1/proveedores?id=eq.'+id,{
+      method:'DELETE',
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'}
+    });
+    if(res.ok){showToast('Proveedor eliminado');await cargarProveedores();}
+    else{showToast('Error al eliminar',true);}
+  }catch(e){showToast('Error de conexion',true);}
+}
+
+// Autocompletado de proveedores (reutilizado en compras de Celulares, Tiendas y el formulario general)
+function provAutocomplete(input,unidad,dropdownId){
+  var q=input.value.trim().toLowerCase();
+  var dd=document.getElementById(dropdownId);
+  if(!dd)return;
+  provAcActiveIdx=-1;
+  if(!q||!unidad){dd.classList.remove('show');dd.innerHTML='';return;}
+  var matches=proveedores.filter(function(p){return p.unidad===unidad&&p.nombre.toLowerCase().indexOf(q)>-1;}).slice(0,8);
+  if(!matches.length){dd.classList.remove('show');dd.innerHTML='';return;}
+  dd.innerHTML=matches.map(function(p,i){
+    return'<div class="ac-item" data-idx="'+i+'" data-nom="'+p.nombre.replace(/"/g,'&quot;')+'" onclick="provAcSelect(this,\''+input.id+'\',\''+dropdownId+'\')">'+
+      '<span class="ac-item-code">'+p.nombre+'</span>'+
+      (p.telefono?'<span class="ac-item-desc">'+p.telefono+'</span>':'')+
+      '</div>';
+  }).join('');
+  dd.classList.add('show');
+}
+function provAcSelect(el,inputId,dropdownId){
+  document.getElementById(inputId).value=el.dataset.nom;
+  var dd=document.getElementById(dropdownId);
+  dd.classList.remove('show');dd.innerHTML='';
 }
 
 // ============ CELULARES ============
@@ -2697,6 +2925,9 @@ async function celGuardarOp(){
           return false;
         }
       }
+      // Guardar proveedores nuevos automaticamente
+      var proveedoresNuevos=compraListaTemp.map(function(c){return c.proveedor;}).filter(function(p,i,arr){return p&&arr.indexOf(p)===i;});
+      for(var pi=0;pi<proveedoresNuevos.length;pi++){await ensureProveedor('CELULARES',proveedoresNuevos[pi]);}
       // Register movimiento egreso
       var totalCosto=compraListaTemp.reduce(function(s,c){return s+(parseFloat(c.precio_compra)||0);},0);
       if(totalCosto>0){
@@ -3536,6 +3767,8 @@ async function tieGuardarOp(){
       if(!tcompraCarritoTemp.length){showToast('Agrega al menos un producto al carrito',true);return;}
       var fecha=document.getElementById('tcompra-fecha').value||new Date().toISOString().slice(0,10);
       var metodo=document.getElementById('tcompra-metodo').value;
+      var proveedor=document.getElementById('tcompra-proveedor').value.trim();
+      if(proveedor)await ensureProveedor('TIENDAS',proveedor);
       var resumenItems=[];
 
       for(var i=0;i<tcompraCarritoTemp.length;i++){
@@ -3621,7 +3854,7 @@ async function tieGuardarOp(){
         await guardarMovimientoInterno({
           fecha:fecha,unidad:'TIENDAS',operacion:'COMPRA',
           categoria:'MERCADERIA',descripcion:'Compra: '+resumenItems.join(', '),
-          ingreso:0,egreso:totalCosto,metodo:metodo,mensaje:''
+          ingreso:0,egreso:totalCosto,metodo:metodo,mensaje:proveedor||''
         });
       }
       tcompraCarritoTemp=[];
@@ -4238,6 +4471,8 @@ async function tieGuardarDesdeForm(op){
     else if(op==='compra'){
       if(!ftcompraCarritoTemp.length){showToast('Agrega al menos un producto al carrito',true);return;}
       var metodo=document.getElementById('ftcompra-metodo').value;
+      var proveedor=document.getElementById('ftcompra-proveedor').value.trim();
+      if(proveedor)await ensureProveedor('TIENDAS',proveedor);
       var resumenItems=[];
 
       for(var i=0;i<ftcompraCarritoTemp.length;i++){
@@ -4320,7 +4555,7 @@ async function tieGuardarDesdeForm(op){
         await guardarMovimientoInterno({
           fecha:fecha,unidad:'TIENDAS',operacion:'COMPRA',
           categoria:'MERCADERIA',descripcion:'Compra: '+resumenItems.join(', '),
-          ingreso:0,egreso:totalCosto,metodo:metodo,mensaje:''
+          ingreso:0,egreso:totalCosto,metodo:metodo,mensaje:proveedor||''
         });
       }
       ftcompraCarritoTemp=[];
@@ -4340,6 +4575,7 @@ window.addEventListener('DOMContentLoaded',function(){
   cargarDatos();
   celCargarDatos();
   tieCargarDatos();
+  cargarProveedores();
 });
 </script>
 
