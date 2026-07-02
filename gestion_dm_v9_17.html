@@ -426,6 +426,15 @@ tr:hover td{background:var(--bg3);}
           </div>
         </div>
 
+        <!-- PASO 3: Canal de venta - aparece solo si la operacion es una venta -->
+        <div id="f-canal-row" style="display:none;">
+          <div class="fg">
+            <div class="fgroup"><label>Canal de venta *</label>
+              <select id="f-canal-venta"><option value="">Selecciona...</option></select>
+            </div>
+          </div>
+        </div>
+
         <!-- FORMULARIO GENERAL (no celulares) -->
         <div id="f-general" style="display:none;">
           <div class="fg">
@@ -734,7 +743,7 @@ tr:hover td{background:var(--bg3);}
         <select id="fil-m" onchange="renderMovs()"><option value="">Todos los metodos</option></select>
       </div>
       <div class="tw"><table><thead><tr>
-        <th>Fecha</th><th>Unidad</th><th>Operacion</th><th>Categoria</th><th>Descripcion</th><th>Ingreso</th><th>Egreso</th><th>Metodo</th><th></th>
+        <th>Fecha</th><th>Unidad</th><th>Operacion</th><th>Categoria</th><th>Canal</th><th>Descripcion</th><th>Ingreso</th><th>Egreso</th><th>Metodo</th><th></th>
       </tr></thead><tbody id="movs-body"></tbody></table></div>
     </div>
 
@@ -760,7 +769,7 @@ tr:hover td{background:var(--bg3);}
       </div>
       <div style="margin-top:11px" class="tw">
         <div class="tw-head"><div class="tw-title" id="u-title">Movimientos</div></div>
-        <table><thead><tr><th>Fecha</th><th>Operacion</th><th>Categoria</th><th>Descripcion</th><th>Ingreso</th><th>Egreso</th><th>Metodo</th></tr></thead>
+        <table><thead><tr><th>Fecha</th><th>Operacion</th><th>Categoria</th><th>Canal</th><th>Descripcion</th><th>Ingreso</th><th>Egreso</th><th>Metodo</th></tr></thead>
         <tbody id="u-body"></tbody></table>
       </div>
     </div>
@@ -813,7 +822,7 @@ tr:hover td{background:var(--bg3);}
         <table><thead><tr>
           <th>IMEI</th><th>Modelo</th><th>Color</th><th>GB</th>
           <th>Costo total</th><th>Precio venta</th><th>Ganancia</th>
-          <th>Fecha venta</th><th>Cliente</th><th>Metodo</th><th>Gtia venta</th><th></th>
+          <th>Fecha venta</th><th>Cliente</th><th>Canal</th><th>Metodo</th><th>Gtia venta</th><th></th>
         </tr></thead><tbody id="cel-tbody-vendidos"></tbody></table>
       </div>
     </div>
@@ -858,7 +867,7 @@ tr:hover td{background:var(--bg3);}
       </div>
       <div class="tw"><div class="tw-head"><div class="tw-title">Historial de ventas</div></div>
         <table><thead><tr>
-          <th>Fecha</th><th>Producto(s)</th><th>Cantidad</th><th>Precio lista</th><th>Cobrado</th><th>Descuento</th><th>Metodo</th><th>Cliente</th><th></th>
+          <th>Fecha</th><th>Producto(s)</th><th>Cantidad</th><th>Precio lista</th><th>Cobrado</th><th>Descuento</th><th>Metodo</th><th>Cliente</th><th>Canal</th><th></th>
         </tr></thead><tbody id="tie-tbody-ventas"></tbody></table>
       </div>
     </div>
@@ -965,6 +974,10 @@ tr:hover td{background:var(--bg3);}
 
     <!-- OP: VENTA (carrito multi-producto) -->
     <div id="tie-op-venta" style="display:none;">
+      <div class="cel-form-grid" style="margin-bottom:12px;">
+        <div class="cel-fgroup"><label>Canal de venta *</label>
+          <select id="tventa-canal"><option value="">Selecciona...</option></select></div>
+      </div>
       <div class="cel-modal-section" style="margin-top:0;padding-top:0;border-top:none;">Agregar productos a la venta</div>
       <div style="display:flex;gap:8px;margin-bottom:12px;">
         <div class="ac-wrap">
@@ -1236,6 +1249,7 @@ var DEFAULT_CONFIG={
   unidades:['CELULARES','TIENDAS','SERVICIO TECNICO','DM'],
   operaciones:['VENTAS','SERVICIOS','COMPRA','GASTOS','INVERSION','AJUSTE'],
   metodos:['MP','EFECTIVO','USD','NARANJA X','A LIQUIDAR','DEUDA'],
+  canales:['LOCAL','VENTA DIRECTA','INSTAGRAM','MERCADO LIBRE','TIENDA NUBE'],
   categorias:{
     VENTAS:['DIRECTA','TIENDA ONLINE','MERCADO LIBRE','INSTAGRAM','MAYORISTA','LOCAL'],
     SERVICIOS:['REPARACION','REVISION','SOFTWARE','LIMPIEZA','DIAGNOSTICO'],
@@ -1247,6 +1261,7 @@ var DEFAULT_CONFIG={
 };
 var cfg=JSON.parse(localStorage.getItem('dm_cfg')||'null')||DEFAULT_CONFIG;
 if(cfg.metodos.indexOf('DEUDA')===-1)cfg.metodos.push('DEUDA');
+if(!cfg.canales||!cfg.canales.length)cfg.canales=DEFAULT_CONFIG.canales.slice();
 if(cfg.operaciones.indexOf('AJUSTE')===-1)cfg.operaciones.push('AJUSTE');
 
 var BOP={VENTAS:'b-ventas',SERVICIOS:'b-servicios',COMPRA:'b-compra',GASTOS:'b-gastos',INVERSION:'b-inversion',AJUSTE:'b-ajuste'};
@@ -1401,6 +1416,10 @@ function populateSelects(){
   so.innerHTML='<option value="">Selecciona...</option>'+cfg.operaciones.map(function(o){return'<option>'+o+'</option>';}).join('');
   var sm=document.getElementById('f-metodo');
   sm.innerHTML='<option value="">Selecciona...</option>'+cfg.metodos.map(function(m){return'<option>'+m+'</option>';}).join('');
+  var scv=document.getElementById('f-canal-venta');
+  scv.innerHTML='<option value="">Selecciona...</option>'+cfg.canales.map(function(c){return'<option>'+c+'</option>';}).join('');
+  var stv=document.getElementById('tventa-canal');
+  stv.innerHTML='<option value="">Selecciona...</option>'+cfg.canales.map(function(c){return'<option>'+c+'</option>';}).join('');
   var fo=document.getElementById('fil-o');
   fo.innerHTML='<option value="">Todas las operaciones</option>'+cfg.operaciones.map(function(o){return'<option>'+o+'</option>';}).join('');
   var fm=document.getElementById('fil-m');
@@ -1429,6 +1448,8 @@ function onUnidadChange(){
 
 function hideAllFormSections(){
   document.getElementById('f-op-row').style.display='none';
+  document.getElementById('f-canal-row').style.display='none';
+  document.getElementById('f-canal-venta').value='';
   document.getElementById('f-general').style.display='none';
   ['compra','venta','reparacion','gastos'].forEach(function(op){
     var el=document.getElementById('f-cel-'+op);
@@ -1462,6 +1483,7 @@ function onOperacionChange(){
     var el=document.getElementById('f-tie-'+o);
     if(el)el.style.display='none';
   });
+  document.getElementById('f-canal-row').style.display=op==='VENTAS'?'block':'none';
   if(!op)return;
   if(unidad==='CELULARES'){
     var celOp=CEL_OP_MAP[op];
@@ -1562,6 +1584,7 @@ async function cargarDatos(){
         egreso:parseFloat(r.egreso)||0,
         metodo:String(r.metodo||'').trim().toUpperCase(),
         nota:String(r.mensaje||'').trim(),
+        canal:String(r.canal_venta||'').trim(),
         id:String(r.id||'')
       };});
       ss('ok',movs.length+' REG');
@@ -1588,9 +1611,11 @@ async function guardar(){
   var egreso=parseFloat(document.getElementById('f-egreso').value)||0;
   var metodo=document.getElementById('f-metodo').value;
   var mensaje=document.getElementById('f-nota').value;
+  var canalVenta=document.getElementById('f-canal-venta').value;
   var meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   var fdate=new Date(fecha+'T12:00:00');
   if(!fecha||!unidad||!operacion||!metodo){showToast('Completa Fecha, Unidad, Operacion y Metodo',true);return;}
+  if(operacion==='VENTAS'&&!canalVenta){showToast('Selecciona el Canal de venta',true);return;}
   if(ingreso>0&&egreso>0){showToast('No puede tener ingreso Y egreso a la vez',true);return;}
   if(!ingreso&&!egreso){showToast('Ingresa al menos un monto',true);return;}
   var btn=document.getElementById('btn-guardar');
@@ -1599,7 +1624,7 @@ async function guardar(){
     var res=await fetch(SUPA_URL+'/rest/v1/movimientos',{
       method:'POST',
       headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
-      body:JSON.stringify({fecha:fecha,unidad:unidad,operacion:operacion,categoria:categoria,descripcion:desc,ingreso:ingreso,egreso:egreso,metodo:metodo,mensaje:mensaje,mes:meses[fdate.getMonth()],anio:fdate.getFullYear()})
+      body:JSON.stringify({fecha:fecha,unidad:unidad,operacion:operacion,categoria:categoria,descripcion:desc,ingreso:ingreso,egreso:egreso,metodo:metodo,mensaje:mensaje,canal_venta:operacion==='VENTAS'?canalVenta:null,mes:meses[fdate.getMonth()],anio:fdate.getFullYear()})
     });
     if(res.ok){showToast('Movimiento guardado');clearForm();await cargarDatos();}
     else{var e=await res.text();showToast('Error: '+e.slice(0,60),true);ss('err','ERROR');}
@@ -1729,6 +1754,7 @@ function buildMovRow(m,showUnit,showDel){
     unitCell+
     '<td><span class="badge '+(BOP[m.operacion]||'')+'">'+m.operacion+'</span></td>'+
     (showDel?'<td style="font-size:11px;color:var(--text2)">'+m.categoria+'</td>':'')+
+    (showDel?'<td style="font-size:11px;color:var(--text2)">'+(m.canal||'-')+'</td>':'')+
     '<td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)" title="'+m.desc+'">'+m.desc+'</td>'+
     '<td>'+ingHtml+'</td>'+
     '<td>'+egrHtml+'</td>'+
@@ -1933,7 +1959,7 @@ function toggleConcil(fecha,checked){
 
 
 function renderConfig(){
-  var sections=[{key:'unidades',label:'Unidades de negocio'},{key:'operaciones',label:'Operaciones'},{key:'metodos',label:'Metodos de pago'}];
+  var sections=[{key:'unidades',label:'Unidades de negocio'},{key:'operaciones',label:'Operaciones'},{key:'metodos',label:'Metodos de pago'},{key:'canales',label:'Canales de venta'}];
   var catSections=cfg.operaciones.map(function(op){return{key:'cat_'+op,label:'Categorias — '+op,op:op};});
   var all=sections.concat(catSections);
   document.getElementById('cfg-grid').innerHTML=all.map(function(sec){
@@ -1998,12 +2024,13 @@ function renderU(){
         '<td class="mono" style="font-size:11px;">'+fd(m.fecha)+'</td>'+
         '<td><span class="badge '+(BOP[m.operacion]||'')+'">'+m.operacion+'</span></td>'+
         '<td style="font-size:11px;color:var(--text2)">'+m.categoria+'</td>'+
+        '<td style="font-size:11px;color:var(--text2)">'+(m.canal||'-')+'</td>'+
         '<td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)" title="'+m.desc+'">'+m.desc+'</td>'+
         '<td>'+ingHtml+'</td><td>'+egrHtml+'</td>'+
         '<td>'+metodoBadge(m.metodo)+'</td>'+
         '</tr>';
     }).join('')
-    :'<tr><td colspan="7" class="empty-row">Sin movimientos</td></tr>';
+    :'<tr><td colspan="8" class="empty-row">Sin movimientos</td></tr>';
 }
 
 function renderMovs(){
@@ -2013,7 +2040,7 @@ function renderMovs(){
   var f=movs.filter(function(m){return(!fo||m.operacion===fo)&&(!fc||m.categoria===fc)&&(!fm||m.metodo===fm);});
   document.getElementById('movs-body').innerHTML=f.length
     ?f.map(function(m){return buildMovRow(m,true,true);}).join('')
-    :'<tr><td colspan="9" class="empty-row">Sin movimientos</td></tr>';
+    :'<tr><td colspan="10" class="empty-row">Sin movimientos</td></tr>';
 }
 
 
@@ -2142,7 +2169,7 @@ function celRenderTabla(tipo){
   var tbodyId='cel-tbody-'+tipo;
   var tbody=document.getElementById(tbodyId);
   if(!tbody)return;
-  if(!filtrado.length){tbody.innerHTML='<tr><td colspan="12" class="empty-row">No hay equipos</td></tr>';return;}
+  if(!filtrado.length){tbody.innerHTML='<tr><td colspan="13" class="empty-row">No hay equipos</td></tr>';return;}
   tbody.innerHTML=filtrado.map(function(c){
     var ct=celCostoTotal(c);
     var arrCost=(c.celulares_arreglos||[]).reduce(function(s,a){return s+(parseFloat(a.costo)||0);},0);
@@ -2180,6 +2207,7 @@ function celRenderTabla(tipo){
         '<td class="mono" style="color:'+(gan>=0?'var(--green)':'var(--red)')+'"><strong>'+fmtSmart(gan)+'</strong></td>'+
         '<td>'+fd(c.fecha_venta)+'</td>'+
         '<td>'+(c.cliente||'-')+'</td>'+
+        '<td>'+(c.canal_venta||'-')+'</td>'+
         '<td>'+(c.metodo_pago_venta||'-')+'</td>'+
         '<td>'+(c.garantia_venta?c.garantia_venta+'m':'-')+'</td>'+
         '<td><button class="btn btn-sm" data-cid="'+c.id+'" onclick="event.stopPropagation();celAbrirDetalle(this.dataset.cid)">Ver</button></td>'+
@@ -2258,6 +2286,7 @@ function celMostrarDetalle(cel){
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">GANANCIA</div><div style="font-size:16px;font-weight:700;color:'+(gan>=0?'var(--green)':'var(--red)')+';">'+fmtSmart(gan)+'</div></div>'+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">FECHA VENTA</div><div style="font-size:13px;">'+fd(cel.fecha_venta)+'</div></div>'+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">CLIENTE</div><div style="font-size:13px;">'+(cel.cliente||'-')+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">CANAL DE VENTA</div><div style="font-size:13px;">'+(cel.canal_venta||'-')+'</div></div>'+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">METODO PAGO</div><div>'+metodoBadge(cel.metodo_pago_venta)+'</div></div>'+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">GARANTIA</div><div style="font-size:13px;">'+(cel.garantia_venta?cel.garantia_venta+'m':'-')+'</div></div>'+
     '</div>';
@@ -2491,9 +2520,9 @@ async function celGuardarDesdeForm(op){
     var gf=document.getElementById('gasto-fecha');
     if(gf)gf.value=fecha;
   }
-  await celGuardarOp();
+  var ok=await celGuardarOp();
   // After save, clear and go to relevant cel screen
-  clearForm();
+  if(ok)clearForm();
 }
 
 function ventaGetMetodoStr(){
@@ -2511,7 +2540,7 @@ async function celGuardarOp(){
   var op=celCurrentOp;
   try{
     if(op==='compra'){
-      if(!compraListaTemp.length){showToast('Agrega al menos un celular',true);return;}
+      if(!compraListaTemp.length){showToast('Agrega al menos un celular',true);return false;}
       var fecha=document.getElementById('compra-fecha')?document.getElementById('compra-fecha').value:'';
       if(!fecha)fecha=document.getElementById('f-fecha').value||new Date().toISOString().slice(0,10);
       var metodo=document.getElementById('compra-metodo')?document.getElementById('compra-metodo').value:'EFECTIVO';
@@ -2546,7 +2575,7 @@ async function celGuardarOp(){
           var eMsg='';
           try{var eJson=JSON.parse(eBody);eMsg=eJson.message||eBody.slice(0,80);}catch(ex){eMsg=eBody.slice(0,80);}
           showToast('Error en celular '+c.imei+': '+eMsg,true);
-          return;
+          return false;
         }
       }
       // Register movimiento egreso
@@ -2562,9 +2591,11 @@ async function celGuardarOp(){
     }
 
     else if(op==='venta'){
-      if(!ventaImeiActual){showToast('Busca el IMEI primero',true);return;}
+      if(!ventaImeiActual){showToast('Busca el IMEI primero',true);return false;}
       var precio=parseFloat(document.getElementById('venta-precio').value)||0;
-      if(!precio){showToast('Ingresa el precio de venta',true);return;}
+      if(!precio){showToast('Ingresa el precio de venta',true);return false;}
+      var canalVenta=document.getElementById('f-canal-venta').value;
+      if(!canalVenta){showToast('Selecciona el Canal de venta',true);return false;}
       var ventaFecha=document.getElementById('venta-fecha').value||document.getElementById('f-fecha').value||new Date().toISOString().slice(0,10);
       var ventaGtia=document.getElementById('venta-gtia').value;
       var updPayload={
@@ -2573,7 +2604,8 @@ async function celGuardarOp(){
         precio_venta:precio,
         cliente:document.getElementById('venta-cliente').value||null,
         metodo_pago_venta:ventaGetMetodoStr(),
-        garantia_venta:ventaGtia?parseInt(ventaGtia):null
+        garantia_venta:ventaGtia?parseInt(ventaGtia):null,
+        canal_venta:canalVenta
       };
       var res=await fetch(SUPA_URL+'/rest/v1/celulares?id=eq.'+ventaImeiActual.id,{
         method:'PATCH',
@@ -2583,12 +2615,12 @@ async function celGuardarOp(){
       if(!res.ok){
         var eBody=await res.text();
         var eMsg='';try{var eJson=JSON.parse(eBody);eMsg=eJson.message||eBody.slice(0,80);}catch(ex){eMsg=eBody.slice(0,80);}
-        showToast('Error venta: '+eMsg,true);return;
+        showToast('Error venta: '+eMsg,true);return false;
       }
       await guardarMovimientoInterno({
         fecha:ventaFecha,unidad:'CELULARES',operacion:'VENTAS',
         categoria:'DIRECTA',descripcion:ventaImeiActual.marca+' '+ventaImeiActual.modelo+' IMEI:'+ventaImeiActual.imei,
-        ingreso:precio,egreso:0,metodo:updPayload.metodo_pago_venta,mensaje:updPayload.cliente||''
+        ingreso:precio,egreso:0,metodo:updPayload.metodo_pago_venta,mensaje:updPayload.cliente||'',canal_venta:canalVenta
       });
       // Parte de pago - add to stock
       for(var i=0;i<ppListaTemp.length;i++){
@@ -2619,10 +2651,10 @@ async function celGuardarOp(){
     }
 
     else if(op==='reparacion'){
-      if(!repImeiActual){showToast('Buscá el IMEI primero',true);return;}
+      if(!repImeiActual){showToast('Buscá el IMEI primero',true);return false;}
       var desc=document.getElementById('rep-desc').value.trim();
       var costo=parseFloat(document.getElementById('rep-costo').value)||0;
-      if(!desc||!costo){showToast('Completa descripcion y costo',true);return;}
+      if(!desc||!costo){showToast('Completa descripcion y costo',true);return false;}
       var tipo=document.getElementById('rep-tipo').value;
       var nuevoEstado=document.getElementById('rep-nuevo-estado').value;
       // Add arreglo
@@ -2631,7 +2663,7 @@ async function celGuardarOp(){
         headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
         body:JSON.stringify({imei:repImeiActual.imei,descripcion:tipo+': '+desc,costo:costo,fecha:document.getElementById('rep-fecha').value})
       });
-      if(!arrRes.ok){var e=await arrRes.text();showToast('Error: '+e.slice(0,60),true);return;}
+      if(!arrRes.ok){var e=await arrRes.text();showToast('Error: '+e.slice(0,60),true);return false;}
       // Update estado del equipo
       var repEstadoUpdate={estado:nuevoEstado};
       var repEstadoRes=await fetch(SUPA_URL+'/rest/v1/celulares?id=eq.'+repImeiActual.id,{
@@ -2639,7 +2671,7 @@ async function celGuardarOp(){
         headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
         body:JSON.stringify(repEstadoUpdate)
       });
-      if(!repEstadoRes.ok){var re=await repEstadoRes.text();showToast('Error estado: '+re.slice(0,60),true);return;}
+      if(!repEstadoRes.ok){var re=await repEstadoRes.text();showToast('Error estado: '+re.slice(0,60),true);return false;}
       // Movimiento de egreso
       await guardarMovimientoInterno({
         fecha:document.getElementById('rep-fecha').value,unidad:'CELULARES',operacion:'GASTOS',
@@ -2652,7 +2684,7 @@ async function celGuardarOp(){
     else if(op==='gastos'){
       var desc=document.getElementById('gasto-desc').value.trim();
       var monto=parseFloat(document.getElementById('gasto-monto').value)||0;
-      if(!desc||!monto){showToast('Completa descripcion y monto',true);return;}
+      if(!desc||!monto){showToast('Completa descripcion y monto',true);return false;}
       await guardarMovimientoInterno({
         fecha:document.getElementById('gasto-fecha').value,unidad:'CELULARES',operacion:'GASTOS',
         categoria:document.getElementById('gasto-cat').value,descripcion:desc,
@@ -2664,7 +2696,8 @@ async function celGuardarOp(){
     celCerrarModal();
     await celCargarDatos();
     await cargarDatos();
-  }catch(e){showToast('Error de conexion',true);console.log(e);}
+    return true;
+  }catch(e){showToast('Error de conexion',true);console.log(e);return false;}
 }
 
 async function guardarMovimientoInterno(data){
@@ -2878,7 +2911,7 @@ function tieRenderTabla(tipo){
     });
     var tbody=document.getElementById('tie-tbody-ventas');
     if(!tbody)return;
-    if(!filtrado.length){tbody.innerHTML='<tr><td colspan="9" class="empty-row">Sin ventas registradas</td></tr>';return;}
+    if(!filtrado.length){tbody.innerHTML='<tr><td colspan="10" class="empty-row">Sin ventas registradas</td></tr>';return;}
     tbody.innerHTML=filtrado.map(function(v){
       var precioLista=parseFloat(v.precio_lista)||0;
       var precioCobrado=parseFloat(v.precio_unitario)||0;
@@ -2894,6 +2927,7 @@ function tieRenderTabla(tipo){
         '<td class="mono" style="color:'+(descuentoTotal>0?'var(--amber)':'var(--text3)')+';">'+descuentoStr+'</td>'+
         '<td>'+metodoBadge(v.metodo_pago)+'</td>'+
         '<td>'+(v.cliente||'-')+'</td>'+
+        '<td>'+(v.canal_venta||'-')+'</td>'+
         '<td><button class="btn-del" data-id="'+v.id+'" onclick="tieEliminarVenta(this.dataset.id)" title="Eliminar">x</button></td>'+
         '</tr>';
     }).join('');
@@ -2989,6 +3023,7 @@ function tieAbrirOp(op,codigoPre){
   if(op==='venta'){
     document.getElementById('tventa-fecha').value=today;
     document.getElementById('tventa-carrito').innerHTML='';
+    document.getElementById('tventa-canal').value='';
     tventaUpdateTotal();
   }
   if(op==='ajuste'){
@@ -3245,10 +3280,9 @@ function tventaAgregarProducto(){
   var cant=parseInt(document.getElementById('tventa-cantidad-input').value)||1;
   var p=productosTiendas.find(function(x){return x.codigo===cod;});
   if(!p){showToast('Codigo no encontrado',true);return;}
-  if((p.stock||0)<cant){showToast('Stock insuficiente. Disponible: '+(p.stock||0),true);return;}
+  if((p.stock||0)<cant)showToast('Aviso: stock disponible '+(p.stock||0)+', se registra igual',false);
   var existing=tventaCarritoTemp.find(function(c){return c.codigo===cod;});
   if(existing){
-    if((p.stock||0)<existing.cantidad+cant){showToast('Stock insuficiente para esa cantidad total',true);return;}
     existing.cantidad+=cant;
   }else{
     var precioLista=parseFloat(p.precio_venta_ars||0);
@@ -3451,6 +3485,8 @@ async function tieGuardarOp(){
 
     else if(op==='venta'){
       if(!tventaCarritoTemp.length){showToast('Agrega al menos un producto',true);return;}
+      var canalVenta=document.getElementById('tventa-canal').value;
+      if(!canalVenta){showToast('Selecciona el Canal de venta',true);return;}
       var fecha=document.getElementById('tventa-fecha').value||new Date().toISOString().slice(0,10);
       var cliente=document.getElementById('tventa-cliente').value||null;
       var metodoStr=tventaGetMetodoStr();
@@ -3463,7 +3499,6 @@ async function tieGuardarOp(){
         var prod=productosTiendas.find(function(p){return p.codigo===item.codigo;});
         if(!prod)continue;
         var nuevoStock=(parseInt(prod.stock)||0)-item.cantidad;
-        if(nuevoStock<0)nuevoStock=0;
         var resStock=await fetch(SUPA_URL+'/rest/v1/productos_tiendas?id=eq.'+prod.id,{
           method:'PATCH',
           headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
@@ -3478,7 +3513,7 @@ async function tieGuardarOp(){
           body:JSON.stringify({
             fecha:fecha,codigo:item.codigo,descripcion:item.descripcion,cantidad:item.cantidad,
             precio_unitario:item.precio_cobrado,precio_lista:item.precio_lista,total:item.precio_cobrado*item.cantidad,
-            metodo_pago:metodoStr,cliente:cliente
+            metodo_pago:metodoStr,cliente:cliente,canal_venta:canalVenta
           })
         });
       }
@@ -3487,7 +3522,7 @@ async function tieGuardarOp(){
       await guardarMovimientoInterno({
         fecha:fecha,unidad:'TIENDAS',operacion:'VENTAS',
         categoria:'DIRECTA',descripcion:descGeneral,
-        ingreso:total,egreso:0,metodo:metodoStr,mensaje:cliente||''
+        ingreso:total,egreso:0,metodo:metodoStr,mensaje:cliente||'',canal_venta:canalVenta
       });
       showToast('Venta registrada: '+fmtARS(total));
     }
@@ -3684,10 +3719,9 @@ function ftventaAgregarProducto(){
   var cant=parseInt(document.getElementById('ftventa-cantidad-input').value)||1;
   var p=productosTiendas.find(function(x){return x.codigo===cod;});
   if(!p){showToast('Codigo no encontrado',true);return;}
-  if((p.stock||0)<cant){showToast('Stock insuficiente. Disponible: '+(p.stock||0),true);return;}
+  if((p.stock||0)<cant)showToast('Aviso: stock disponible '+(p.stock||0)+', se registra igual',false);
   var existing=ftventaCarritoTemp.find(function(c){return c.codigo===cod;});
   if(existing){
-    if((p.stock||0)<existing.cantidad+cant){showToast('Stock insuficiente para esa cantidad total',true);return;}
     existing.cantidad+=cant;
   }else{
     var precioLista=parseFloat(p.precio_venta_ars||0);
@@ -4014,6 +4048,8 @@ async function tieGuardarDesdeForm(op){
   try{
     if(op==='venta'){
       if(!ftventaCarritoTemp.length){showToast('Agrega al menos un producto',true);return;}
+      var canalVenta=document.getElementById('f-canal-venta').value;
+      if(!canalVenta){showToast('Selecciona el Canal de venta',true);return;}
       var cliente=document.getElementById('ftventa-cliente').value||null;
       var metodoStr=ftventaGetMetodoStr();
       var total=ftventaUpdateTotal();
@@ -4024,7 +4060,6 @@ async function tieGuardarDesdeForm(op){
         var prod=productosTiendas.find(function(p){return p.codigo===item.codigo;});
         if(!prod)continue;
         var nuevoStock=(parseInt(prod.stock)||0)-item.cantidad;
-        if(nuevoStock<0)nuevoStock=0;
         var resStock=await fetch(SUPA_URL+'/rest/v1/productos_tiendas?id=eq.'+prod.id,{
           method:'PATCH',
           headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
@@ -4038,7 +4073,7 @@ async function tieGuardarDesdeForm(op){
           body:JSON.stringify({
             fecha:fecha,codigo:item.codigo,descripcion:item.descripcion,cantidad:item.cantidad,
             precio_unitario:item.precio_cobrado,precio_lista:item.precio_lista,total:item.precio_cobrado*item.cantidad,
-            metodo_pago:metodoStr,cliente:cliente
+            metodo_pago:metodoStr,cliente:cliente,canal_venta:canalVenta
           })
         });
       }
@@ -4046,7 +4081,7 @@ async function tieGuardarDesdeForm(op){
       await guardarMovimientoInterno({
         fecha:fecha,unidad:'TIENDAS',operacion:'VENTAS',
         categoria:'DIRECTA',descripcion:descGeneral,
-        ingreso:total,egreso:0,metodo:metodoStr,mensaje:cliente||''
+        ingreso:total,egreso:0,metodo:metodoStr,mensaje:cliente||'',canal_venta:canalVenta
       });
       showToast('Venta registrada: '+fmtARS(total));
     }
