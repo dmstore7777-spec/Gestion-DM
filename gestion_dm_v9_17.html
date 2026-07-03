@@ -107,6 +107,7 @@ tr:hover td{background:var(--bg3);}
 .b-gastos{background:var(--red-lt);color:var(--red);}
 .b-inversion{background:var(--purple-lt);color:var(--purple);}
 .b-ajuste{background:var(--accent-dim);color:var(--text2);}
+.b-financiero{background:var(--blue-lt);color:var(--blue);}
 .b-mp{background:var(--green-lt);color:var(--green);}
 .b-efectivo{background:var(--amber-lt);color:var(--amber);}
 .b-usd{background:var(--blue-lt);color:var(--blue);}
@@ -481,6 +482,53 @@ tr:hover td{background:var(--bg3);}
           </div>
         </div>
 
+        <!-- FINANCIERO: movimientos internos (no afectan facturacion/ganancias/gastos, solo saldos de cuentas) -->
+        <div id="f-financiero" style="display:none;">
+          <div class="fg">
+            <div class="fgroup"><label>Tipo de movimiento *</label>
+              <select id="fin-tipo" onchange="finToggleTipo()"><option value="">Selecciona operacion primero</option></select></div>
+            <div class="fgroup"><label>Responsable *</label>
+              <input type="text" id="fin-responsable" placeholder="Quien realiza el movimiento..."></div>
+            <div class="fgroup"><label>Hora</label>
+              <input type="time" id="fin-hora"></div>
+          </div>
+
+          <div id="fin-dos-cuentas" style="display:none;">
+            <div class="fg">
+              <div class="fgroup"><label>Cuenta origen *</label><select id="fin-cuenta-origen"></select></div>
+              <div class="fgroup"><label>Monto cuenta origen *</label><input type="number" id="fin-monto-origen" placeholder="0.00" min="0" step="0.01"></div>
+              <div class="fgroup"><label>Cuenta destino *</label><select id="fin-cuenta-destino"></select></div>
+              <div class="fgroup"><label>Monto cuenta destino *</label><input type="number" id="fin-monto-destino" placeholder="0.00" min="0" step="0.01"></div>
+            </div>
+          </div>
+
+          <div id="fin-una-cuenta" style="display:none;">
+            <div class="fg">
+              <div class="fgroup"><label>Cuenta *</label><select id="fin-cuenta-simple"></select></div>
+              <div class="fgroup"><label>Monto *</label><input type="number" id="fin-monto-simple" placeholder="0.00" min="0" step="0.01"></div>
+            </div>
+          </div>
+
+          <div id="fin-ajuste" style="display:none;">
+            <div class="fg">
+              <div class="fgroup"><label>Cuenta *</label><select id="fin-ajuste-cuenta"></select></div>
+              <div class="fgroup"><label>Saldo esperado *</label><input type="number" id="fin-saldo-esperado" placeholder="0.00" step="0.01" oninput="finCalcDiferencia()"></div>
+              <div class="fgroup"><label>Saldo real *</label><input type="number" id="fin-saldo-real" placeholder="0.00" step="0.01" oninput="finCalcDiferencia()"></div>
+              <div class="fgroup"><label>Diferencia</label><input type="text" id="fin-diferencia" disabled placeholder="-"></div>
+              <div class="fgroup cel-form-full"><label>Motivo *</label><input type="text" id="fin-motivo" placeholder="Motivo del ajuste..."></div>
+            </div>
+          </div>
+
+          <div class="fg">
+            <div class="fgroup cel-form-full"><label>Nota</label><input type="text" id="fin-nota" placeholder="Opcional"></div>
+          </div>
+
+          <div class="fa">
+            <button class="btn" onclick="clearForm()">Limpiar</button>
+            <button class="btn btn-p" onclick="guardarFinanciero()">Guardar movimiento financiero</button>
+          </div>
+        </div>
+
         <!-- CELULARES: COMPRA -->
         <div id="f-cel-compra" style="display:none;">
           <div style="background:var(--bg3);border-radius:var(--r);padding:16px;margin-bottom:12px;">
@@ -775,12 +823,19 @@ tr:hover td{background:var(--bg3);}
 
     <!-- MOVIMIENTOS -->
     <div class="screen" id="screen-movimientos">
+      <div class="cel-filters" style="margin-bottom:10px;">
+        <button class="btn btn-sm btn-p" id="mov-tab-todos" onclick="movSetVista('todos')">Todos los movimientos</button>
+        <button class="btn btn-sm" id="mov-tab-financiero" onclick="movSetVista('financiero')">Movimientos financieros</button>
+      </div>
       <div class="filters">
         <select id="fil-o" onchange="onFilOp()"><option value="">Todas las operaciones</option></select>
         <select id="fil-c" onchange="renderMovs()"><option value="">Todas las categorias</option></select>
         <select id="fil-m" onchange="renderMovs()"><option value="">Todos los metodos</option></select>
         <select id="fil-marca" onchange="renderMovs()"><option value="">Todas las marcas</option></select>
         <select id="fil-modelo" onchange="renderMovs()"><option value="">Todos los modelos</option></select>
+        <select id="fil-responsable" onchange="renderMovs()"><option value="">Todos los responsables</option></select>
+        <input type="date" id="fil-fecha-desde" onchange="renderMovs()" title="Desde">
+        <input type="date" id="fil-fecha-hasta" onchange="renderMovs()" title="Hasta">
       </div>
       <div class="tw"><table><thead><tr>
         <th>Fecha</th><th>Unidad</th><th>Operacion</th><th>Categoria</th><th>Canal</th><th>Descripcion</th><th>Ingreso</th><th>Egreso</th><th>Metodo</th><th>Estado de garantia</th><th></th>
@@ -1399,7 +1454,7 @@ document.getElementById('sb-logo').src='data:image/png;base64,'+LOGO_B64;
 
 var DEFAULT_CONFIG={
   unidades:['CELULARES','TIENDAS','SERVICIO TECNICO','DM'],
-  operaciones:['VENTAS','SERVICIOS','COMPRA','GASTOS','INVERSION','AJUSTE'],
+  operaciones:['VENTAS','SERVICIOS','COMPRA','GASTOS','INVERSION','AJUSTE','FINANCIERO'],
   metodos:['MP','EFECTIVO','USD','NARANJA X','A LIQUIDAR','DEUDA'],
   canales:['LOCAL','VENTA DIRECTA','INSTAGRAM','MERCADO LIBRE','TIENDA NUBE'],
   categorias:{
@@ -1408,15 +1463,18 @@ var DEFAULT_CONFIG={
     COMPRA:['MERCADERIA','REPUESTOS','HERRAMIENTAS','INSUMOS'],
     GASTOS:['RECURSOS HUMANOS','MARKETING','LOCAL','OPERATIVO','FINANCIERO','ENVIOS','SOCIOS'],
     INVERSION:['SOCIOS','INVERSORES','EQUIPAMIENTO'],
-    AJUSTE:['COMPENSACION','DEVOLUCION','FINANCIERO']
+    AJUSTE:['COMPENSACION','DEVOLUCION','FINANCIERO'],
+    FINANCIERO:['TRANSFERENCIA ENTRE CUENTAS','COMPRA DE DOLARES','VENTA DE DOLARES','DEPOSITO DE EFECTIVO','EXTRACCION DE EFECTIVO','AJUSTE DE CAJA']
   }
 };
 var cfg=JSON.parse(localStorage.getItem('dm_cfg')||'null')||DEFAULT_CONFIG;
 if(cfg.metodos.indexOf('DEUDA')===-1)cfg.metodos.push('DEUDA');
 if(!cfg.canales||!cfg.canales.length)cfg.canales=DEFAULT_CONFIG.canales.slice();
 if(cfg.operaciones.indexOf('AJUSTE')===-1)cfg.operaciones.push('AJUSTE');
+if(cfg.operaciones.indexOf('FINANCIERO')===-1)cfg.operaciones.push('FINANCIERO');
+if(!cfg.categorias.FINANCIERO)cfg.categorias.FINANCIERO=DEFAULT_CONFIG.categorias.FINANCIERO.slice();
 
-var BOP={VENTAS:'b-ventas',SERVICIOS:'b-servicios',COMPRA:'b-compra',GASTOS:'b-gastos',INVERSION:'b-inversion',AJUSTE:'b-ajuste'};
+var BOP={VENTAS:'b-ventas',SERVICIOS:'b-servicios',COMPRA:'b-compra',GASTOS:'b-gastos',INVERSION:'b-inversion',AJUSTE:'b-ajuste',FINANCIERO:'b-financiero'};
 var BMET={MP:'b-mp',EFECTIVO:'b-efectivo',USD:'b-usd','NARANJA X':'b-naranja','A LIQUIDAR':'b-liquidar',DEUDA:'b-deuda'};
 
 function metodoBadge(metodo){
@@ -1525,6 +1583,117 @@ function garantiaEstadoTexto(m){
   var hoy=new Date().toISOString().slice(0,10);
   return m.fechaVencimientoGarantia&&m.fechaVencimientoGarantia>=hoy?'🟢 Vigente':'🔴 Caducada';
 }
+
+// ============ MOVIMIENTOS FINANCIEROS (transferencias, USD, ajuste de caja) ============
+// Nunca afectan facturacion/ganancias/gastos: solo mueven saldos entre cuentas (metodos de pago).
+var FIN_DOS_CUENTAS=['TRANSFERENCIA ENTRE CUENTAS','COMPRA DE DOLARES','VENTA DE DOLARES'];
+var FIN_UNA_CUENTA=['DEPOSITO DE EFECTIVO','EXTRACCION DE EFECTIVO'];
+
+function finToggleTipo(){
+  var tipo=document.getElementById('fin-tipo').value;
+  document.getElementById('fin-dos-cuentas').style.display=FIN_DOS_CUENTAS.indexOf(tipo)>-1?'block':'none';
+  document.getElementById('fin-una-cuenta').style.display=FIN_UNA_CUENTA.indexOf(tipo)>-1?'block':'none';
+  document.getElementById('fin-ajuste').style.display=tipo==='AJUSTE DE CAJA'?'block':'none';
+}
+
+function finCalcDiferencia(){
+  var esperado=parseFloat(document.getElementById('fin-saldo-esperado').value);
+  var real=parseFloat(document.getElementById('fin-saldo-real').value);
+  var el=document.getElementById('fin-diferencia');
+  if(isNaN(esperado)||isNaN(real)){el.value='';return;}
+  var dif=Math.round((real-esperado)*100)/100;
+  el.value=(dif>0?'+':'')+fmtARS(dif);
+}
+
+function finResetForm(){
+  ['fin-tipo','fin-responsable','fin-hora','fin-cuenta-origen','fin-monto-origen','fin-cuenta-destino','fin-monto-destino',
+    'fin-cuenta-simple','fin-monto-simple','fin-ajuste-cuenta','fin-saldo-esperado','fin-saldo-real','fin-diferencia','fin-motivo','fin-nota'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
+  document.getElementById('fin-dos-cuentas').style.display='none';
+  document.getElementById('fin-una-cuenta').style.display='none';
+  document.getElementById('fin-ajuste').style.display='none';
+}
+
+async function guardarFinanciero(){
+  var fecha=document.getElementById('f-fecha').value||new Date().toISOString().slice(0,10);
+  var unidad=document.getElementById('f-unidad').value;
+  var tipo=document.getElementById('fin-tipo').value;
+  var responsable=document.getElementById('fin-responsable').value.trim();
+  var hora=document.getElementById('fin-hora').value||null;
+  var nota=document.getElementById('fin-nota').value||'';
+  if(!fecha||!unidad||!tipo){showToast('Completa Fecha, Unidad y Tipo de movimiento',true);return;}
+  if(!responsable){showToast('Ingresa el Responsable',true);return;}
+  try{
+    if(tipo==='AJUSTE DE CAJA'){
+      var cuenta=document.getElementById('fin-ajuste-cuenta').value;
+      var esperado=parseFloat(document.getElementById('fin-saldo-esperado').value);
+      var real=parseFloat(document.getElementById('fin-saldo-real').value);
+      var motivo=document.getElementById('fin-motivo').value.trim();
+      if(!cuenta||isNaN(esperado)||isNaN(real)||!motivo){showToast('Completa Cuenta, Saldo esperado, Saldo real y Motivo',true);return;}
+      var diferencia=Math.round((real-esperado)*100)/100;
+      if(diferencia===0){showToast('El saldo real coincide con el esperado, no hay diferencia que ajustar',true);return;}
+      await guardarMovimientoInterno({
+        fecha:fecha,unidad:unidad,operacion:'FINANCIERO',categoria:tipo,
+        descripcion:'Ajuste de caja — '+cuenta+': '+motivo,
+        ingreso:diferencia>0?diferencia:0,egreso:diferencia<0?-diferencia:0,
+        metodo:cuenta,mensaje:nota,responsable:responsable,hora:hora,
+        saldo_esperado:esperado,saldo_real:real,diferencia_caja:diferencia
+      });
+    }else if(FIN_UNA_CUENTA.indexOf(tipo)>-1){
+      var cuentaS=document.getElementById('fin-cuenta-simple').value;
+      var montoS=parseFloat(document.getElementById('fin-monto-simple').value)||0;
+      if(!cuentaS||!montoS||montoS<=0){showToast('Completa Cuenta y Monto',true);return;}
+      var esDeposito=tipo==='DEPOSITO DE EFECTIVO';
+      await guardarMovimientoInterno({
+        fecha:fecha,unidad:unidad,operacion:'FINANCIERO',categoria:tipo,
+        descripcion:tipo+' — '+cuentaS,
+        ingreso:esDeposito?montoS:0,egreso:esDeposito?0:montoS,
+        metodo:cuentaS,mensaje:nota,responsable:responsable,hora:hora
+      });
+    }else if(FIN_DOS_CUENTAS.indexOf(tipo)>-1){
+      var cOrigen=document.getElementById('fin-cuenta-origen').value;
+      var mOrigen=parseFloat(document.getElementById('fin-monto-origen').value)||0;
+      var cDestino=document.getElementById('fin-cuenta-destino').value;
+      var mDestino=parseFloat(document.getElementById('fin-monto-destino').value)||0;
+      if(!cOrigen||!cDestino||!mOrigen||!mDestino||mOrigen<=0||mDestino<=0){showToast('Completa las cuentas y montos de origen y destino',true);return;}
+      if(cOrigen===cDestino){showToast('La cuenta origen y destino no pueden ser la misma',true);return;}
+      var desc=tipo+': '+cOrigen+' → '+cDestino;
+      var idOrigen=await guardarMovimientoInternoConId({
+        fecha:fecha,unidad:unidad,operacion:'FINANCIERO',categoria:tipo,descripcion:desc,
+        ingreso:0,egreso:mOrigen,metodo:cOrigen,mensaje:nota,responsable:responsable,hora:hora
+      });
+      await guardarMovimientoInterno({
+        fecha:fecha,unidad:unidad,operacion:'FINANCIERO',categoria:tipo,descripcion:desc,
+        ingreso:mDestino,egreso:0,metodo:cDestino,mensaje:nota,responsable:responsable,hora:hora,
+        referencia_financiera:idOrigen
+      });
+    }else{
+      showToast('Selecciona el Tipo de movimiento',true);return;
+    }
+    showToast('Movimiento financiero registrado');
+    clearForm();
+    await cargarDatos();
+  }catch(e){showToast('Error de conexion',true);console.log(e);}
+}
+
+// Genera el asiento inverso de un movimiento financiero (nunca se elimina fisicamente, se revierte).
+async function revertirMovimientoFinanciero(id){
+  var m=movs.find(function(x){return String(x.id)===String(id);});
+  if(!m){showToast('No se encontro el movimiento',true);return;}
+  if(movs.some(function(x){return String(x.esReversoDe)===String(id);})){showToast('Este movimiento ya fue revertido',true);return;}
+  if(!confirm('Se va a generar un movimiento inverso para anular: "'+m.desc+'". El original queda en el historial. ¿Continuar?'))return;
+  await guardarMovimientoInterno({
+    fecha:new Date().toISOString().slice(0,10),unidad:m.unidad,operacion:'FINANCIERO',categoria:m.categoria,
+    descripcion:'Reverso de #'+m.id+' — '+m.desc,
+    ingreso:m.egreso,egreso:m.ingreso,metodo:m.metodo,mensaje:'Reverso',responsable:m.responsable||'',
+    es_reverso_de:parseInt(m.id)
+  });
+  showToast('Movimiento inverso generado');
+  document.getElementById('mov-det-modal').classList.remove('show');
+  await cargarDatos();
+}
+
 function ss(st,txt){document.getElementById('s-dot').className='dot '+st;document.getElementById('s-txt').textContent=txt;}
 function showToast(msg,err){var t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(err?' err':'')+' show';setTimeout(function(){t.className='toast';},3500);}
 
@@ -1611,6 +1780,11 @@ function populateSelects(){
   var fm=document.getElementById('fil-m');
   fm.innerHTML='<option value="">Todos los metodos</option>'+cfg.metodos.map(function(m){return'<option>'+m+'</option>';}).join('');
   document.getElementById('fil-c').innerHTML='<option value="">Todas las categorias</option>';
+  var cuentas=cfg.metodos.filter(function(m){return m!=='DEUDA';});
+  var cuentasOpts='<option value="">Selecciona...</option>'+cuentas.map(function(m){return'<option>'+m+'</option>';}).join('');
+  ['fin-cuenta-origen','fin-cuenta-destino','fin-cuenta-simple','fin-ajuste-cuenta'].forEach(function(id){
+    document.getElementById(id).innerHTML=cuentasOpts;
+  });
 }
 
 var CEL_OPS=['VENTAS','COMPRA','REPARACION','REPUESTO','GASTOS'];
@@ -1643,6 +1817,8 @@ function hideAllFormSections(){
   garantiaResetForm('f');
   document.getElementById('f-desc-label').textContent='Cliente';
   document.getElementById('f-general').style.display='none';
+  document.getElementById('f-financiero').style.display='none';
+  finResetForm();
   ['compra','venta','reparacion','gastos'].forEach(function(op){
     var el=document.getElementById('f-cel-'+op);
     if(el)el.style.display='none';
@@ -1699,6 +1875,7 @@ function onOperacionChange(){
   var op=document.getElementById('f-operacion').value;
   // Hide all form sections
   document.getElementById('f-general').style.display='none';
+  document.getElementById('f-financiero').style.display='none';
   ['compra','venta','reparacion','gastos'].forEach(function(o){
     var el=document.getElementById('f-cel-'+o);
     if(el)el.style.display='none';
@@ -1736,6 +1913,10 @@ function onOperacionChange(){
         if(tieOp==='compra'){ftcompraCarritoTemp=[];renderFtcompraCarrito();}
       }
     }
+  }else if(op==='FINANCIERO'){
+    document.getElementById('f-financiero').style.display='block';
+    finResetForm();
+    document.getElementById('fin-tipo').innerHTML='<option value="">Selecciona...</option>'+(cfg.categorias.FINANCIERO||[]).map(function(c){return'<option>'+c+'</option>';}).join('');
   }else{
     // General form
     document.getElementById('f-general').style.display='block';
@@ -1759,6 +1940,20 @@ function updateCats(){
   var cats=cfg.categorias[op];
   if(op&&cats&&cats.length){sel.innerHTML=cats.map(function(c){return'<option>'+c+'</option>';}).join('');}
   else{sel.innerHTML='<option value="">Selecciona operacion primero</option>';}
+}
+
+var movVista='todos';
+function movSetVista(v){
+  movVista=v;
+  document.getElementById('mov-tab-todos').className='btn btn-sm'+(v==='todos'?' btn-p':'');
+  document.getElementById('mov-tab-financiero').className='btn btn-sm'+(v==='financiero'?' btn-p':'');
+  var filO=document.getElementById('fil-o');
+  var mostrarSoloFinanciero=v==='financiero';
+  filO.disabled=mostrarSoloFinanciero;
+  filO.value=mostrarSoloFinanciero?'FINANCIERO':'';
+  document.getElementById('fil-marca').style.display=mostrarSoloFinanciero?'none':'';
+  document.getElementById('fil-modelo').style.display=mostrarSoloFinanciero?'none':'';
+  onFilOp();
 }
 
 function onFilOp(){
@@ -1816,6 +2011,11 @@ function populateEquipoFiltros(){
   if(selM){var curM=selM.value;selM.innerHTML='<option value="">Todas las marcas</option>'+marcas.map(function(m){return'<option>'+m+'</option>';}).join('');if(curM)selM.value=curM;}
   var selMo=document.getElementById('fil-modelo');
   if(selMo){var curMo=selMo.value;selMo.innerHTML='<option value="">Todos los modelos</option>'+modelos.map(function(m){return'<option>'+m+'</option>';}).join('');if(curMo)selMo.value=curMo;}
+  var responsables=[];
+  movs.forEach(function(m){if(m.responsable&&responsables.indexOf(m.responsable)===-1)responsables.push(m.responsable);});
+  responsables.sort();
+  var selR=document.getElementById('fil-responsable');
+  if(selR){var curR=selR.value;selR.innerHTML='<option value="">Todos los responsables</option>'+responsables.map(function(r){return'<option>'+r+'</option>';}).join('');if(curR)selR.value=curR;}
 }
 
 async function cargarDatos(){
@@ -1846,6 +2046,13 @@ async function cargarDatos(){
         tieneGarantia:!!r.tiene_garantia,
         diasGarantia:r.dias_garantia||null,
         fechaVencimientoGarantia:r.fecha_vencimiento_garantia||null,
+        responsable:String(r.responsable||'').trim(),
+        hora:r.hora||null,
+        saldoEsperado:r.saldo_esperado,
+        saldoReal:r.saldo_real,
+        diferenciaCaja:r.diferencia_caja,
+        referenciaFinanciera:r.referencia_financiera||null,
+        esReversoDe:r.es_reverso_de||null,
         createdAt:r.created_at||'',
         id:String(r.id||'')
       };});
@@ -1929,6 +2136,8 @@ function closeModal(){document.getElementById('modal-del').classList.remove('sho
 async function confirmDelete(){
   if(!pendingDelId){closeModal();return;}
   var delId=String(pendingDelId);
+  var delMov=movs.find(function(x){return x.id===delId;});
+  if(delMov&&delMov.operacion==='FINANCIERO'){closeModal();showToast('Los movimientos financieros no se eliminan: usa "Revertir"',true);return;}
   closeModal();
   ss('loading','ELIMINANDO...');
   try{
@@ -1955,7 +2164,7 @@ function trend(data){
 function renderChart(){
   var anio=document.getElementById('chart-anio').value;
   var mes=document.getElementById('chart-mes').value;
-  var filtered=movs.filter(function(m){return m.metodo!=='DEUDA';});
+  var filtered=movs.filter(function(m){return m.metodo!=='DEUDA'&&m.operacion!=='FINANCIERO';});
   if(anio)filtered=filtered.filter(function(m){return String(m.fecha).slice(0,4)===anio;});
 
   var labels,ingData,egrData;
@@ -2025,7 +2234,14 @@ function buildMovRow(m,showUnit,showDel){
     egrHtml='<span class="egr">'+fmtMov(m.egreso,m.metodo)+'</span>';
     if(isPureUSD&&dolarBlue)egrHtml+='<span class="usd-cell">'+fmtARS(m.egreso*dolarBlue)+'</span>';
   }
-  var delBtn=showDel?'<button class="btn-del" onclick="event.stopPropagation();askDelete(\''+m.id+'\',\''+m.desc.replace(/'/g,'')+'\')" title="Eliminar">x</button>':'';
+  // Los movimientos financieros nunca se eliminan: se revierten (o ya son un reverso / ya fueron revertidos).
+  var delBtn;
+  if(m.operacion==='FINANCIERO'){
+    var yaRevertido=movs.some(function(x){return String(x.esReversoDe)===String(m.id);});
+    delBtn=showDel?((yaRevertido||m.esReversoDe)?'<span style="font-size:10px;color:var(--text3);">'+(m.esReversoDe?'reverso':'revertido')+'</span>':'<button class="btn-del" style="border-color:var(--blue);color:var(--blue);" onclick="event.stopPropagation();revertirMovimientoFinanciero(\''+m.id+'\')" title="Revertir">↺</button>'):'';
+  }else{
+    delBtn=showDel?'<button class="btn-del" onclick="event.stopPropagation();askDelete(\''+m.id+'\',\''+m.desc.replace(/'/g,'')+'\')" title="Eliminar">x</button>':'';
+  }
   var unitCell=showUnit?'<td style="font-size:11px;color:var(--text2)">'+m.unidad+'</td>':'';
   return'<tr style="cursor:pointer" data-mid="'+m.id+'" onclick="abrirDetalleMov(this.dataset.mid)">'+
     '<td class="mono" style="font-size:11px;">'+fd(m.fecha)+'</td>'+
@@ -2043,7 +2259,7 @@ function buildMovRow(m,showUnit,showDel){
 }
 
 function renderDash(){
-  var nonDeuda=movs.filter(function(m){return m.metodo!=='DEUDA';});
+  var nonDeuda=movs.filter(function(m){return m.metodo!=='DEUDA'&&m.operacion!=='FINANCIERO';});
   var tIng=nonDeuda.reduce(function(s,m){return s+m.ingresoCaja;},0);
   var tEgr=nonDeuda.reduce(function(s,m){return s+m.egreso;},0);
   var cajaTot=movs.filter(function(m){return m.metodo!=='DEUDA'&&m.metodo!=='USD';}).reduce(function(s,m){return s+m.ingresoCaja-m.egreso;},0);
@@ -2065,7 +2281,7 @@ function renderDash(){
   renderChart();
   var unidades=['CELULARES','TIENDAS','SERVICIO TECNICO'];
   document.getElementById('dash-units').innerHTML=unidades.map(function(u){
-    var um=movs.filter(function(m){return m.unidad===u&&m.metodo!=='DEUDA';});
+    var um=movs.filter(function(m){return m.unidad===u&&m.metodo!=='DEUDA'&&m.operacion!=='FINANCIERO';});
     var ing=um.reduce(function(s,m){return s+m.ingresoCaja;},0);
     var egr=um.reduce(function(s,m){return s+m.egreso;},0);
     var sal=ing-egr;
@@ -2131,7 +2347,7 @@ function renderCaja(){
   var diaActual=hoy.getDate();
   var diasRestantes=diasMes-diaActual;
   var inicioMes=new Date(hoy.getFullYear(),hoy.getMonth(),1).toISOString().slice(0,10);
-  var movsMes=movs.filter(function(m){return m.fecha>=inicioMes&&m.metodo!=='DEUDA';});
+  var movsMes=movs.filter(function(m){return m.fecha>=inicioMes&&m.metodo!=='DEUDA'&&m.operacion!=='FINANCIERO';});
   var ingMes=movsMes.reduce(function(s,m){return s+m.ingresoCaja;},0);
   var egrMes=movsMes.reduce(function(s,m){return s+m.egreso;},0);
   var netoMes=ingMes-egrMes;
@@ -2262,15 +2478,17 @@ function setU(u){curU=u;document.getElementById('page-title').textContent=u;rend
 function renderU(){
   var u=curU;
   var um=movs.filter(function(m){return m.unidad===u;});
-  var ing=um.reduce(function(s,m){return s+m.ingreso;},0);
-  var egr=um.reduce(function(s,m){return s+m.egreso;},0);
+  // Facturacion/ganancias del rubro: sin deuda pendiente de cobro y sin movimientos financieros internos.
+  var umRev=um.filter(function(m){return m.metodo!=='DEUDA'&&m.operacion!=='FINANCIERO';});
+  var ing=umRev.reduce(function(s,m){return s+m.ingresoCaja;},0);
+  var egr=umRev.reduce(function(s,m){return s+m.egreso;},0);
   var sal=ing-egr;
   document.getElementById('u-ing').textContent=fmtSmart(ing);
   document.getElementById('u-egr').textContent=fmtSmart(egr);
   var sEl=document.getElementById('u-sal');sEl.textContent=fmtSmart(sal);sEl.className='mc-val '+(sal>=0?'pos':'neg');
   document.getElementById('u-title').textContent=u;
   var meses={};
-  um.forEach(function(m){var k=String(m.fecha).slice(0,7);if(!k||k.length<7)return;if(!meses[k])meses[k]={ing:0,egr:0};meses[k].ing+=m.ingreso;meses[k].egr+=m.egreso;});
+  umRev.forEach(function(m){var k=String(m.fecha).slice(0,7);if(!k||k.length<7)return;if(!meses[k])meses[k]={ing:0,egr:0};meses[k].ing+=m.ingresoCaja;meses[k].egr+=m.egreso;});
   var labs=Object.keys(meses).sort();
   if(cU)cU.destroy();
   if(labs.length){
@@ -2284,7 +2502,7 @@ function renderU(){
     });
   }
   var cats={};
-  um.forEach(function(m){if(m.categoria){if(!cats[m.categoria])cats[m.categoria]=0;cats[m.categoria]+=m.ingreso+m.egreso;}});
+  umRev.forEach(function(m){if(m.categoria){if(!cats[m.categoria])cats[m.categoria]=0;cats[m.categoria]+=m.ingreso+m.egreso;}});
   var catKeys=Object.keys(cats).filter(function(k){return k;});
   if(cUCat)cUCat.destroy();
   if(catKeys.length){
@@ -2318,7 +2536,10 @@ function renderMovs(){
   var fm=document.getElementById('fil-m').value;
   var fMarca=document.getElementById('fil-marca').value;
   var fModelo=document.getElementById('fil-modelo').value;
-  var f=movs.filter(function(m){return(!fo||m.operacion===fo)&&(!fc||m.categoria===fc)&&(!fm||m.metodo===fm)&&(!fMarca||m.marcaEquipo===fMarca)&&(!fModelo||m.modeloEquipo===fModelo);});
+  var fResponsable=document.getElementById('fil-responsable').value;
+  var fDesde=document.getElementById('fil-fecha-desde').value;
+  var fHasta=document.getElementById('fil-fecha-hasta').value;
+  var f=movs.filter(function(m){return(!fo||m.operacion===fo)&&(!fc||m.categoria===fc)&&(!fm||m.metodo===fm)&&(!fMarca||m.marcaEquipo===fMarca)&&(!fModelo||m.modeloEquipo===fModelo)&&(!fResponsable||m.responsable===fResponsable)&&(!fDesde||m.fecha>=fDesde)&&(!fHasta||m.fecha<=fHasta);});
   document.getElementById('movs-body').innerHTML=f.length
     ?f.map(function(m){return buildMovRow(m,true,true);}).join('')
     :'<tr><td colspan="11" class="empty-row">Sin movimientos</td></tr>';
@@ -2385,6 +2606,19 @@ function movDetCorrelacionar(m){
     res.clienteLabel='Proveedor';
     res.cliente=m.nota||'-';
     res.items=matchedC.map(function(c){return{producto:c.codigo+(c.descripcion?' - '+c.descripcion:'')+(c.modelo_celular?' ('+c.modelo_celular+')':''),cantidad:c.cantidad||1,precioUnit:parseFloat(c.precio_unitario_ars)||0,subtotal:parseFloat(c.total_ars)||0};});
+  }else if(m.operacion==='FINANCIERO'){
+    res.clienteLabel='Responsable';
+    res.cliente=m.responsable||'-';
+    res.observaciones=m.nota||'-';
+    res.financiero={
+      cuenta:m.metodo,
+      esAjuste:m.categoria==='AJUSTE DE CAJA',
+      saldoEsperado:m.saldoEsperado,
+      saldoReal:m.saldoReal,
+      diferenciaCaja:m.diferenciaCaja,
+      esReversoDe:m.esReversoDe,
+      referenciaFinanciera:m.referenciaFinanciera
+    };
   }else{
     // Formulario general (Servicio Tecnico, DM, etc): el nombre va en "descripcion" y la nota en "mensaje"
     res.clienteLabel=m.operacion==='COMPRA'?'Proveedor':'Cliente';
@@ -2416,25 +2650,46 @@ function abrirDetalleMov(id){
       '</tbody></table>'
     :'<div style="font-size:12px;color:var(--text3);margin-top:6px;">Sin detalle de productos disponible para este movimiento.</div>';
   var equipoRow=d.equipo?'<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">EQUIPO</div><div style="font-size:13px;">'+d.equipo+'</div></div>':'';
-  var html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">'+
-    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">FECHA</div><div style="font-size:13px;font-weight:600;">'+fd(m.fecha)+'</div></div>'+
-    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">UNIDAD DE NEGOCIO</div><div style="font-size:13px;font-weight:600;">'+m.unidad+'</div></div>'+
-    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">TIPO DE OPERACION</div><div style="font-size:13px;"><span class="badge '+(BOP[m.operacion]||'')+'">'+m.operacion+'</span> '+(m.categoria?'— '+m.categoria:'')+'</div></div>'+
-    (m.canal?'<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">CANAL DE VENTA</div><div style="font-size:13px;">'+m.canal+'</div></div>':'')+
-    equipoRow+
-    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">'+d.clienteLabel.toUpperCase()+'</div><div style="font-size:13px;">'+d.cliente+'</div></div>'+
-    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">METODO DE PAGO</div><div>'+metodoBadge(m.metodo)+'</div></div>'+
-    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">TOTAL</div><div style="font-size:16px;font-weight:700;color:'+(m.ingreso?'var(--green)':'var(--red)')+';">'+fmtMov(total,m.metodo)+'</div></div>'+
-    '</div>'+
-    '<div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:4px;text-transform:uppercase;">Productos</div>'+
-    itemsHtml+
+  var esFinanciero=m.operacion==='FINANCIERO';
+  var garantiaSection=esFinanciero?'':(
     '<div style="margin-top:14px;font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:6px;text-transform:uppercase;">Garantia</div>'+
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">TIENE GARANTIA</div><div style="font-size:13px;">'+(m.tieneGarantia?'Si':'No')+'</div></div>'+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">DIAS DE GARANTIA</div><div style="font-size:13px;">'+(m.tieneGarantia?m.diasGarantia+' dias':'-')+'</div></div>'+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">FECHA DE VENCIMIENTO</div><div style="font-size:13px;">'+(m.tieneGarantia?fd(m.fechaVencimientoGarantia):'-')+'</div></div>'+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">ESTADO ACTUAL</div><div style="font-size:13px;">'+garantiaEstadoTexto(m)+'</div></div>'+
+    '</div>');
+  var financieroSection='';
+  if(esFinanciero&&d.financiero){
+    var fin=d.financiero;
+    var yaRevertido=movs.some(function(x){return String(x.esReversoDe)===String(m.id);});
+    var revertirBtn=(fin.esReversoDe||yaRevertido)?'':'<button class="btn btn-sm" onclick="revertirMovimientoFinanciero(\''+m.id+'\')" style="margin-top:10px;">↺ Generar movimiento inverso</button>';
+    financieroSection=
+      '<div style="margin-top:14px;font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:6px;text-transform:uppercase;">Movimiento financiero</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'+
+      '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">CUENTA</div><div style="font-size:13px;">'+fin.cuenta+'</div></div>'+
+      (fin.esReversoDe?'<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">ESTADO</div><div style="font-size:13px;">Reverso de #'+fin.esReversoDe+'</div></div>':
+        (yaRevertido?'<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">ESTADO</div><div style="font-size:13px;">Ya revertido</div></div>':''))+
+      (fin.esAjuste?(
+        '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">SALDO ESPERADO</div><div style="font-size:13px;">'+fmtARS(fin.saldoEsperado)+'</div></div>'+
+        '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">SALDO REAL</div><div style="font-size:13px;">'+fmtARS(fin.saldoReal)+'</div></div>'+
+        '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">DIFERENCIA</div><div style="font-size:13px;color:'+(fin.diferenciaCaja>=0?'var(--green)':'var(--red)')+';font-weight:600;">'+(fin.diferenciaCaja>0?'+':'')+fmtARS(fin.diferenciaCaja)+'</div></div>'
+      ):'')+
+      '</div>'+revertirBtn;
+  }
+  var html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">FECHA</div><div style="font-size:13px;font-weight:600;">'+fd(m.fecha)+(m.hora?' '+m.hora:'')+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">UNIDAD DE NEGOCIO</div><div style="font-size:13px;font-weight:600;">'+m.unidad+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">TIPO DE OPERACION</div><div style="font-size:13px;"><span class="badge '+(BOP[m.operacion]||'')+'">'+m.operacion+'</span> '+(m.categoria?'— '+m.categoria:'')+'</div></div>'+
+    (m.canal?'<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">CANAL DE VENTA</div><div style="font-size:13px;">'+m.canal+'</div></div>':'')+
+    equipoRow+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">'+d.clienteLabel.toUpperCase()+'</div><div style="font-size:13px;">'+d.cliente+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">'+(esFinanciero?'CUENTA':'METODO DE PAGO')+'</div><div>'+metodoBadge(m.metodo)+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">TOTAL</div><div style="font-size:16px;font-weight:700;color:'+(m.ingreso?'var(--green)':'var(--red)')+';">'+fmtMov(total,m.metodo)+'</div></div>'+
     '</div>'+
+    (esFinanciero?'':('<div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:4px;text-transform:uppercase;">Productos</div>'+itemsHtml))+
+    garantiaSection+
+    financieroSection+
     '<div style="margin-top:14px;font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;text-transform:uppercase;">Observaciones</div>'+
     '<div style="font-size:12px;color:var(--text2);">'+(d.observaciones||'-')+'</div>';
   document.getElementById('mov-det-body').innerHTML=html;
