@@ -250,6 +250,9 @@ tr:hover td{background:var(--bg3);}
     <div class="nav-item" onclick="go('proveedores',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="7" width="16" height="13" rx="1"/><path d="M1 7l3-5h10l3 5"/><line x1="1" y1="12" x2="17" y2="12"/></svg>Proveedores
     </div>
+    <div class="nav-item" onclick="go('deudores',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="7" r="3"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><line x1="17" y1="8" x2="22" y2="8"/><line x1="17" y1="8" x2="19" y2="5.5"/><line x1="17" y1="8" x2="19" y2="10.5"/></svg>Deudores
+    </div>
     <div class="sb-section">Unidades</div>
     <div class="nav-item" id="nav-celulares-toggle" onclick="toggleCelSubMenu()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
@@ -534,11 +537,11 @@ tr:hover td{background:var(--bg3);}
               <div class="cel-fgroup cel-form-full">
                 <label>Metodo de pago (podes dividir en hasta 3 metodos)</label>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">
-                  <select id="venta-metodo1" onchange="ventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select>
+                  <select id="venta-metodo1" onchange="ventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
                   <input type="number" id="venta-monto1" placeholder="Monto 1" min="0" step="0.01" oninput="ventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-                  <select id="venta-metodo2" onchange="ventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select>
+                  <select id="venta-metodo2" onchange="ventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
                   <input type="number" id="venta-monto2" placeholder="Monto 2 (opcional)" min="0" step="0.01" oninput="ventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-                  <select id="venta-metodo3" onchange="ventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select>
+                  <select id="venta-metodo3" onchange="ventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
                   <input type="number" id="venta-monto3" placeholder="Monto 3 (opcional)" min="0" step="0.01" oninput="ventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
                 </div>
                 <div id="venta-mixto-info" style="font-size:11px;color:var(--text3);margin-top:5px;font-family:monospace;"></div>
@@ -671,11 +674,11 @@ tr:hover td{background:var(--bg3);}
             <div class="cel-fgroup cel-form-full">
               <label>Metodo de pago (podes dividir en hasta 3 metodos)</label>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">
-                <select id="ftventa-metodo1" onchange="ftventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select>
+                <select id="ftventa-metodo1" onchange="ftventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
                 <input type="number" id="ftventa-monto1" placeholder="Monto 1" min="0" step="0.01" oninput="ftventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-                <select id="ftventa-metodo2" onchange="ftventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select>
+                <select id="ftventa-metodo2" onchange="ftventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
                 <input type="number" id="ftventa-monto2" placeholder="Monto 2 (opcional)" min="0" step="0.01" oninput="ftventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-                <select id="ftventa-metodo3" onchange="ftventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select>
+                <select id="ftventa-metodo3" onchange="ftventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
                 <input type="number" id="ftventa-monto3" placeholder="Monto 3 (opcional)" min="0" step="0.01" oninput="ftventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
               </div>
               <div id="ftventa-mixto-info" style="font-size:11px;color:var(--text3);margin-top:5px;font-family:monospace;"></div>
@@ -795,6 +798,36 @@ tr:hover td{background:var(--bg3);}
         <table><thead><tr>
           <th>Nombre</th><th>Unidad</th><th>Direccion</th><th>Telefono</th><th>WhatsApp</th><th>Instagram</th><th></th>
         </tr></thead><tbody id="prov-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- DEUDORES -->
+    <div class="screen" id="screen-deudores">
+      <div class="u-metrics" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px;">
+        <div class="mc"><div class="mc-label">Total adeudado</div><div class="mc-val neg" id="deu-total-adeudado">-</div><div class="mc-sub">saldo pendiente</div></div>
+        <div class="mc"><div class="mc-label">Clientes con deuda</div><div class="mc-val" id="deu-clientes">0</div><div class="mc-sub">clientes</div></div>
+        <div class="mc"><div class="mc-label">Deudas vencidas</div><div class="mc-val neg" id="deu-vencidas">0</div><div class="mc-sub">🔴 vencidas</div></div>
+        <div class="mc"><div class="mc-label">Proximos vencimientos</div><div class="mc-val" id="deu-proximos">0</div><div class="mc-sub">🟠 en los proximos dias</div></div>
+      </div>
+      <div class="tw" style="margin-bottom:14px;">
+        <div class="tw-head"><div class="tw-title">Ranking de mayores deudores</div></div>
+        <table><thead><tr><th>Cliente</th><th>Saldo</th></tr></thead><tbody id="deu-ranking-body"></tbody></table>
+      </div>
+      <div class="cel-filters">
+        <select id="deu-fil-unidad" onchange="renderDeudores()"><option value="">Todas las unidades</option></select>
+        <select id="deu-fil-estado" onchange="renderDeudores()">
+          <option value="">Todos los estados</option>
+          <option value="PENDIENTE">Pendiente</option>
+          <option value="PARCIALMENTE PAGADA">Parcialmente pagada</option>
+          <option value="CANCELADA">Cancelada</option>
+          <option value="VENCIDA">Vencida</option>
+        </select>
+        <input type="text" id="deu-search" placeholder="Buscar cliente..." oninput="renderDeudores()">
+      </div>
+      <div class="tw"><div class="tw-head"><div class="tw-title">Deudas</div></div>
+        <table><thead><tr>
+          <th>Cliente</th><th>Unidad</th><th>Fecha</th><th>Importe original</th><th>Abonado</th><th>Saldo</th><th>Estado</th><th>Alerta</th>
+        </tr></thead><tbody id="deu-tbody"></tbody></table>
       </div>
     </div>
 
@@ -1051,11 +1084,11 @@ tr:hover td{background:var(--bg3);}
         <div class="cel-fgroup cel-form-full">
           <label>Metodo de pago (podes dividir en hasta 3 metodos)</label>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">
-            <select id="tventa-metodo1" onchange="tventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select>
+            <select id="tventa-metodo1" onchange="tventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
             <input type="number" id="tventa-monto1" placeholder="Monto 1" min="0" step="0.01" oninput="tventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-            <select id="tventa-metodo2" onchange="tventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select>
+            <select id="tventa-metodo2" onchange="tventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
             <input type="number" id="tventa-monto2" placeholder="Monto 2 (opcional)" min="0" step="0.01" oninput="tventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-            <select id="tventa-metodo3" onchange="tventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select>
+            <select id="tventa-metodo3" onchange="tventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
             <input type="number" id="tventa-monto3" placeholder="Monto 3 (opcional)" min="0" step="0.01" oninput="tventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
           </div>
           <div id="tventa-mixto-info" style="font-size:11px;color:var(--text3);margin-top:5px;font-family:monospace;"></div>
@@ -1327,6 +1360,35 @@ tr:hover td{background:var(--bg3);}
   </div>
 </div>
 
+<!-- DETALLE DE DEUDA -->
+<div class="cel-modal-bg" id="deu-det-modal">
+  <div class="cel-modal" style="max-width:640px;">
+    <h3 style="display:flex;justify-content:space-between;align-items:center;">
+      Detalle de deuda
+      <button class="btn btn-sm" onclick="deuCerrarModal()">Cerrar</button>
+    </h3>
+    <div id="deu-det-body" style="margin-top:16px;"></div>
+
+    <div class="cel-modal-section">Registrar pago parcial</div>
+    <div class="cel-form-grid">
+      <div class="cel-fgroup"><label>Fecha *</label><input type="date" id="deu-pago-fecha"></div>
+      <div class="cel-fgroup"><label>Importe *</label><input type="number" id="deu-pago-importe" placeholder="0" min="0" step="0.01"></div>
+      <div class="cel-fgroup"><label>Metodo de pago *</label>
+        <select id="deu-pago-metodo"><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select></div>
+      <div class="cel-fgroup cel-form-full"><label>Observaciones</label><input type="text" id="deu-pago-obs" placeholder="Opcional"></div>
+    </div>
+    <button class="btn btn-sm" onclick="deuRegistrarPago()" style="margin-top:4px;">+ Registrar pago</button>
+
+    <div class="cel-modal-section">Registrar promesa de pago</div>
+    <div class="cel-form-grid">
+      <div class="cel-fgroup"><label>Fecha comprometida *</label><input type="date" id="deu-promesa-fecha"></div>
+      <div class="cel-fgroup"><label>Monto comprometido</label><input type="number" id="deu-promesa-monto" placeholder="0" min="0" step="0.01"></div>
+      <div class="cel-fgroup cel-form-full"><label>Observaciones</label><input type="text" id="deu-promesa-obs" placeholder="Opcional"></div>
+    </div>
+    <button class="btn btn-sm" onclick="deuRegistrarPromesa()" style="margin-top:4px;">+ Registrar promesa</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1394,7 +1456,7 @@ var METC={MP:'#1D9E75',EFECTIVO:'#EF9F27',USD:'#378ADD','NARANJA X':'#D85A30','A
 var UCOLORS={CELULARES:'#7F77DD',TIENDAS:'#1D9E75','SERVICIO TECNICO':'#378ADD'};
 var NOM=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 var CATC=['#7F77DD','#1D9E75','#378ADD','#EF9F27','#D85A30','#888780','#D4537E','#639922'];
-var TITLES={dashboard:'Dashboard',caja:'Caja',cargar:'Cargar movimiento',movimientos:'Movimientos',config:'Configuracion',unidad:'Unidad',proveedores:'Proveedores'};
+var TITLES={dashboard:'Dashboard',caja:'Caja',cargar:'Cargar movimiento',movimientos:'Movimientos',config:'Configuracion',unidad:'Unidad',proveedores:'Proveedores',deudores:'Deudores'};
 var movs=[],cMes=null,cCaja=null,cU=null,cUCat=null,curU='CELULARES';
 var dolarBlue=0,pendingDelId=null,currentCurrency='USD';
 
@@ -1530,6 +1592,7 @@ function go(name,el){
   if(name==='unidad')renderU();
   if(name==='config')renderConfig();
   if(name==='proveedores')renderProveedores();
+  if(name==='deudores')renderDeudores();
 }
 
 function populateSelects(){
@@ -1763,15 +1826,19 @@ async function cargarDatos(){
     });
     var data=await res.json();
     if(Array.isArray(data)){
-      movs=data.map(function(r){return{
+      movs=data.map(function(r){
+        var ingresoNum=parseFloat(r.ingreso)||0;
+        var metodoNorm=String(r.metodo||'').trim().toUpperCase();
+        return{
         fecha:String(r.fecha||'').slice(0,10),
         unidad:String(r.unidad||'').trim().toUpperCase(),
         operacion:String(r.operacion||'').trim().toUpperCase(),
         categoria:String(r.categoria||'').trim(),
         desc:String(r.descripcion||'').trim(),
-        ingreso:parseFloat(r.ingreso)||0,
+        ingreso:ingresoNum,
         egreso:parseFloat(r.egreso)||0,
-        metodo:String(r.metodo||'').trim().toUpperCase(),
+        ingresoCaja:ingresoNum-montoDeudaDeMetodo(metodoNorm,ingresoNum),
+        metodo:metodoNorm,
         nota:String(r.mensaje||'').trim(),
         canal:String(r.canal_venta||'').trim(),
         marcaEquipo:String(r.marca_equipo||'').trim(),
@@ -1827,11 +1894,15 @@ async function guardar(){
   try{
     var res=await fetch(SUPA_URL+'/rest/v1/movimientos',{
       method:'POST',
-      headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+      headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=representation'},
       body:JSON.stringify({fecha:fecha,unidad:unidad,operacion:operacion,categoria:categoria,descripcion:desc,ingreso:ingreso,egreso:egreso,metodo:metodo,mensaje:mensaje,canal_venta:operacion==='VENTAS'?canalVenta:null,marca_equipo:operacion==='SERVICIOS'?marcaEquipo:null,modelo_equipo:operacion==='SERVICIOS'?modeloEquipo:null,tiene_garantia:garantiaGen.tiene_garantia,dias_garantia:garantiaGen.dias_garantia,fecha_vencimiento_garantia:garantiaGen.fecha_vencimiento_garantia,mes:meses[fdate.getMonth()],anio:fdate.getFullYear()})
     });
     if(res.ok){
       if(operacion==='COMPRA'&&desc)await ensureProveedor(unidad,desc);
+      if((operacion==='VENTAS'||operacion==='SERVICIOS')&&ingreso>0){
+        var creado=await res.json();
+        await crearDeudaSiCorresponde(unidad,desc,fecha,ingreso,metodo,creado&&creado[0]?creado[0].id:null);
+      }
       showToast('Movimiento guardado');clearForm();await cargarDatos();
     }
     else{var e=await res.text();showToast('Error: '+e.slice(0,60),true);ss('err','ERROR');}
@@ -1895,7 +1966,7 @@ function renderChart(){
     ingData=NOM.map(function(_,i){
       var mm=String(i+1).padStart(2,'0');
       var key=anio+'-'+mm;
-      return Math.round(filtered.filter(function(m){return String(m.fecha).slice(0,7)===key;}).reduce(function(s,m){return s+m.ingreso;},0));
+      return Math.round(filtered.filter(function(m){return String(m.fecha).slice(0,7)===key;}).reduce(function(s,m){return s+m.ingresoCaja;},0));
     });
     egrData=NOM.map(function(_,i){
       var mm=String(i+1).padStart(2,'0');
@@ -1909,13 +1980,13 @@ function renderChart(){
     for(var d=1;d<=daysInMonth;d++){
       var dayStr=anio+'-'+mes+'-'+String(d).padStart(2,'0');
       labels.push(String(d));
-      ingData.push(Math.round(filtered.filter(function(m){return m.fecha===dayStr;}).reduce(function(s,m){return s+m.ingreso;},0)));
+      ingData.push(Math.round(filtered.filter(function(m){return m.fecha===dayStr;}).reduce(function(s,m){return s+m.ingresoCaja;},0)));
       egrData.push(Math.round(filtered.filter(function(m){return m.fecha===dayStr;}).reduce(function(s,m){return s+m.egreso;},0)));
     }
   }else{
     // Todos los meses disponibles
     var meses={};
-    filtered.forEach(function(m){var k=String(m.fecha).slice(0,7);if(!k||k.length<7)return;if(!meses[k])meses[k]={ing:0,egr:0};meses[k].ing+=m.ingreso;meses[k].egr+=m.egreso;});
+    filtered.forEach(function(m){var k=String(m.fecha).slice(0,7);if(!k||k.length<7)return;if(!meses[k])meses[k]={ing:0,egr:0};meses[k].ing+=m.ingresoCaja;meses[k].egr+=m.egreso;});
     var ks=Object.keys(meses).sort();
     labels=ks.map(function(l){var p=l.split('-');return NOM[parseInt(p[1])-1]+' '+p[0].slice(2);});
     ingData=ks.map(function(k){return Math.round(meses[k].ing);});
@@ -1973,30 +2044,29 @@ function buildMovRow(m,showUnit,showDel){
 
 function renderDash(){
   var nonDeuda=movs.filter(function(m){return m.metodo!=='DEUDA';});
-  var tIng=nonDeuda.reduce(function(s,m){return s+m.ingreso;},0);
+  var tIng=nonDeuda.reduce(function(s,m){return s+m.ingresoCaja;},0);
   var tEgr=nonDeuda.reduce(function(s,m){return s+m.egreso;},0);
-  var cajaTot=movs.filter(function(m){return m.metodo!=='DEUDA'&&m.metodo!=='USD';}).reduce(function(s,m){return s+m.ingreso-m.egreso;},0);
-  var cajaUSD=movs.filter(function(m){return m.metodo==='USD';}).reduce(function(s,m){return s+m.ingreso-m.egreso;},0);
+  var cajaTot=movs.filter(function(m){return m.metodo!=='DEUDA'&&m.metodo!=='USD';}).reduce(function(s,m){return s+m.ingresoCaja-m.egreso;},0);
+  var cajaUSD=movs.filter(function(m){return m.metodo==='USD';}).reduce(function(s,m){return s+m.ingresoCaja-m.egreso;},0);
   document.getElementById('d-caja-ars').textContent=fmtSmart(cajaTot);
   var usdEl=document.getElementById('d-caja-usd');
   usdEl.textContent=fmtUSD(cajaUSD);
   usdEl.dataset.raw=cajaUSD;
   document.getElementById('d-caja-usd-ars').textContent=cajaUSD&&dolarBlue?'= '+fmtARS(cajaUSD*dolarBlue):'';
-  var deudaIng=movs.filter(function(m){return m.metodo==='DEUDA';}).reduce(function(s,m){return s+m.ingreso;},0);
-  var deudaEgr=movs.filter(function(m){return m.metodo==='DEUDA';}).reduce(function(s,m){return s+m.egreso;},0);
-  var saldoDeuda=deudaIng-deudaEgr;
+  // Total adeudado real, tomado del modulo Deudores (incluye deudas mixtas, no solo metodo=DEUDA puro).
+  var saldoDeuda=deudas.reduce(function(s,d){return s+deudaInfo(d).saldo;},0);
   var dEl=document.getElementById('d-deudores');
-  dEl.textContent=fmtARS(Math.abs(saldoDeuda));
-  dEl.className='mc-val '+(saldoDeuda>=0?'pos':'neg');
-  document.getElementById('d-deuda-label').textContent=saldoDeuda>=0?'a favor (deudores)':'en contra (deuda)';
-  document.getElementById('d-deuda-label').style.color=saldoDeuda>=0?'var(--green)':'var(--red)';
+  dEl.textContent=fmtARS(saldoDeuda);
+  dEl.className='mc-val '+(saldoDeuda>0?'neg':'pos');
+  document.getElementById('d-deuda-label').textContent='pendiente de cobro (deudores)';
+  document.getElementById('d-deuda-label').style.color=saldoDeuda>0?'var(--red)':'var(--green)';
   document.getElementById('d-ing').textContent=fmtSmart(tIng);
   document.getElementById('d-egr').textContent=fmtSmart(tEgr);
   renderChart();
   var unidades=['CELULARES','TIENDAS','SERVICIO TECNICO'];
   document.getElementById('dash-units').innerHTML=unidades.map(function(u){
     var um=movs.filter(function(m){return m.unidad===u&&m.metodo!=='DEUDA';});
-    var ing=um.reduce(function(s,m){return s+m.ingreso;},0);
+    var ing=um.reduce(function(s,m){return s+m.ingresoCaja;},0);
     var egr=um.reduce(function(s,m){return s+m.egreso;},0);
     var sal=ing-egr;
     var col=UCOLORS[u]||'#fff';
@@ -2062,7 +2132,7 @@ function renderCaja(){
   var diasRestantes=diasMes-diaActual;
   var inicioMes=new Date(hoy.getFullYear(),hoy.getMonth(),1).toISOString().slice(0,10);
   var movsMes=movs.filter(function(m){return m.fecha>=inicioMes&&m.metodo!=='DEUDA';});
-  var ingMes=movsMes.reduce(function(s,m){return s+m.ingreso;},0);
+  var ingMes=movsMes.reduce(function(s,m){return s+m.ingresoCaja;},0);
   var egrMes=movsMes.reduce(function(s,m){return s+m.egreso;},0);
   var netoMes=ingMes-egrMes;
   var promDiario=diaActual>0?netoMes/diaActual:0;
@@ -2117,7 +2187,7 @@ function renderCaja(){
   movs.filter(function(m){return m.metodo!=='DEUDA';}).forEach(function(m){
     var k=String(m.fecha).slice(0,10);if(!k||k.length<10)return;
     if(!dias[k])dias[k]={ing:0,egr:0};
-    dias[k].ing+=m.ingreso;dias[k].egr+=m.egreso;
+    dias[k].ing+=m.ingresoCaja;dias[k].egr+=m.egreso;
   });
   // Last 30 days
   var histKeys=Object.keys(dias).sort().slice(-30);
@@ -2537,6 +2607,206 @@ function provAcSelect(el,inputId,dropdownId){
   document.getElementById(inputId).value=el.dataset.nom;
   var dd=document.getElementById(dropdownId);
   dd.classList.remove('show');dd.innerHTML='';
+}
+
+// ============ DEUDORES ============
+var deudas=[];
+var pagosDeuda=[];
+var promesasPago=[];
+var deudaActualId=null;
+var DEUDA_DIAS_PROXIMO_VENCER=3;
+
+async function cargarDeudas(){
+  try{
+    var r1=await fetch(SUPA_URL+'/rest/v1/deudas?select=*&order=fecha.desc',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+    var d1=await r1.json();if(Array.isArray(d1))deudas=d1;
+    var r2=await fetch(SUPA_URL+'/rest/v1/pagos_deuda?select=*&order=fecha.asc',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+    var d2=await r2.json();if(Array.isArray(d2))pagosDeuda=d2;
+    var r3=await fetch(SUPA_URL+'/rest/v1/promesas_pago?select=*&order=fecha_comprometida.desc',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+    var d3=await r3.json();if(Array.isArray(d3))promesasPago=d3;
+    var activeId=document.querySelector('.screen.active')?document.querySelector('.screen.active').id:'';
+    if(activeId==='screen-deudores')renderDeudores();
+    if(activeId==='screen-dashboard')renderDash();
+  }catch(e){console.log('Deudas load error',e);}
+}
+
+// Si el metodo de pago de una venta incluye DEUDA (solo o mixto), genera automaticamente el registro de deuda.
+// Extrae cuanto de un metodo de pago (simple "DEUDA" o mixto "EFECTIVO:7000|DEUDA:3000") quedo como deuda.
+// 'totalSiUnico' es el importe a usar cuando el metodo es exactamente "DEUDA" (no mixto, no hay desglose por monto).
+function montoDeudaDeMetodo(metodoStr,totalSiUnico){
+  if(!metodoStr)return 0;
+  if(metodoStr==='DEUDA')return parseFloat(totalSiUnico)||0;
+  if(metodoStr.indexOf('DEUDA:')>-1){
+    var part=metodoStr.split('|').filter(function(p){return p.indexOf('DEUDA:')===0;})[0];
+    return part?parseFloat(part.split(':')[1])||0:0;
+  }
+  return 0;
+}
+
+async function crearDeudaSiCorresponde(unidad,cliente,fecha,total,metodoStr,movimientoId){
+  if(!metodoStr)return;
+  var montoDeuda=montoDeudaDeMetodo(metodoStr,total);
+  if(!montoDeuda||montoDeuda<=0)return;
+  await fetch(SUPA_URL+'/rest/v1/deudas',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+    body:JSON.stringify({movimiento_id:movimientoId||null,unidad:unidad,cliente:cliente||'Sin nombre',fecha:fecha,importe_original:montoDeuda})
+  });
+  await cargarDeudas();
+}
+
+// Deriva abonado/saldo/estado/alerta de una deuda a partir de sus pagos y promesas (nunca se guardan, siempre se calculan).
+function deudaInfo(deuda){
+  var pagos=pagosDeuda.filter(function(p){return p.deuda_id===deuda.id;});
+  var abonado=pagos.reduce(function(s,p){return s+(parseFloat(p.importe)||0);},0);
+  var saldo=Math.round(((parseFloat(deuda.importe_original)||0)-abonado)*100)/100;
+  // La promesa "activa" es la ultima que se registro (no la de fecha mas lejana): si el cliente renegocia, la nueva reemplaza a la anterior.
+  var promesas=promesasPago.filter(function(p){return p.deuda_id===deuda.id;}).sort(function(a,b){return (b.created_at||'').localeCompare(a.created_at||'');});
+  var promesaActiva=promesas.length?promesas[0]:null;
+  var hoy=new Date().toISOString().slice(0,10);
+  var estado='PENDIENTE',alerta='🟢 Al dia';
+  if(saldo<=0.01){
+    estado='CANCELADA';alerta='🟢 Al dia';
+  }else{
+    estado=abonado>0?'PARCIALMENTE PAGADA':'PENDIENTE';
+    if(promesaActiva){
+      if(promesaActiva.fecha_comprometida<hoy){
+        estado='VENCIDA';alerta='🔴 Vencida';
+      }else{
+        var dias=Math.round((new Date(promesaActiva.fecha_comprometida+'T12:00:00')-new Date(hoy+'T12:00:00'))/(1000*60*60*24));
+        alerta=dias<=DEUDA_DIAS_PROXIMO_VENCER?'🟠 Proxima a vencer':'🟢 Al dia';
+      }
+    }
+  }
+  return{pagos:pagos,abonado:abonado,saldo:saldo,promesas:promesas,promesaActiva:promesaActiva,estado:estado,alerta:alerta};
+}
+
+function renderDeudores(){
+  var filUnidad=document.getElementById('deu-fil-unidad').value;
+  var filEstado=document.getElementById('deu-fil-estado').value;
+  var search=(document.getElementById('deu-search').value||'').toLowerCase();
+  var rows=deudas.map(function(d){return{d:d,info:deudaInfo(d)};});
+  rows=rows.filter(function(r){
+    return(!filUnidad||r.d.unidad===filUnidad)&&(!filEstado||r.info.estado===filEstado)&&(!search||r.d.cliente.toLowerCase().indexOf(search)>-1);
+  });
+  // Reportes
+  var pendientes=deudas.map(function(d){return{d:d,info:deudaInfo(d)};}).filter(function(r){return r.info.saldo>0.01;});
+  var totalAdeudado=pendientes.reduce(function(s,r){return s+r.info.saldo;},0);
+  var clientesUnicos=[];pendientes.forEach(function(r){if(clientesUnicos.indexOf(r.d.cliente)===-1)clientesUnicos.push(r.d.cliente);});
+  var vencidas=pendientes.filter(function(r){return r.info.estado==='VENCIDA';}).length;
+  var hoy=new Date().toISOString().slice(0,10);
+  var proximos=pendientes.filter(function(r){return r.info.promesaActiva&&r.info.promesaActiva.fecha_comprometida>=hoy&&r.info.alerta==='🟠 Proxima a vencer';}).length;
+  document.getElementById('deu-total-adeudado').textContent=fmtARS(totalAdeudado);
+  document.getElementById('deu-clientes').textContent=clientesUnicos.length;
+  document.getElementById('deu-vencidas').textContent=vencidas;
+  document.getElementById('deu-proximos').textContent=proximos;
+  // Ranking mayores deudores
+  var porCliente={};
+  pendientes.forEach(function(r){porCliente[r.d.cliente]=(porCliente[r.d.cliente]||0)+r.info.saldo;});
+  var ranking=Object.keys(porCliente).map(function(c){return{cliente:c,saldo:porCliente[c]};}).sort(function(a,b){return b.saldo-a.saldo;}).slice(0,10);
+  var rankBody=document.getElementById('deu-ranking-body');
+  rankBody.innerHTML=ranking.length?ranking.map(function(r){return'<tr><td>'+r.cliente+'</td><td class="mono" style="color:var(--red);font-weight:600;">'+fmtARS(r.saldo)+'</td></tr>';}).join(''):'<tr><td colspan="2" class="empty-row">Sin deudas pendientes</td></tr>';
+  // Filtro de unidad (poblado una sola vez, no se pisa la seleccion)
+  var selU=document.getElementById('deu-fil-unidad');
+  if(!selU.dataset.filled){
+    selU.innerHTML='<option value="">Todas las unidades</option>'+cfg.unidades.map(function(u){return'<option>'+u+'</option>';}).join('');
+    selU.dataset.filled='1';
+  }
+  // Tabla principal
+  document.getElementById('deu-tbody').innerHTML=rows.length?rows.map(function(r){
+    return'<tr style="cursor:pointer" data-id="'+r.d.id+'" onclick="deuAbrirDetalle(this.dataset.id)">'+
+      '<td>'+r.d.cliente+'</td>'+
+      '<td style="font-size:11px;color:var(--text2)">'+r.d.unidad+'</td>'+
+      '<td class="mono" style="font-size:11px;">'+fd(r.d.fecha)+'</td>'+
+      '<td class="mono">'+fmtARS(r.d.importe_original)+'</td>'+
+      '<td class="mono" style="color:var(--green);">'+fmtARS(r.info.abonado)+'</td>'+
+      '<td class="mono" style="color:var(--red);font-weight:600;">'+fmtARS(r.info.saldo)+'</td>'+
+      '<td style="font-size:11px;">'+r.info.estado+'</td>'+
+      '<td>'+r.info.alerta+'</td>'+
+      '</tr>';
+  }).join(''):'<tr><td colspan="8" class="empty-row">Sin deudas registradas</td></tr>';
+}
+
+function deuAbrirDetalle(id){
+  deudaActualId=parseInt(id);
+  var d=deudas.find(function(x){return x.id===deudaActualId;});
+  if(!d){showToast('No se encontro la deuda',true);return;}
+  var info=deudaInfo(d);
+  var html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">CLIENTE</div><div style="font-size:13px;font-weight:600;">'+d.cliente+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">UNIDAD</div><div style="font-size:13px;">'+d.unidad+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">FECHA VENTA ORIGINAL</div><div style="font-size:13px;">'+fd(d.fecha)+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">IMPORTE ORIGINAL</div><div style="font-size:13px;font-weight:600;">'+fmtARS(d.importe_original)+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">TOTAL ABONADO</div><div style="font-size:13px;color:var(--green);font-weight:600;">'+fmtARS(info.abonado)+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">SALDO PENDIENTE</div><div style="font-size:16px;color:var(--red);font-weight:700;">'+fmtARS(info.saldo)+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">ESTADO</div><div style="font-size:13px;">'+info.estado+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">ALERTA</div><div style="font-size:13px;">'+info.alerta+'</div></div>'+
+    '</div>';
+  html+='<div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:6px;text-transform:uppercase;">Historial de pagos</div>';
+  html+=info.pagos.length?info.pagos.map(function(p){return'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--bg3);border-radius:var(--r);margin-bottom:4px;font-size:12px;">'+
+    '<span style="color:var(--text2);">'+fd(p.fecha)+' — '+metodoBadge(p.metodo_pago)+(p.observaciones?' <span style="color:var(--text3)">'+p.observaciones+'</span>':'')+'</span>'+
+    '<span style="color:var(--green);font-family:monospace;font-weight:600;">'+fmtARS(p.importe)+'</span></div>';}).join(''):'<div style="font-size:12px;color:var(--text3);margin-bottom:8px;">Sin pagos registrados.</div>';
+  html+='<div style="font-size:10px;color:var(--text3);font-family:monospace;margin:14px 0 6px;text-transform:uppercase;">Promesas de pago</div>';
+  html+=info.promesas.length?info.promesas.map(function(p){return'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--bg3);border-radius:var(--r);margin-bottom:4px;font-size:12px;">'+
+    '<span style="color:var(--text2);">Comprometido para '+fd(p.fecha_comprometida)+(p.observaciones?' — <span style="color:var(--text3)">'+p.observaciones+'</span>':'')+'</span>'+
+    '<span style="color:var(--amber);font-family:monospace;">'+(p.monto_comprometido?fmtARS(p.monto_comprometido):'-')+'</span></div>';}).join(''):'<div style="font-size:12px;color:var(--text3);margin-bottom:8px;">Sin promesas registradas.</div>';
+  document.getElementById('deu-det-body').innerHTML=html;
+  document.getElementById('deu-pago-fecha').value=new Date().toISOString().slice(0,10);
+  document.getElementById('deu-pago-importe').value='';
+  document.getElementById('deu-pago-metodo').value='EFECTIVO';
+  document.getElementById('deu-pago-obs').value='';
+  document.getElementById('deu-promesa-fecha').value='';
+  document.getElementById('deu-promesa-monto').value='';
+  document.getElementById('deu-promesa-obs').value='';
+  document.getElementById('deu-det-modal').classList.add('show');
+}
+
+function deuCerrarModal(){
+  document.getElementById('deu-det-modal').classList.remove('show');
+  deudaActualId=null;
+  renderDeudores();
+}
+
+async function deuRegistrarPago(){
+  if(!deudaActualId)return;
+  var d=deudas.find(function(x){return x.id===deudaActualId;});
+  var fecha=document.getElementById('deu-pago-fecha').value;
+  var importe=parseFloat(document.getElementById('deu-pago-importe').value)||0;
+  var metodo=document.getElementById('deu-pago-metodo').value;
+  var obs=document.getElementById('deu-pago-obs').value||null;
+  if(!fecha||!importe||importe<=0||!metodo){showToast('Completa fecha, importe y metodo del pago',true);return;}
+  var res=await fetch(SUPA_URL+'/rest/v1/pagos_deuda',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+    body:JSON.stringify({deuda_id:deudaActualId,fecha:fecha,importe:importe,metodo_pago:metodo,observaciones:obs})
+  });
+  if(!res.ok){showToast('Error al registrar el pago',true);return;}
+  // El cobro de una deuda es plata real que entra a la caja (la deuda original nunca conto en Caja).
+  await guardarMovimientoInterno({
+    fecha:fecha,unidad:d?d.unidad:'',operacion:'VENTAS',categoria:'COBRO DEUDA',
+    descripcion:'Cobro deuda — '+(d?d.cliente:''),ingreso:importe,egreso:0,metodo:metodo,mensaje:obs||''
+  });
+  showToast('Pago registrado');
+  await cargarDeudas();
+  await cargarDatos();
+  deuAbrirDetalle(deudaActualId);
+}
+
+async function deuRegistrarPromesa(){
+  if(!deudaActualId)return;
+  var fecha=document.getElementById('deu-promesa-fecha').value;
+  var monto=document.getElementById('deu-promesa-monto').value;
+  var obs=document.getElementById('deu-promesa-obs').value||null;
+  if(!fecha){showToast('Ingresa la fecha comprometida',true);return;}
+  var res=await fetch(SUPA_URL+'/rest/v1/promesas_pago',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+    body:JSON.stringify({deuda_id:deudaActualId,fecha_comprometida:fecha,monto_comprometido:monto?parseFloat(monto):null,observaciones:obs})
+  });
+  if(!res.ok){showToast('Error al registrar la promesa',true);return;}
+  showToast('Promesa de pago registrada');
+  await cargarDeudas();
+  deuAbrirDetalle(deudaActualId);
 }
 
 // ============ CELULARES ============
@@ -3115,12 +3385,13 @@ async function celGuardarOp(){
         var eMsg='';try{var eJson=JSON.parse(eBody);eMsg=eJson.message||eBody.slice(0,80);}catch(ex){eMsg=eBody.slice(0,80);}
         showToast('Error venta: '+eMsg,true);return false;
       }
-      await guardarMovimientoInterno({
+      var movIdVenta=await guardarMovimientoInternoConId({
         fecha:ventaFecha,unidad:'CELULARES',operacion:'VENTAS',
         categoria:'DIRECTA',descripcion:ventaImeiActual.marca+' '+ventaImeiActual.modelo+' IMEI:'+ventaImeiActual.imei,
         ingreso:precio,egreso:0,metodo:updPayload.metodo_pago_venta,mensaje:updPayload.cliente||'',canal_venta:canalVenta,
         tiene_garantia:garantiaVenta.tiene_garantia,dias_garantia:garantiaVenta.dias_garantia,fecha_vencimiento_garantia:garantiaVenta.fecha_vencimiento_garantia
       });
+      await crearDeudaSiCorresponde('CELULARES',updPayload.cliente,ventaFecha,precio,updPayload.metodo_pago_venta,movIdVenta);
       // Parte de pago - add to stock
       for(var i=0;i<ppListaTemp.length;i++){
         var pp=ppListaTemp[i];
@@ -3205,9 +3476,15 @@ async function guardarMovimientoInterno(data){
   var payload=Object.assign({},data,{mes:meses[fdate.getMonth()],anio:fdate.getFullYear()});
   return fetch(SUPA_URL+'/rest/v1/movimientos',{
     method:'POST',
-    headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+    headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=representation'},
     body:JSON.stringify(payload)
   });
+}
+// Devuelve el id del movimiento recien creado (o null si fallo), para poder vincular una deuda si corresponde.
+async function guardarMovimientoInternoConId(data){
+  var res=await guardarMovimientoInterno(data);
+  if(!res.ok)return null;
+  try{var arr=await res.json();return arr&&arr[0]?arr[0].id:null;}catch(e){return null;}
 }
 
 // Add rep-costo listener
@@ -4064,12 +4341,13 @@ async function tieGuardarOp(){
       }
 
       // Register single movimiento for the whole sale
-      await guardarMovimientoInterno({
+      var movIdTVenta=await guardarMovimientoInternoConId({
         fecha:fecha,unidad:'TIENDAS',operacion:'VENTAS',
         categoria:'DIRECTA',descripcion:descGeneral,
         ingreso:total,egreso:0,metodo:metodoStr,mensaje:cliente||'',canal_venta:canalVenta,
         tiene_garantia:garantiaVenta.tiene_garantia,dias_garantia:garantiaVenta.dias_garantia,fecha_vencimiento_garantia:garantiaVenta.fecha_vencimiento_garantia
       });
+      await crearDeudaSiCorresponde('TIENDAS',cliente,fecha,total,metodoStr,movIdTVenta);
       showToast('Venta registrada: '+fmtARS(total));
     }
 
@@ -4628,12 +4906,13 @@ async function tieGuardarDesdeForm(op){
         });
       }
 
-      await guardarMovimientoInterno({
+      var movIdFtVenta=await guardarMovimientoInternoConId({
         fecha:fecha,unidad:'TIENDAS',operacion:'VENTAS',
         categoria:'DIRECTA',descripcion:descGeneral,
         ingreso:total,egreso:0,metodo:metodoStr,mensaje:cliente||'',canal_venta:canalVenta,
         tiene_garantia:garantiaVenta.tiene_garantia,dias_garantia:garantiaVenta.dias_garantia,fecha_vencimiento_garantia:garantiaVenta.fecha_vencimiento_garantia
       });
+      await crearDeudaSiCorresponde('TIENDAS',cliente,fecha,total,metodoStr,movIdFtVenta);
       showToast('Venta registrada: '+fmtARS(total));
     }
 
@@ -4745,6 +5024,7 @@ window.addEventListener('DOMContentLoaded',function(){
   celCargarDatos();
   tieCargarDatos();
   cargarProveedores();
+  cargarDeudas();
 });
 </script>
 
