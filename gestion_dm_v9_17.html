@@ -23,21 +23,21 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;}
 .layout{display:flex;min-height:100vh;}
-.sidebar{width:236px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
+.sidebar{width:236px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;font-family:'Inter',sans-serif;}
 .sb-brand{padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;}
 .sb-logo{width:34px;height:34px;border-radius:6px;object-fit:cover;}
 .sb-brand h1{font-size:15px;font-weight:700;color:var(--text);}
-.sb-brand span{font-size:10px;color:var(--text3);font-family:monospace;}
-.sb-section{padding:16px 20px 5px;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);font-family:monospace;}
+.sb-brand span{font-size:10px;color:var(--text3);letter-spacing:0.05em;}
+.sb-section{padding:16px 20px 5px;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);}
 .sb-nav{flex:1;padding:6px 0;overflow-y:auto;}
-.nav-item{display:flex;align-items:center;gap:9px;padding:9px 20px;cursor:pointer;font-size:13px;color:var(--text2);border-left:2px solid transparent;transition:all 0.12s;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 20px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);border-left:2px solid transparent;transition:all 0.12s;}
 .nav-item:hover{color:var(--text);background:var(--accent-dim);}
-.nav-item.active{color:var(--text);background:var(--accent-dim);border-left-color:var(--text);font-weight:500;}
+.nav-item.active{color:var(--text);background:var(--accent-dim);border-left-color:var(--text);font-weight:600;}
 .nav-item svg{width:15px;height:15px;flex-shrink:0;opacity:0.55;}
 .nav-item.active svg{opacity:1;}
 .sb-footer{border-top:1px solid var(--border);}
 .sb-status{padding:13px 20px;}
-.status-pill{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--text3);font-family:monospace;}
+.status-pill{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:500;color:var(--text3);}
 .dot{width:6px;height:6px;border-radius:50%;background:#444;flex-shrink:0;}
 .dot.ok{background:var(--green);box-shadow:0 0 5px rgba(29,158,117,0.5);}
 .dot.err{background:var(--red);}
@@ -49,6 +49,12 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 .topbar-right{display:flex;align-items:center;gap:12px;}
 .dolar-pill{font-size:11px;font-family:monospace;color:#1D9E75;background:rgba(29,158,117,0.15);padding:4px 10px;border-radius:20px;cursor:pointer;border:none;font-weight:600;}
 .dolar-pill:hover{opacity:0.8;}
+/* Toggle switch USD/ARS — componente unico reutilizable, reemplaza los 2 botones sueltos */
+.curr-toggle{position:relative;display:flex;align-items:center;width:108px;height:30px;background:#1a1b1f;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:3px;cursor:pointer;font-family:'Inter',sans-serif;user-select:none;flex-shrink:0;}
+.curr-toggle-thumb{position:absolute;top:3px;left:3px;width:calc(50% - 3px);height:calc(100% - 6px);background:#3ecf8e;border-radius:6px;transition:transform 0.25s cubic-bezier(.4,0,.2,1);}
+.curr-toggle.is-ars .curr-toggle-thumb{transform:translateX(100%);}
+.curr-toggle-opt{position:relative;z-index:1;flex:1;text-align:center;font-size:11.5px;font-weight:700;letter-spacing:0.02em;color:#94969c;transition:color 0.2s ease;}
+.curr-toggle-opt.active{color:#131316;}
 .btn{padding:6px 13px;border-radius:var(--r);font-size:12px;font-family:'Space Grotesk',sans-serif;cursor:pointer;font-weight:500;border:1px solid var(--border-md);background:transparent;color:var(--text2);transition:all 0.12s;}
 .btn:hover{color:var(--text);border-color:var(--border-hi);background:var(--accent-dim);}
 .btn-p{background:var(--text);color:var(--bg);border-color:var(--text);font-weight:600;}
@@ -255,6 +261,13 @@ tr:hover td{background:var(--bg3);}
 .rd-quick:hover{transform:translateY(-2px);border-color:var(--rd-green);}
 .rd-activity-row{padding:10px 0;border-bottom:1px solid var(--rd-border);}
 .rd-activity-row:last-child{border-bottom:none;}
+.rd-select{padding:5px 9px;border:1px solid var(--rd-border-hi);border-radius:7px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:500;color:var(--rd-text2);background:var(--rd-bg);outline:none;cursor:pointer;}
+.rd-unit-card{background:var(--rd-card);border:1px solid var(--rd-border);border-radius:14px;padding:16px 18px;position:relative;overflow:hidden;transition:transform .15s ease;}
+.rd-unit-card:hover{transform:translateY(-2px);}
+.rd-unit-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--uc,var(--rd-green));}
+.rd-unit-name{font-size:13px;font-weight:600;color:var(--rd-text);margin-bottom:12px;}
+.rd-unit-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:6px;color:var(--rd-text2);}
+.rd-unit-saldo{font-size:16px;font-weight:700;border-top:1px solid var(--rd-border);padding-top:9px;margin-top:9px;}
 </style>
 </head>
 <body>
@@ -342,9 +355,10 @@ tr:hover td{background:var(--bg3);}
     <div class="page-title" id="page-title">Dashboard</div>
     <div class="topbar-right">
       <button class="dolar-pill" id="dolar-pill" onclick="fetchDolar(true)" title="Click para actualizar">Blue $...</button>
-      <div class="currency-toggle">
-        <button id="btn-usd" class="curr-btn active" onclick="setCurrency('USD')">USD</button>
-        <button id="btn-ars" class="curr-btn" onclick="setCurrency('ARS')">ARS</button>
+      <div class="curr-toggle" id="curr-toggle" onclick="setCurrency(currentCurrency==='USD'?'ARS':'USD')" title="Cambiar moneda">
+        <div class="curr-toggle-thumb"></div>
+        <div class="curr-toggle-opt active" id="curr-opt-usd">USD</div>
+        <div class="curr-toggle-opt" id="curr-opt-ars">ARS</div>
       </div>
       <button class="btn" onclick="location.reload()">↻ Actualizar</button>
     </div>
@@ -374,7 +388,7 @@ tr:hover td{background:var(--bg3);}
         <div>
           <div class="rd-label" style="margin-bottom:12px;">Acciones rapidas</div>
           <div class="rd-grid-4">
-            <div class="rd-quick" onclick="tieAbrirOp('venta')"><span style="font-size:20px;">🛒</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Nueva venta</span></div>
+            <div class="rd-quick" onclick="dashAbrirNuevaVenta()"><span style="font-size:20px;">🛒</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Nueva venta</span></div>
             <div class="rd-quick" onclick="go('cargar',document.querySelectorAll('.nav-item')[2])"><span style="font-size:20px;">💳</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Registrar movimiento</span></div>
             <div class="rd-quick" onclick="celAbrirOp('reparacion')"><span style="font-size:20px;">🔧</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Nueva reparacion</span></div>
             <div class="rd-quick" onclick="go('movimientos',document.querySelectorAll('.nav-item')[3])"><span style="font-size:20px;">📄</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Ver movimientos</span></div>
@@ -415,13 +429,13 @@ tr:hover td{background:var(--bg3);}
 
     <!-- METRICAS (ex-contenido financiero del Dashboard) -->
     <div class="screen rd" id="screen-metricas">
-      <div class="dash-top">
-        <div class="dash-chart rd-card" style="padding:22px 18px 18px;">
-          <div class="dash-chart-head">
-            <div class="rd-label">Resultado neto por mes</div>
-            <div class="chart-filters">
-              <select id="chart-anio" onchange="renderChart()"><option value="">Todos los anios</option></select>
-              <select id="chart-mes" onchange="renderChart()">
+      <div style="display:grid;grid-template-columns:1fr 260px;gap:16px;margin-bottom:20px;align-items:start;">
+        <div class="rd-card" style="padding:20px 22px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <span class="rd-label">Resultado neto por mes</span>
+            <div style="display:flex;gap:8px;">
+              <select class="rd-select" id="chart-anio" onchange="renderChart()"><option value="">Todos los anios</option></select>
+              <select class="rd-select" id="chart-mes" onchange="renderChart()">
                 <option value="">Todo el anio</option>
                 <option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option>
                 <option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option>
@@ -432,33 +446,33 @@ tr:hover td{background:var(--bg3);}
           </div>
           <canvas id="chartMes" height="195"></canvas>
         </div>
-        <div class="dash-metrics">
-          <div class="rd-card">
-            <div class="rd-label">Caja total</div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="rd-card" style="padding:16px 18px;">
+            <span class="rd-label">Caja total</span>
             <div class="rd-mono" style="font-size:16px;font-weight:700;color:var(--rd-green);margin-top:8px;" id="d-caja-ars">-</div>
             <div style="height:1px;background:var(--rd-border);margin:6px 0;"></div>
             <div class="rd-mono" style="font-size:16px;font-weight:700;color:var(--rd-text);" id="d-caja-usd">-</div>
             <div class="rd-mono" style="font-size:12px;color:var(--rd-text3);margin-top:3px;" id="d-caja-usd-ars"></div>
           </div>
-          <div class="rd-card">
-            <div class="rd-label">👥 Clientes con saldo</div>
+          <div class="rd-card" style="padding:16px 18px;">
+            <span class="rd-label">👥 Clientes con saldo</span>
             <div class="rd-mono" style="font-size:16px;font-weight:700;color:var(--rd-text);margin-top:8px;" id="d-deudores">-</div>
             <div style="font-size:10px;color:var(--rd-text3);margin-top:4px;" id="d-deuda-label">-</div>
           </div>
-          <div class="rd-card">
-            <div class="rd-label">📈 Facturacion</div>
+          <div class="rd-card" style="padding:16px 18px;">
+            <span class="rd-label">📈 Facturacion</span>
             <div class="rd-mono" style="font-size:16px;font-weight:700;color:var(--rd-green);margin-top:8px;" id="d-ing">-</div>
             <div style="font-size:10px;color:var(--rd-text3);margin-top:4px;">ARS total</div>
           </div>
-          <div class="rd-card">
-            <div class="rd-label">📉 Gastos</div>
+          <div class="rd-card" style="padding:16px 18px;">
+            <span class="rd-label">📉 Gastos</span>
             <div class="rd-mono" style="font-size:16px;font-weight:700;color:var(--rd-red);margin-top:8px;" id="d-egr">-</div>
             <div style="font-size:10px;color:var(--rd-text3);margin-top:4px;">ARS total</div>
           </div>
         </div>
       </div>
-      <div class="rd-label" style="margin:20px 0 12px;">Por unidad</div>
-      <div class="dash-units" id="dash-units"></div>
+      <div class="rd-label" style="margin-bottom:12px;">Por unidad</div>
+      <div class="rd-grid-3" id="dash-units"></div>
     </div>
 
     <!-- CAJA -->
@@ -1506,6 +1520,25 @@ tr:hover td{background:var(--bg3);}
   </div>
 </div>
 
+<!-- NUEVA VENTA (selector de unidad, acceso rapido del Dashboard) -->
+<div class="cel-modal-bg rd" id="dash-venta-modal">
+  <div style="background:var(--rd-card);border:1px solid var(--rd-border);border-radius:14px;padding:26px 28px;max-width:380px;width:100%;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <span style="font-size:16px;font-weight:700;color:var(--rd-text);">Nueva venta</span>
+      <span onclick="dashCerrarNuevaVenta()" style="cursor:pointer;color:var(--rd-text3);font-size:13px;">✕</span>
+    </div>
+    <span class="rd-label">Unidad de negocio</span>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px;">
+      <div class="rd-quick" style="flex-direction:row;align-items:center;padding:14px 16px;" onclick="dashElegirUnidadVenta('CELULARES')">
+        <span style="font-size:18px;">📱</span><span style="font-size:13.5px;font-weight:600;color:var(--rd-text);">Celulares</span>
+      </div>
+      <div class="rd-quick" style="flex-direction:row;align-items:center;padding:14px 16px;" onclick="dashElegirUnidadVenta('TIENDAS')">
+        <span style="font-size:18px;">🏬</span><span style="font-size:13.5px;font-weight:600;color:var(--rd-text);">Tienda</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- DETALLE DE DEUDA -->
 <div class="cel-modal-bg" id="deu-det-modal">
   <div class="cel-modal" style="max-width:640px;">
@@ -1803,8 +1836,9 @@ async function fetchDolar(manual){
 
 function setCurrency(cur){
   currentCurrency=cur;
-  document.getElementById('btn-usd').classList.toggle('active',cur==='USD');
-  document.getElementById('btn-ars').classList.toggle('active',cur==='ARS');
+  document.getElementById('curr-toggle').classList.toggle('is-ars',cur==='ARS');
+  document.getElementById('curr-opt-usd').classList.toggle('active',cur==='USD');
+  document.getElementById('curr-opt-ars').classList.toggle('active',cur==='ARS');
   refreshCurrentScreen();
 }
 
@@ -2374,9 +2408,9 @@ function renderMetricas(){
   var saldoDeuda=deudas.reduce(function(s,d){return s+deudaInfo(d).saldo;},0);
   var dEl=document.getElementById('d-deudores');
   dEl.textContent=fmtARS(saldoDeuda);
-  dEl.className='mc-val '+(saldoDeuda>0?'neg':'pos');
+  dEl.style.color=saldoDeuda>0?'var(--rd-red)':'var(--rd-green)';
   document.getElementById('d-deuda-label').textContent='pendiente de cobro (deudores)';
-  document.getElementById('d-deuda-label').style.color=saldoDeuda>0?'var(--red)':'var(--green)';
+  document.getElementById('d-deuda-label').style.color=saldoDeuda>0?'var(--rd-red)':'var(--rd-green)';
   document.getElementById('d-ing').textContent=fmtSmart(tIng);
   document.getElementById('d-egr').textContent=fmtSmart(tEgr);
   renderChart();
@@ -2387,11 +2421,11 @@ function renderMetricas(){
     var egr=um.reduce(function(s,m){return s+m.egreso;},0);
     var sal=ing-egr;
     var col=UCOLORS[u]||'#fff';
-    return'<div class="uu" style="--uc:'+col+'">'+
-      '<div class="uu-name">'+u+'</div>'+
-      '<div class="uu-row"><span>Ingresos</span><span class="ing">'+fmtSmart(ing)+'</span></div>'+
-      '<div class="uu-row"><span>Egresos</span><span class="egr">'+fmtSmart(egr)+'</span></div>'+
-      '<div class="uu-saldo" style="color:'+(sal>=0?'var(--green)':'var(--red)')+'">'+fmtSmart(sal)+'</div>'+
+    return'<div class="rd-unit-card" style="--uc:'+col+'">'+
+      '<div class="rd-unit-name">'+u+'</div>'+
+      '<div class="rd-unit-row"><span>Ingresos</span><span class="rd-mono" style="color:var(--rd-green);">'+fmtSmart(ing)+'</span></div>'+
+      '<div class="rd-unit-row"><span>Egresos</span><span class="rd-mono" style="color:var(--rd-red);">'+fmtSmart(egr)+'</span></div>'+
+      '<div class="rd-unit-saldo rd-mono" style="color:'+(sal>=0?'var(--rd-green)':'var(--rd-red)')+'">'+fmtSmart(sal)+'</div>'+
       '</div>';
   }).join('');
 }
@@ -2410,6 +2444,16 @@ function dashToggleTask(id){
   if(t.done[id])delete t.done[id];else t.done[id]=true;
   localStorage.setItem(t.key,JSON.stringify(t.done));
   renderDashboardHome();
+}
+
+// Selector de Unidad de negocio para "Nueva venta" desde el Dashboard: solo elige a que
+// flujo de venta ya existente despachar (celAbrirOp / tieAbrirOp), no crea logica nueva.
+function dashAbrirNuevaVenta(){document.getElementById('dash-venta-modal').classList.add('show');}
+function dashCerrarNuevaVenta(){document.getElementById('dash-venta-modal').classList.remove('show');}
+function dashElegirUnidadVenta(unidad){
+  dashCerrarNuevaVenta();
+  if(unidad==='CELULARES')celAbrirOp('venta');
+  else tieAbrirOp('venta');
 }
 
 function renderDashboardHome(){
