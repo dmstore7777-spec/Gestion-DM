@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DM Store</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 :root{
@@ -61,11 +62,11 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 .screen.active{display:block;}
 /* DASHBOARD */
 .dash-top{display:grid;grid-template-columns:1fr 260px;gap:14px;margin-bottom:14px;}
-.dash-chart{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px;}
+.dash-chart{background:var(--rd-card,var(--surface));border:1px solid var(--rd-border,var(--border));border-radius:var(--rl);padding:18px;}
 .dash-chart-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;}
 .chart-title{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-family:monospace;}
 .chart-filters{display:flex;gap:6px;}
-.chart-filters select{padding:4px 8px;border:1px solid var(--border-md);border-radius:var(--r);font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--text2);background:var(--bg3);outline:none;cursor:pointer;}
+.chart-filters select{padding:4px 8px;border:1px solid var(--rd-border-hi,var(--border-md));border-radius:var(--r);font-family:'Inter','Space Grotesk',sans-serif;font-size:11px;color:var(--rd-text2,var(--text2));background:var(--rd-bg,var(--bg3));outline:none;cursor:pointer;}
 /* METRICS */
 .dash-metrics{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:10px;}
 .mc{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:14px 16px;display:flex;flex-direction:column;justify-content:center;}
@@ -80,12 +81,12 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tex
 .mc-deuda{font-size:10px;margin-top:4px;font-family:monospace;}
 /* UNIDADES */
 .dash-units{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px;}
-.uu{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:16px;position:relative;overflow:hidden;}
+.uu{background:var(--rd-card,var(--surface));border:1px solid var(--rd-border,var(--border));border-radius:var(--rl);padding:16px;position:relative;overflow:hidden;}
 .uu::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--uc,#fff);}
-.uu-name{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;font-family:monospace;}
+.uu-name{font-size:10px;font-weight:500;color:var(--rd-text3,var(--text3));text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;font-family:'JetBrains Mono',monospace;}
 .uu-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:5px;}
-.uu-row span:first-child{color:var(--text3);}
-.uu-saldo{font-size:16px;font-weight:700;font-family:monospace;border-top:1px solid var(--border);padding-top:9px;margin-top:9px;}
+.uu-row span:first-child{color:var(--rd-text3,var(--text3));}
+.uu-saldo{font-size:16px;font-weight:700;font-family:'JetBrains Mono',monospace;border-top:1px solid var(--rd-border,var(--border));padding-top:9px;margin-top:9px;}
 /* TABLE */
 .tw{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:18px;}
 .tw-head{display:flex;align-items:center;justify-content:space-between;padding:11px 15px;border-bottom:1px solid var(--border);}
@@ -225,6 +226,35 @@ tr:hover td{background:var(--bg3);}
 .ing{color:var(--green);font-family:monospace;font-size:12px;}
 .egr{color:var(--red);font-family:monospace;font-size:12px;}
 .mono{font-family:monospace;}
+
+/* ===== Rediseño Dashboard / Metricas (scope propio, no afecta el resto de la app) ===== */
+.rd{
+  --rd-bg:#131316;--rd-card:#1a1b1f;--rd-border:rgba(255,255,255,0.07);--rd-border-hi:rgba(255,255,255,0.16);
+  --rd-text:#f4f4f2;--rd-text2:#94969c;--rd-text3:#5c5e66;
+  --rd-green:#3ecf8e;--rd-green-lt:rgba(62,207,142,0.14);--rd-red:#ef7b63;--rd-red-lt:rgba(239,123,99,0.14);
+  font-family:'Inter',sans-serif;color:var(--rd-text);
+}
+.rd .rd-mono{font-family:'JetBrains Mono',monospace;}
+.rd-label{font-size:10.5px;font-weight:600;letter-spacing:0.07em;color:var(--rd-text3);text-transform:uppercase;}
+.rd-card{background:var(--rd-card);border:1px solid var(--rd-border);border-radius:14px;padding:18px 20px;transition:transform 0.15s ease,border-color 0.15s ease;}
+.rd-card:hover{transform:translateY(-2px);}
+.rd-card.rd-clickable{cursor:pointer;}
+.rd-card.rd-clickable:hover{border-color:var(--rd-green);}
+.rd-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.rd-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.rd-grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
+.rd-btn{background:transparent;border:1px solid var(--rd-border-hi);color:var(--rd-text2);border-radius:8px;padding:6px 13px;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s ease;}
+.rd-btn:hover{color:var(--rd-text);border-color:var(--rd-green);}
+.rd-btn.rd-btn-active{background:var(--rd-text);color:var(--rd-bg);border-color:var(--rd-text);}
+.rd-task{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:10px;background:var(--rd-card);border:1px solid var(--rd-border);cursor:pointer;transition:transform .15s ease,border-color .15s ease;}
+.rd-task:hover{transform:translateY(-1px);border-color:var(--rd-border-hi);}
+.rd-task.rd-task-done{opacity:0.5;}
+.rd-check{width:17px;height:17px;border-radius:5px;border:1.6px solid rgba(255,255,255,0.22);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.rd-task-done .rd-check{background:var(--rd-green-lt);border-color:transparent;}
+.rd-quick{background:var(--rd-card);border:1px solid var(--rd-border);border-radius:12px;padding:18px 16px;cursor:pointer;display:flex;flex-direction:column;gap:10px;transition:transform .15s ease,border-color .15s ease;}
+.rd-quick:hover{transform:translateY(-2px);border-color:var(--rd-green);}
+.rd-activity-row{padding:10px 0;border-bottom:1px solid var(--rd-border);}
+.rd-activity-row:last-child{border-bottom:none;}
 </style>
 </head>
 <body>
@@ -247,6 +277,9 @@ tr:hover td{background:var(--bg3);}
     </div>
     <div class="nav-item" onclick="go('movimientos',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>Movimientos
+    </div>
+    <div class="nav-item" onclick="go('metricas',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="13" width="3" height="7" rx="1"/><rect x="10.5" y="8" width="3" height="12" rx="1" opacity="0.75"/><rect x="17" y="4" width="3" height="16" rx="1"/></svg>Métricas
     </div>
     <div class="nav-item" onclick="go('proveedores',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="7" width="16" height="13" rx="1"/><path d="M1 7l3-5h10l3 5"/><line x1="1" y1="12" x2="17" y2="12"/></svg>Proveedores
@@ -319,11 +352,73 @@ tr:hover td{background:var(--bg3);}
   <div class="content">
 
     <!-- DASHBOARD -->
-    <div class="screen active" id="screen-dashboard">
+    <div class="screen active rd" id="screen-dashboard">
+      <div style="display:flex;flex-direction:column;gap:22px;max-width:1180px;">
+
+        <div>
+          <div style="font-size:25px;font-weight:700;color:var(--rd-text);letter-spacing:-0.01em;" id="dash-greeting">Buenos dias 👋</div>
+          <div style="font-size:13px;color:var(--rd-text3);margin-top:5px;" id="dash-today">-</div>
+        </div>
+
+        <div class="rd-grid-2">
+          <div class="rd-card" id="dash-atencion"></div>
+          <div class="rd-card">
+            <span class="rd-label">Progreso de hoy</span>
+            <div style="margin-top:14px;height:8px;border-radius:6px;background:var(--rd-bg);overflow:hidden;">
+              <div id="dash-progress-bar" style="height:100%;border-radius:6px;background:var(--rd-green);width:0%;transition:width .4s ease;"></div>
+            </div>
+            <div style="margin-top:10px;font-size:12.5px;color:var(--rd-text2);" id="dash-progress-label">-</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="rd-label" style="margin-bottom:12px;">Acciones rapidas</div>
+          <div class="rd-grid-4">
+            <div class="rd-quick" onclick="tieAbrirOp('venta')"><span style="font-size:20px;">🛒</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Nueva venta</span></div>
+            <div class="rd-quick" onclick="go('cargar',document.querySelectorAll('.nav-item')[2])"><span style="font-size:20px;">💳</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Registrar movimiento</span></div>
+            <div class="rd-quick" onclick="celAbrirOp('reparacion')"><span style="font-size:20px;">🔧</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Nueva reparacion</span></div>
+            <div class="rd-quick" onclick="go('movimientos',document.querySelectorAll('.nav-item')[3])"><span style="font-size:20px;">📄</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Ver movimientos</span></div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start;">
+          <div>
+            <div class="rd-label" style="margin-bottom:12px;">Operaciones de hoy</div>
+            <div style="display:flex;flex-direction:column;gap:8px;" id="dash-tasks"></div>
+            <div id="dash-tasks-done-wrap" style="display:none;">
+              <div class="rd-label" style="margin:22px 0 12px;">Completado hoy</div>
+              <div style="display:flex;flex-direction:column;gap:8px;" id="dash-tasks-done"></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div>
+              <div class="rd-label" style="margin-bottom:12px;">Resumen</div>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div class="rd-card" style="padding:14px 16px;display:flex;flex-direction:column;gap:5px;">
+                  <span style="font-size:10px;font-weight:600;letter-spacing:0.06em;color:var(--rd-text3);text-transform:uppercase;">🟢 Caja disponible</span>
+                  <span class="rd-mono" style="font-size:16px;font-weight:700;color:var(--rd-green);white-space:nowrap;" id="dash-caja">-</span>
+                </div>
+                <div class="rd-card" style="padding:14px 16px;display:flex;flex-direction:column;gap:5px;">
+                  <span style="font-size:10px;font-weight:600;letter-spacing:0.06em;color:var(--rd-text3);text-transform:uppercase;">💵 Cotizacion del dolar</span>
+                  <span class="rd-mono" style="font-size:16px;font-weight:700;color:var(--rd-text);white-space:nowrap;" id="dash-dolar">-</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="rd-label" style="margin-bottom:12px;">Actividad reciente</div>
+              <div class="rd-card" style="padding:4px 16px;" id="dash-activity"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- METRICAS (ex-contenido financiero del Dashboard) -->
+    <div class="screen rd" id="screen-metricas">
       <div class="dash-top">
-        <div class="dash-chart">
+        <div class="dash-chart rd-card" style="padding:22px 18px 18px;">
           <div class="dash-chart-head">
-            <div class="chart-title">Resultado neto por mes</div>
+            <div class="rd-label">Resultado neto por mes</div>
             <div class="chart-filters">
               <select id="chart-anio" onchange="renderChart()"><option value="">Todos los anios</option></select>
               <select id="chart-mes" onchange="renderChart()">
@@ -338,36 +433,32 @@ tr:hover td{background:var(--bg3);}
           <canvas id="chartMes" height="195"></canvas>
         </div>
         <div class="dash-metrics">
-          <div class="mc">
-            <div class="mc-label">Caja total</div>
-            <div class="mc-val pos" id="d-caja-ars">-</div>
-            <div class="mc-divider"></div>
-            <div class="mc-val2" id="d-caja-usd">-</div>
-            <div class="mc-val2-ars" id="d-caja-usd-ars"></div>
+          <div class="rd-card">
+            <div class="rd-label">Caja total</div>
+            <div class="rd-mono" style="font-size:16px;font-weight:700;color:var(--rd-green);margin-top:8px;" id="d-caja-ars">-</div>
+            <div style="height:1px;background:var(--rd-border);margin:6px 0;"></div>
+            <div class="rd-mono" style="font-size:16px;font-weight:700;color:var(--rd-text);" id="d-caja-usd">-</div>
+            <div class="rd-mono" style="font-size:12px;color:var(--rd-text3);margin-top:3px;" id="d-caja-usd-ars"></div>
           </div>
-          <div class="mc">
-            <div class="mc-label">Deudores</div>
-            <div class="mc-val" id="d-deudores">-</div>
-            <div class="mc-deuda" id="d-deuda-label">-</div>
+          <div class="rd-card">
+            <div class="rd-label">👥 Clientes con saldo</div>
+            <div class="rd-mono" style="font-size:16px;font-weight:700;color:var(--rd-text);margin-top:8px;" id="d-deudores">-</div>
+            <div style="font-size:10px;color:var(--rd-text3);margin-top:4px;" id="d-deuda-label">-</div>
           </div>
-          <div class="mc">
-            <div class="mc-label">Ingresos</div>
-            <div class="mc-val pos" id="d-ing">-</div>
-            <div class="mc-sub">ARS TOTAL</div>
+          <div class="rd-card">
+            <div class="rd-label">📈 Facturacion</div>
+            <div class="rd-mono" style="font-size:16px;font-weight:700;color:var(--rd-green);margin-top:8px;" id="d-ing">-</div>
+            <div style="font-size:10px;color:var(--rd-text3);margin-top:4px;">ARS total</div>
           </div>
-          <div class="mc">
-            <div class="mc-label">Egresos</div>
-            <div class="mc-val neg" id="d-egr">-</div>
-            <div class="mc-sub">ARS TOTAL</div>
+          <div class="rd-card">
+            <div class="rd-label">📉 Gastos</div>
+            <div class="rd-mono" style="font-size:16px;font-weight:700;color:var(--rd-red);margin-top:8px;" id="d-egr">-</div>
+            <div style="font-size:10px;color:var(--rd-text3);margin-top:4px;">ARS total</div>
           </div>
         </div>
       </div>
+      <div class="rd-label" style="margin:20px 0 12px;">Por unidad</div>
       <div class="dash-units" id="dash-units"></div>
-      <div class="tw">
-        <div class="tw-head"><div class="tw-title">Ultimos movimientos</div><button class="btn btn-sm" onclick="go('movimientos',document.querySelectorAll('.nav-item')[3])">Ver todos</button></div>
-        <table><thead><tr><th>Fecha</th><th>Unidad</th><th>Operacion</th><th>Descripcion</th><th>Ingreso</th><th>Egreso</th><th>Metodo</th></tr></thead>
-        <tbody id="recent-body"></tbody></table>
-      </div>
     </div>
 
     <!-- CAJA -->
@@ -1514,7 +1605,7 @@ var METC={MP:'#1D9E75',EFECTIVO:'#EF9F27',USD:'#378ADD','NARANJA X':'#D85A30','A
 var UCOLORS={CELULARES:'#7F77DD',TIENDAS:'#1D9E75','SERVICIO TECNICO':'#378ADD'};
 var NOM=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 var CATC=['#7F77DD','#1D9E75','#378ADD','#EF9F27','#D85A30','#888780','#D4537E','#639922'];
-var TITLES={dashboard:'Dashboard',caja:'Caja',cargar:'Cargar movimiento',movimientos:'Movimientos',config:'Configuracion',unidad:'Unidad',proveedores:'Proveedores',deudores:'Deudores'};
+var TITLES={dashboard:'Dashboard',caja:'Caja',cargar:'Cargar movimiento',movimientos:'Movimientos',metricas:'Metricas',config:'Configuracion',unidad:'Unidad',proveedores:'Proveedores',deudores:'Deudores'};
 var movs=[],cMes=null,cCaja=null,cU=null,cUCat=null,curU='CELULARES';
 var dolarBlue=0,pendingDelId=null,currentCurrency='USD';
 
@@ -1721,7 +1812,8 @@ function refreshCurrentScreen(){
   var active=document.querySelector('.screen.active');
   if(!active)return;
   var id=active.id.replace('screen-','');
-  if(id==='dashboard')renderDash();
+  if(id==='dashboard')renderDashboardHome();
+  else if(id==='metricas')renderMetricas();
   else if(id==='caja')renderCaja();
   else if(id==='cel-resumen')celRenderResumen();
   else if(id==='cel-stock')celRenderTabla('stock');
@@ -1755,7 +1847,8 @@ function go(name,el){
   document.getElementById('screen-'+name).classList.add('active');
   if(el)el.classList.add('active');
   document.getElementById('page-title').textContent=TITLES[name]||name;
-  if(name==='dashboard')renderDash();
+  if(name==='dashboard')renderDashboardHome();
+  if(name==='metricas')renderMetricas();
   if(name==='movimientos')renderMovs();
   if(name==='caja')renderCaja();
   if(name==='unidad')renderU();
@@ -2062,7 +2155,8 @@ async function cargarDatos(){
       var active=document.querySelector('.screen.active');
       if(active){
         var id=active.id.replace('screen-','');
-        if(id==='dashboard')renderDash();
+        if(id==='dashboard')renderDashboardHome();
+        else if(id==='metricas')renderMetricas();
         else if(id==='caja')renderCaja();
         else if(id==='movimientos')renderMovs();
         else if(id==='unidad')renderU();
@@ -2207,16 +2301,16 @@ function renderChart(){
     cMes=new Chart(document.getElementById('chartMes').getContext('2d'),{
       type:'line',
       data:{labels:labels,datasets:[
-        {label:'Ingresos',data:ingData,borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.08)',borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#1D9E75',fill:true,tension:0.3},
-        {label:'Egresos',data:egrData,borderColor:'#D85A30',backgroundColor:'rgba(216,90,48,0.08)',borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#D85A30',fill:true,tension:0.3}
+        {label:'Ingresos',data:ingData,borderColor:'#3ecf8e',backgroundColor:'rgba(62,207,142,0.1)',borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#3ecf8e',fill:true,tension:0.3},
+        {label:'Egresos',data:egrData,borderColor:'#ef7b63',backgroundColor:'rgba(239,123,99,0.1)',borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#ef7b63',fill:true,tension:0.3}
       ]},
       options:{responsive:true,
-        plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12,color:'#9A9890'}},
+        plugins:{legend:{position:'bottom',labels:{font:{size:11,family:'Inter'},boxWidth:12,color:'#94969c'}},
           tooltip:{callbacks:{label:function(ctx){return' '+ctx.dataset.label+': '+fmtShort(ctx.raw);}}}},
         scales:{
-          x:{ticks:{font:{size:10},color:'#5A5856'},grid:{color:'rgba(255,255,255,0.04)'}},
-          y:{ticks:{font:{size:10},color:'#5A5856',callback:function(v){return fmtShort(v);}},grid:{color:'rgba(255,255,255,0.04)'},
-            title:{display:true,text:'ARS',color:'#5A5856',font:{size:10}}}
+          x:{ticks:{font:{size:10,family:'JetBrains Mono'},color:'#5c5e66'},grid:{color:'rgba(255,255,255,0.04)'}},
+          y:{ticks:{font:{size:10,family:'JetBrains Mono'},color:'#5c5e66',callback:function(v){return fmtShort(v);}},grid:{color:'rgba(255,255,255,0.04)'},
+            title:{display:true,text:'ARS',color:'#5c5e66',font:{size:10}}}
         }
       }
     });
@@ -2258,17 +2352,24 @@ function buildMovRow(m,showUnit,showDel){
     '</tr>';
 }
 
-function renderDash(){
+// Caja disponible (ARS + USD): misma formula que ya existia en el ex-Dashboard, ahora compartida
+// por Metricas y por el resumen del nuevo Dashboard para no duplicarla en dos lugares.
+function calcCajaDisponible(){
+  var cajaTot=movs.filter(function(m){return m.metodo!=='DEUDA'&&m.metodo!=='USD';}).reduce(function(s,m){return s+m.ingresoCaja-m.egreso;},0);
+  var cajaUSD=movs.filter(function(m){return m.metodo==='USD';}).reduce(function(s,m){return s+m.ingresoCaja-m.egreso;},0);
+  return{cajaTot:cajaTot,cajaUSD:cajaUSD};
+}
+
+function renderMetricas(){
   var nonDeuda=movs.filter(function(m){return m.metodo!=='DEUDA'&&m.operacion!=='FINANCIERO';});
   var tIng=nonDeuda.reduce(function(s,m){return s+m.ingresoCaja;},0);
   var tEgr=nonDeuda.reduce(function(s,m){return s+m.egreso;},0);
-  var cajaTot=movs.filter(function(m){return m.metodo!=='DEUDA'&&m.metodo!=='USD';}).reduce(function(s,m){return s+m.ingresoCaja-m.egreso;},0);
-  var cajaUSD=movs.filter(function(m){return m.metodo==='USD';}).reduce(function(s,m){return s+m.ingresoCaja-m.egreso;},0);
-  document.getElementById('d-caja-ars').textContent=fmtSmart(cajaTot);
+  var caja=calcCajaDisponible();
+  document.getElementById('d-caja-ars').textContent=fmtSmart(caja.cajaTot);
   var usdEl=document.getElementById('d-caja-usd');
-  usdEl.textContent=fmtUSD(cajaUSD);
-  usdEl.dataset.raw=cajaUSD;
-  document.getElementById('d-caja-usd-ars').textContent=cajaUSD&&dolarBlue?'= '+fmtARS(cajaUSD*dolarBlue):'';
+  usdEl.textContent=fmtUSD(caja.cajaUSD);
+  usdEl.dataset.raw=caja.cajaUSD;
+  document.getElementById('d-caja-usd-ars').textContent=caja.cajaUSD&&dolarBlue?'= '+fmtARS(caja.cajaUSD*dolarBlue):'';
   // Total adeudado real, tomado del modulo Deudores (incluye deudas mixtas, no solo metodo=DEUDA puro).
   var saldoDeuda=deudas.reduce(function(s,d){return s+deudaInfo(d).saldo;},0);
   var dEl=document.getElementById('d-deudores');
@@ -2293,10 +2394,100 @@ function renderDash(){
       '<div class="uu-saldo" style="color:'+(sal>=0?'var(--green)':'var(--red)')+'">'+fmtSmart(sal)+'</div>'+
       '</div>';
   }).join('');
+}
+
+// ============ DASHBOARD OPERATIVO (nuevo "home" del dia a dia) ============
+// Todo lo que sigue es puramente de lectura/presentacion: solo lee arrays ya cargados
+// (movs, celulares, productosTiendas, deudas) a traves de funciones ya existentes.
+// El "check" de tareas es un estado de interfaz en localStorage (mismo patron que dm_concil
+// en Caja), se resetea solo cada dia y no toca Supabase ni ninguna tabla de negocio.
+function dashTasksHoy(){
+  var key='dm_dash_tasks_'+new Date().toISOString().slice(0,10);
+  return{key:key,done:JSON.parse(localStorage.getItem(key)||'{}')};
+}
+function dashToggleTask(id){
+  var t=dashTasksHoy();
+  if(t.done[id])delete t.done[id];else t.done[id]=true;
+  localStorage.setItem(t.key,JSON.stringify(t.done));
+  renderDashboardHome();
+}
+
+function renderDashboardHome(){
+  var hoy=new Date();
+  var horaSaludo=hoy.getHours()<12?'Buenos dias':hoy.getHours()<19?'Buenas tardes':'Buenas noches';
+  document.getElementById('dash-greeting').textContent=horaSaludo+', Agustin 👋';
+  var dias=['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
+  var meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  document.getElementById('dash-today').textContent='Hoy es '+dias[hoy.getDay()]+' '+hoy.getDate()+' de '+meses[hoy.getMonth()];
+
+  // Señales reales derivadas de datos ya cargados (mismos criterios que ya usan Tiendas/Celulares/Deudores).
+  var stockBajo=productosTiendas.filter(function(p){return(parseInt(p.stock)||0)<5;});
+  var enReparacion=celulares.filter(function(c){return c.estado==='EN REPARACION';});
+  var deudasVencidas=deudas.filter(function(d){return deudaInfo(d).estado==='VENCIDA';});
+
+  var tasks=[];
+  if(stockBajo.length)tasks.push({id:'stock-bajo',emoji:'📦',label:'Revisar stock bajo ('+stockBajo.length+' producto'+(stockBajo.length>1?'s':'')+')',onClick:"goTie('tie-stock')"});
+  if(enReparacion.length)tasks.push({id:'reparaciones',emoji:'🔧',label:enReparacion.length+' reparacion'+(enReparacion.length>1?'es':'')+' en curso',onClick:"goCel('cel-reparacion')"});
+  if(deudasVencidas.length)tasks.push({id:'deudas-vencidas',emoji:'💸',label:'Cobrar '+deudasVencidas.length+' deuda'+(deudasVencidas.length>1?'s':'')+' vencida'+(deudasVencidas.length>1?'s':''),onClick:"go('deudores',null)"});
+
+  var st=dashTasksHoy();
+  var pendientes=tasks.filter(function(t){return!st.done[t.id];});
+  var completadas=tasks.filter(function(t){return st.done[t.id];});
+
+  // Tarjeta "Atencion"
+  var atEl=document.getElementById('dash-atencion');
+  if(!tasks.length){
+    atEl.innerHTML='<div style="display:flex;align-items:center;gap:9px;"><span style="font-size:19px;">🟢</span><span style="font-size:15px;font-weight:700;color:var(--rd-green);">Todo en orden</span></div>'+
+      '<div style="margin-top:12px;font-size:12.5px;color:var(--rd-text2);">No hay pendientes detectados por ahora.</div>';
+  }else{
+    atEl.innerHTML='<div style="display:flex;align-items:center;gap:9px;"><span style="font-size:19px;">🟠</span><span style="font-size:15px;font-weight:700;color:#f0a742;">Atencion</span></div>'+
+      '<div style="margin-top:12px;display:flex;flex-direction:column;gap:6px;">'+
+      tasks.map(function(t){return'<span style="font-size:12.5px;color:var(--rd-text2);">·&nbsp;&nbsp;'+t.label+'</span>';}).join('')+
+      '</div>';
+  }
+
+  // Tarjeta "Progreso de hoy"
+  var pct=tasks.length?Math.round((completadas.length/tasks.length)*100):100;
+  document.getElementById('dash-progress-bar').style.width=pct+'%';
+  document.getElementById('dash-progress-label').textContent=completadas.length+' de '+tasks.length+' tareas completadas';
+
+  // Lista de tareas (checklist)
+  function taskRow(t,done){
+    return'<div class="rd-task'+(done?' rd-task-done':'')+'" onclick="dashToggleTask(\''+t.id+'\')">'+
+      '<div class="rd-check">'+(done?'<svg width="10" height="10" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 5.5" stroke="#3ecf8e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+'</div>'+
+      '<span style="font-size:16px;">'+t.emoji+'</span>'+
+      '<span style="flex:1;font-size:13.5px;font-weight:600;color:'+(done?'var(--rd-text2)':'var(--rd-text)')+';">'+t.label+'</span>'+
+      (done?'':'<span onclick="event.stopPropagation();'+t.onClick+'" style="font-size:11px;color:var(--rd-text3);font-weight:600;">Ir →</span>')+
+      '</div>';
+  }
+  document.getElementById('dash-tasks').innerHTML=pendientes.length
+    ?pendientes.map(function(t){return taskRow(t,false);}).join('')
+    :'<div style="font-size:12.5px;color:var(--rd-text3);padding:8px 0;">Sin operaciones pendientes hoy.</div>';
+  var doneWrap=document.getElementById('dash-tasks-done-wrap');
+  if(completadas.length){
+    doneWrap.style.display='block';
+    document.getElementById('dash-tasks-done').innerHTML=completadas.map(function(t){return taskRow(t,true);}).join('');
+  }else{
+    doneWrap.style.display='none';
+  }
+
+  // Resumen: caja disponible + cotizacion (mismos valores que Metricas, misma funcion compartida)
+  var caja=calcCajaDisponible();
+  document.getElementById('dash-caja').textContent=fmtSmart(caja.cajaTot);
+  document.getElementById('dash-dolar').textContent='$'+(dolarBlue||'-');
+
+  // Actividad reciente: mismos datos que ya usaba la tabla "Ultimos movimientos"
   var rec=movs.slice(0,6);
-  document.getElementById('recent-body').innerHTML=rec.length
-    ?rec.map(function(m){return buildMovRow(m,true,false);}).join('')
-    :'<tr><td colspan="7" class="empty-row">Sin movimientos</td></tr>';
+  document.getElementById('dash-activity').innerHTML=rec.length
+    ?rec.map(function(m){
+      var montoTxt=m.ingreso?('+ '+fmtMov(m.ingreso,m.metodo)):(m.egreso?('- '+fmtMov(m.egreso,m.metodo)):'');
+      var montoColor=m.ingreso?'var(--rd-green)':'var(--rd-red)';
+      return'<div class="rd-activity-row">'+
+        '<div style="font-size:12.5px;color:var(--rd-text);line-height:1.4;">'+m.unidad+' — '+(m.desc||m.categoria)+' <span class="rd-mono" style="color:'+montoColor+';font-weight:600;">'+montoTxt+'</span></div>'+
+        '<div style="font-size:11px;color:var(--rd-text3);margin-top:3px;">'+fd(m.fecha)+'</div>'+
+        '</div>';
+    }).join('')
+    :'<div style="font-size:12.5px;color:var(--rd-text3);padding:8px 0;">Sin movimientos todavia.</div>';
 }
 
 function renderCaja(){
@@ -2881,7 +3072,8 @@ async function cargarDeudas(){
     var d3=await r3.json();if(Array.isArray(d3))promesasPago=d3;
     var activeId=document.querySelector('.screen.active')?document.querySelector('.screen.active').id:'';
     if(activeId==='screen-deudores')renderDeudores();
-    if(activeId==='screen-dashboard')renderDash();
+    if(activeId==='screen-dashboard')renderDashboardHome();
+    if(activeId==='screen-metricas')renderMetricas();
   }catch(e){console.log('Deudas load error',e);}
 }
 
