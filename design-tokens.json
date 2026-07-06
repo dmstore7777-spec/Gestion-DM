@@ -1,0 +1,72 @@
+{
+  "$schema": "Design tokens transcritos 1:1 desde _design_handoff/DM Store.dc.html (Guia de marca, lineas 490-628). No inventar valores nuevos aca sin actualizarlos primero en el mockup.",
+  "color": {
+    "background": { "value": "#131316", "name": "Fondo app", "cssVar": "--rd-bg" },
+    "surface": { "value": "#1a1b1f", "name": "Superficie (cards, sidebar, inputs)", "cssVar": "--rd-card" },
+    "surfaceOverlay": { "value": "#202127", "name": "Overlay (modales, dropdowns, tooltips)" },
+    "border": { "value": "rgba(255,255,255,0.07)", "name": "Borde default", "cssVar": "--rd-border" },
+    "borderHi": { "value": "rgba(255,255,255,0.16)", "name": "Borde hover/destacado", "cssVar": "--rd-border-hi" },
+    "textPrimary": { "value": "#f4f4f2", "name": "Texto primario", "cssVar": "--rd-text" },
+    "textSecondary": { "value": "#94969c", "name": "Texto secundario", "cssVar": "--rd-text2" },
+    "textTertiary": { "value": "#5c5e66", "name": "Texto terciario / labels", "cssVar": "--rd-text3" },
+    "brandGreen": { "value": "#3ecf8e", "name": "Brand / positivo / ingreso", "cssVar": "--rd-green" },
+    "brandGreenLight": { "value": "rgba(62,207,142,0.14)", "name": "Fondo tenue positivo", "cssVar": "--rd-green-lt" },
+    "brandCoral": { "value": "#ef7b63", "name": "Negativo / egreso", "cssVar": "--rd-red" },
+    "brandCoralLight": { "value": "rgba(239,123,99,0.14)", "name": "Fondo tenue negativo", "cssVar": "--rd-red-lt" },
+    "info": { "value": "#5b9bf2", "name": "Info / vinculos / neutral" },
+    "warning": { "value": "#e8b84b", "name": "Advertencia / pendiente" }
+  },
+  "typography": {
+    "fontUi": { "value": "'Inter', sans-serif", "weights": [400, 500, 600, 700, 800], "use": "Titulos, interfaz, labels, botones, navegacion" },
+    "fontMono": { "value": "'JetBrains Mono', monospace", "weights": [400, 500, 600, 700], "use": "Montos, fechas, IDs, metricas — todo dato cuantitativo" },
+    "scale": {
+      "h1": { "size": "26px", "weight": 700, "font": "Inter", "use": "Titulo de pagina" },
+      "h1Topbar": { "size": "22px", "weight": 700, "font": "Inter", "use": "Titulo de pagina en topbar (variante mas chica)" },
+      "h2": { "size": "19px", "weight": 700, "font": "Inter", "use": "Titulo de tarjeta / seccion grande" },
+      "body": { "size": "14px", "weight": 500, "font": "Inter", "use": "Texto de interfaz, labels de campos" },
+      "caption": { "size": "10-11px", "weight": "600-700", "font": "Inter", "letterSpacing": "0.07-0.08em", "textTransform": "uppercase", "color": "textTertiary", "use": "Eyebrow / label de card" },
+      "dataSmall": { "size": "12.5-16px", "weight": 700, "font": "JetBrains Mono", "use": "Valores en tablas y KPIs de grilla densa" },
+      "dataLarge": { "size": "20-32px", "weight": 700, "font": "JetBrains Mono", "use": "KPI hero (Caja, panel lateral de Metricas)" }
+    }
+  },
+  "spacing": {
+    "scale": [4, 8, 12, 16, 24, 32, 48, 64],
+    "unit": "px",
+    "common": {
+      "cardGap": 16,
+      "cardGapDense": 14,
+      "cardPadding": "16-20px",
+      "cardPaddingLarge": "24-28px",
+      "sectionGap": "20-22px",
+      "topbarPaddingX": "22-36px"
+    }
+  },
+  "radius": {
+    "chip": { "value": "6px", "use": "Chips, badges, botones pequenos" },
+    "input": { "value": "8px", "use": "Inputs, botones, barra unificada de topbar" },
+    "card": { "value": "14px", "use": "Cards (contenedor grande de cualquier bloque)" },
+    "interactiveSmall": { "value": "10-12px", "use": "Task rows, quick actions (card chica interactiva)" },
+    "circle": { "value": "50%", "use": "Dots de estado, checkbox completado, avatar" }
+  },
+  "shadow": {
+    "flat": { "value": "none", "use": "Estado de reposo de cualquier card (solo border)" },
+    "hover": { "value": "0 2px 6px rgba(0,0,0,0.3)", "use": "Elevacion en hover, junto a transform:translateY(-2px)" },
+    "dropdown": { "value": "0 8px 24px rgba(0,0,0,0.45)", "use": "Tooltips, dropdowns, modales, overlays" }
+  },
+  "transition": {
+    "hoverTransform": { "duration": "0.15s", "easing": "ease", "properties": ["transform", "border-color"] },
+    "navColor": { "duration": "0.12-0.2s", "easing": "ease", "properties": ["color", "background"] },
+    "toggleThumb": { "duration": "0.25s", "easing": "cubic-bezier(.4,0,.2,1)", "properties": ["transform"] },
+    "progressBar": { "duration": "0.4s", "easing": "ease", "properties": ["width"] },
+    "refreshIcon": { "duration": "0.7s", "easing": "ease", "properties": ["transform"] },
+    "toast": { "duration": "0.25s", "easing": "ease", "properties": ["transform", "opacity"] }
+  },
+  "icon": {
+    "style": "geometrica, 1.6px stroke, sin relleno decorativo",
+    "viewBox": "0 0 20 20",
+    "sizeNav": "17px",
+    "sizeSecondary": "12-15px",
+    "strokeWidth": 1.6,
+    "colorRule": "el icono siempre toma el color del texto que acompana (nunca un color propio)"
+  }
+}

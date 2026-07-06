@@ -23,35 +23,40 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;}
 .layout{display:flex;min-height:100vh;}
-.sidebar{width:236px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;font-family:'Inter',sans-serif;}
-.sb-brand{padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;}
+.sidebar{width:236px;background:#121214;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;flex-shrink:0;font-family:'Inter',sans-serif;}
+.sb-brand{padding:20px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:11px;}
 .sb-logo{width:34px;height:34px;border-radius:6px;object-fit:cover;}
-.sb-brand h1{font-size:15px;font-weight:700;color:var(--text);}
-.sb-brand span{font-size:10px;color:var(--text3);letter-spacing:0.05em;}
-.sb-section{padding:16px 20px 5px;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);}
-.sb-nav{flex:1;padding:6px 0;overflow-y:auto;}
-.nav-item{display:flex;align-items:center;gap:9px;padding:9px 20px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);border-left:2px solid transparent;transition:all 0.12s;}
-.nav-item:hover{color:var(--text);background:var(--accent-dim);}
-.nav-item.active{color:var(--text);background:var(--accent-dim);border-left-color:var(--text);font-weight:600;}
-.nav-item svg{width:15px;height:15px;flex-shrink:0;opacity:0.55;}
-.nav-item.active svg{opacity:1;}
-.sb-footer{border-top:1px solid var(--border);}
+.sb-brand h1{font-size:15px;font-weight:700;color:#f4f4f2;}
+.sb-brand span{font-size:10px;color:#5c5e66;letter-spacing:0.05em;}
+.sb-section{padding:16px 20px 5px;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#5c5e66;}
+.sb-nav{flex:1;padding:6px 10px;overflow-y:auto;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;margin-bottom:2px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#94969c;transition:all 0.12s;}
+.nav-item:hover{color:#f4f4f2;background:rgba(255,255,255,0.05);}
+.nav-item.active{color:#f4f4f2;background:rgba(62,207,142,0.14);font-weight:600;}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;opacity:0.65;}
+.nav-item.active svg{opacity:1;color:#3ecf8e;}
+.sb-footer{border-top:1px solid rgba(255,255,255,0.07);}
 .sb-status{padding:13px 20px;}
-.status-pill{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:500;color:var(--text3);}
+.status-pill{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:500;color:#5c5e66;}
 .dot{width:6px;height:6px;border-radius:50%;background:#444;flex-shrink:0;}
 .dot.ok{background:var(--green);box-shadow:0 0 5px rgba(29,158,117,0.5);}
 .dot.err{background:var(--red);}
 .dot.loading{background:var(--amber);animation:blink 1s infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 26px;height:52px;display:flex;align-items:center;justify-content:space-between;}
-.page-title{font-size:14px;font-weight:600;}
+.topbar{background:var(--rd-bg,var(--bg2));border-bottom:1px solid var(--rd-border,var(--border));padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.page-title{font-size:22px;font-weight:700;letter-spacing:-0.01em;color:var(--rd-text,var(--text));}
 .topbar-right{display:flex;align-items:center;gap:12px;}
-.dolar-pill{font-size:11px;font-family:monospace;color:#1D9E75;background:rgba(29,158,117,0.15);padding:4px 10px;border-radius:20px;cursor:pointer;border:none;font-weight:600;}
+/* Barra unificada: cotizacion + toggle USD/ARS + actualizar como una sola pieza visual */
+.topbar-unified{display:flex;align-items:stretch;height:38px;background:#1a1b1f;border:1px solid rgba(255,255,255,0.1);border-radius:10px;overflow:hidden;}
+.tu-divider{width:1px;align-self:stretch;margin:7px 0;background:rgba(255,255,255,0.1);}
+.dolar-pill{font-size:12px;font-family:'JetBrains Mono',monospace;color:#3ecf8e;background:rgba(62,207,142,0.14);padding:0 16px;cursor:pointer;border:none;font-weight:600;height:100%;display:flex;align-items:center;}
 .dolar-pill:hover{opacity:0.8;}
+.tu-actualizar{background:#f4f4f2;color:#131316;border:none;padding:0 16px;height:100%;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:opacity .15s ease;}
+.tu-actualizar:hover{opacity:0.85;}
 /* Toggle switch USD/ARS — componente unico reutilizable, reemplaza los 2 botones sueltos */
-.curr-toggle{position:relative;display:flex;align-items:center;width:108px;height:30px;background:#1a1b1f;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:3px;cursor:pointer;font-family:'Inter',sans-serif;user-select:none;flex-shrink:0;}
-.curr-toggle-thumb{position:absolute;top:3px;left:3px;width:calc(50% - 3px);height:calc(100% - 6px);background:#3ecf8e;border-radius:6px;transition:transform 0.25s cubic-bezier(.4,0,.2,1);}
+.curr-toggle{position:relative;display:flex;align-items:center;width:104px;height:100%;background:transparent;border:none;border-radius:0;padding:0 4px;cursor:pointer;font-family:'Inter',sans-serif;user-select:none;flex-shrink:0;}
+.curr-toggle-thumb{position:absolute;top:5px;left:4px;width:calc(50% - 5px);height:calc(100% - 10px);background:#f4f4f2;border-radius:6px;transition:transform 0.25s cubic-bezier(.4,0,.2,1);}
 .curr-toggle.is-ars .curr-toggle-thumb{transform:translateX(100%);}
 .curr-toggle-opt{position:relative;z-index:1;flex:1;text-align:center;font-size:11.5px;font-weight:700;letter-spacing:0.02em;color:#94969c;transition:color 0.2s ease;}
 .curr-toggle-opt.active{color:#131316;}
@@ -169,11 +174,11 @@ tr:hover td{background:var(--bg3);}
 .u-detail{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:18px;}
 .chart-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:17px;margin-bottom:18px;}
 .sec-label{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:11px;font-family:monospace;}
-.nav-subitem{display:flex;align-items:center;gap:9px;padding:7px 20px 7px 32px;cursor:pointer;font-size:12px;color:var(--text3);border-left:2px solid transparent;transition:all 0.12s;}
-.nav-subitem:hover{color:var(--text);background:rgba(255,255,255,0.04);}
-.nav-subitem.active{color:var(--text);background:rgba(255,255,255,0.06);border-left-color:rgba(255,255,255,0.4);}
+.nav-subitem{display:flex;align-items:center;gap:9px;margin:0 10px 2px 22px;padding:7px 12px;border-radius:7px;cursor:pointer;font-size:12px;color:#5c5e66;transition:all 0.12s;}
+.nav-subitem:hover{color:#f4f4f2;background:rgba(255,255,255,0.05);}
+.nav-subitem.active{color:#f4f4f2;background:rgba(62,207,142,0.12);}
 .nav-subitem svg{width:13px;height:13px;flex-shrink:0;opacity:0.5;}
-.nav-subitem.active svg{opacity:0.9;}
+.nav-subitem.active svg{opacity:1;color:#3ecf8e;}
 /* CELULARES */
 .cel-metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:11px;margin-bottom:20px;}
 .cel-filters{display:flex;gap:9px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
@@ -268,6 +273,42 @@ tr:hover td{background:var(--bg3);}
 .rd-unit-name{font-size:13px;font-weight:600;color:var(--rd-text);margin-bottom:12px;}
 .rd-unit-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:6px;color:var(--rd-text2);}
 .rd-unit-saldo{font-size:16px;font-weight:700;border-top:1px solid var(--rd-border);padding-top:9px;margin-top:9px;}
+.rd-table{background:var(--rd-card);border:1px solid var(--rd-border);border-radius:14px;overflow:hidden;}
+.rd-thead{display:grid;padding:12px 20px;border-bottom:1px solid var(--rd-border);font-size:10.5px;font-weight:600;letter-spacing:0.06em;color:var(--rd-text3);text-transform:uppercase;}
+.rd-trow{display:grid;padding:14px 20px;border-bottom:1px solid var(--rd-border);align-items:center;font-size:13px;color:var(--rd-text);cursor:pointer;transition:background .12s ease;}
+.rd-trow:hover{background:rgba(255,255,255,0.03);}
+.rd-trow:last-child{border-bottom:none;}
+.rd-empty{padding:40px;text-align:center;color:var(--rd-text3);font-size:13px;}
+.rd-toolbar{display:flex;gap:10px;margin-bottom:14px;align-items:center;}
+.rd-input{padding:8px 12px;border:1px solid var(--rd-border-hi);border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;color:var(--rd-text);background:var(--rd-card);outline:none;}
+.rd-input:focus{border-color:var(--rd-green);}
+.rd-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 20px;}
+.rd-modal-bg.show{display:flex;}
+.rd-modal{background:#202127;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:26px 28px;width:100%;margin:auto;box-shadow:0 8px 24px rgba(0,0,0,0.45);}
+.rd-fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.rd-fgroup{display:flex;flex-direction:column;gap:5px;}
+.rd-fgroup.rd-full{grid-column:1/-1;}
+.rd-fgroup label{font-size:10.5px;font-weight:600;color:var(--rd-text3);text-transform:uppercase;letter-spacing:0.06em;}
+.rd-fgroup input,.rd-fgroup select,.rd-fgroup textarea{padding:9px 12px;border:1px solid rgba(255,255,255,0.1);border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;color:var(--rd-text);background:var(--rd-bg);outline:none;}
+.rd-fgroup input:focus,.rd-fgroup select:focus,.rd-fgroup textarea:focus{border-color:var(--rd-green);}
+.rd-section-title{font-size:11px;font-weight:600;letter-spacing:0.08em;color:var(--rd-text3);text-transform:uppercase;margin:20px 0 10px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.07);}
+.rd-hist-row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);color:var(--rd-text2);}
+.rd-hist-row:last-child{border-bottom:none;}
+.rd-badge{display:inline-block;font-size:11px;padding:3px 9px;border-radius:6px;font-weight:700;}
+.rd-badge-green{background:var(--rd-green-lt);color:var(--rd-green);}
+.rd-badge-red{background:var(--rd-red-lt);color:var(--rd-red);}
+.rd-modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.07);}
+.rd-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.rd-cal-grid+.rd-cal-grid{margin-top:6px;}
+.rd-cal-day{min-height:88px;border:1px solid var(--rd-border);border-radius:8px;padding:6px;background:var(--rd-card);cursor:pointer;transition:border-color .12s ease;overflow:hidden;}
+.rd-cal-day:hover{border-color:var(--rd-border-hi);}
+.rd-cal-day.is-other-month{opacity:0.35;}
+.rd-cal-day.is-today{border-color:var(--rd-green);}
+.rd-cal-daynum{font-size:11px;font-weight:600;color:var(--rd-text3);margin-bottom:4px;}
+.rd-cal-item{font-size:9.5px;padding:1px 4px;border-radius:4px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rd-check-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:6px 10px;border:1px solid var(--rd-border-hi);border-radius:8px;cursor:pointer;color:var(--rd-text2);user-select:none;}
+.rd-check-pill:hover{border-color:var(--rd-green);}
+.rd-check-pill input{accent-color:var(--rd-green);cursor:pointer;}
 </style>
 </head>
 <body>
@@ -275,7 +316,7 @@ tr:hover td{background:var(--bg3);}
 <aside class="sidebar">
   <div class="sb-brand">
     <img id="sb-logo" class="sb-logo" alt="logo">
-    <div><h1>DM Store</h1><span>GESTION v8</span></div>
+    <div><h1>DM Store</h1><span>GESTIÓN V9</span></div>
   </div>
   <nav class="sb-nav">
     <div class="sb-section">General</div>
@@ -285,14 +326,22 @@ tr:hover td{background:var(--bg3);}
     <div class="nav-item" onclick="go('caja',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>Caja
     </div>
-    <div class="nav-item" onclick="go('cargar',this)">
+    <div class="nav-item" id="nav-cargar" onclick="go('cargar',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Cargar movimiento
     </div>
-    <div class="nav-item" onclick="go('movimientos',this)">
+    <div class="nav-item" id="nav-movimientos" onclick="go('movimientos',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>Movimientos
     </div>
     <div class="nav-item" onclick="go('metricas',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="13" width="3" height="7" rx="1"/><rect x="10.5" y="8" width="3" height="12" rx="1" opacity="0.75"/><rect x="17" y="4" width="3" height="16" rx="1"/></svg>Métricas
+    </div>
+    <div class="nav-item" onclick="go('agenda',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>Agenda
+    </div>
+
+    <div class="sb-section">Contactos</div>
+    <div class="nav-item" onclick="go('clientes',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>Clientes
     </div>
     <div class="nav-item" onclick="go('proveedores',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="7" width="16" height="13" rx="1"/><path d="M1 7l3-5h10l3 5"/><line x1="1" y1="12" x2="17" y2="12"/></svg>Proveedores
@@ -300,7 +349,8 @@ tr:hover td{background:var(--bg3);}
     <div class="nav-item" onclick="go('deudores',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="7" r="3"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><line x1="17" y1="8" x2="22" y2="8"/><line x1="17" y1="8" x2="19" y2="5.5"/><line x1="17" y1="8" x2="19" y2="10.5"/></svg>Deudores
     </div>
-    <div class="sb-section">Unidades</div>
+
+    <div class="sb-section">Unidades de negocio</div>
     <div class="nav-item" id="nav-celulares-toggle" onclick="toggleCelSubMenu()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
       <span style="flex:1">Celulares</span>
@@ -336,14 +386,29 @@ tr:hover td{background:var(--bg3);}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Resumen
       </div>
     </div>
-    <div class="nav-item" onclick="go('unidad',this);setU('SERVICIO TECNICO')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Serv. Tecnico
+    <div class="nav-item" id="nav-servicio-toggle" onclick="toggleServSubMenu()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      <span style="flex:1">Servicio Técnico</span>
+      <svg id="serv-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;transition:transform 0.2s;opacity:0.5;"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
-  </nav>
-  <div class="sb-footer">
+    <div id="serv-submenu" style="display:none;">
+      <div class="nav-subitem" onclick="goServ('serv-pendientes',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Pendientes
+      </div>
+      <div class="nav-subitem" onclick="goServ('serv-entregados',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="20 6 9 17 4 12"/></svg>Entregados
+      </div>
+      <div class="nav-subitem" onclick="goServ('serv-resumen',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Resumen
+      </div>
+    </div>
+
+    <div class="sb-section">Configuración</div>
     <div class="nav-item" onclick="go('config',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Configuracion
     </div>
+  </nav>
+  <div class="sb-footer">
     <div class="sb-status">
       <div class="status-pill"><div class="dot loading" id="s-dot"></div><span id="s-txt">CONECTANDO...</span></div>
     </div>
@@ -351,16 +416,20 @@ tr:hover td{background:var(--bg3);}
 </aside>
 
 <div class="main">
-  <div class="topbar">
+  <div class="topbar rd">
     <div class="page-title" id="page-title">Dashboard</div>
     <div class="topbar-right">
-      <button class="dolar-pill" id="dolar-pill" onclick="fetchDolar(true)" title="Click para actualizar">Blue $...</button>
-      <div class="curr-toggle" id="curr-toggle" onclick="setCurrency(currentCurrency==='USD'?'ARS':'USD')" title="Cambiar moneda">
-        <div class="curr-toggle-thumb"></div>
-        <div class="curr-toggle-opt active" id="curr-opt-usd">USD</div>
-        <div class="curr-toggle-opt" id="curr-opt-ars">ARS</div>
+      <div class="topbar-unified">
+        <button class="dolar-pill" id="dolar-pill" onclick="fetchDolar(true)" title="Click para actualizar">Blue $...</button>
+        <div class="tu-divider"></div>
+        <div class="curr-toggle" id="curr-toggle" onclick="setCurrency(currentCurrency==='USD'?'ARS':'USD')" title="Cambiar moneda">
+          <div class="curr-toggle-thumb"></div>
+          <div class="curr-toggle-opt active" id="curr-opt-usd">USD</div>
+          <div class="curr-toggle-opt" id="curr-opt-ars">ARS</div>
+        </div>
+        <div class="tu-divider"></div>
+        <button class="tu-actualizar" onclick="location.reload()">↻ Actualizar</button>
       </div>
-      <button class="btn" onclick="location.reload()">↻ Actualizar</button>
     </div>
   </div>
   <div class="content">
@@ -389,9 +458,9 @@ tr:hover td{background:var(--bg3);}
           <div class="rd-label" style="margin-bottom:12px;">Acciones rapidas</div>
           <div class="rd-grid-4">
             <div class="rd-quick" onclick="dashAbrirNuevaVenta()"><span style="font-size:20px;">🛒</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Nueva venta</span></div>
-            <div class="rd-quick" onclick="go('cargar',document.querySelectorAll('.nav-item')[2])"><span style="font-size:20px;">💳</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Registrar movimiento</span></div>
+            <div class="rd-quick" onclick="go('cargar',document.getElementById('nav-cargar'))"><span style="font-size:20px;">💳</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Registrar movimiento</span></div>
             <div class="rd-quick" onclick="celAbrirOp('reparacion')"><span style="font-size:20px;">🔧</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Nueva reparacion</span></div>
-            <div class="rd-quick" onclick="go('movimientos',document.querySelectorAll('.nav-item')[3])"><span style="font-size:20px;">📄</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Ver movimientos</span></div>
+            <div class="rd-quick" onclick="go('movimientos',document.getElementById('nav-movimientos'))"><span style="font-size:20px;">📄</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Ver movimientos</span></div>
           </div>
         </div>
 
@@ -419,6 +488,10 @@ tr:hover td{background:var(--bg3);}
               </div>
             </div>
             <div>
+              <div class="rd-label" style="margin-bottom:12px;">Proximos compromisos</div>
+              <div class="rd-card" style="padding:4px 16px;" id="dash-agenda-proximos"></div>
+            </div>
+            <div>
               <div class="rd-label" style="margin-bottom:12px;">Actividad reciente</div>
               <div class="rd-card" style="padding:4px 16px;" id="dash-activity"></div>
             </div>
@@ -429,26 +502,54 @@ tr:hover td{background:var(--bg3);}
 
     <!-- METRICAS (ex-contenido financiero del Dashboard) -->
     <div class="screen rd" id="screen-metricas">
+      <div class="rd-grid-4" style="margin-bottom:16px;">
+        <div class="rd-card" style="padding:16px 18px;">
+          <span class="rd-label">Ventas del mes</span>
+          <div class="rd-mono" style="font-size:20px;font-weight:700;color:var(--rd-text);margin-top:8px;letter-spacing:-0.02em;" id="kpi-ventas">-</div>
+          <div style="margin-top:6px;" id="kpi-ventas-trend"></div>
+        </div>
+        <div class="rd-card" style="padding:16px 18px;">
+          <span class="rd-label">Ganancia</span>
+          <div class="rd-mono" style="font-size:20px;font-weight:700;color:var(--rd-text);margin-top:8px;letter-spacing:-0.02em;" id="kpi-ganancia">-</div>
+          <div style="margin-top:6px;" id="kpi-ganancia-trend"></div>
+        </div>
+        <div class="rd-card" style="padding:16px 18px;">
+          <span class="rd-label">Margen</span>
+          <div class="rd-mono" style="font-size:20px;font-weight:700;color:var(--rd-text);margin-top:8px;letter-spacing:-0.02em;" id="kpi-margen">-</div>
+          <div style="margin-top:6px;" id="kpi-margen-trend"></div>
+        </div>
+        <div class="rd-card" style="padding:16px 18px;">
+          <span class="rd-label">Ticket promedio</span>
+          <div class="rd-mono" style="font-size:20px;font-weight:700;color:var(--rd-text);margin-top:8px;letter-spacing:-0.02em;" id="kpi-ticket">-</div>
+          <div style="margin-top:6px;" id="kpi-ticket-trend"></div>
+        </div>
+      </div>
       <div style="display:grid;grid-template-columns:1fr 260px;gap:16px;margin-bottom:20px;align-items:start;">
         <div class="rd-card" style="padding:20px 22px;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-            <span class="rd-label">Resultado neto por mes</span>
-            <div style="display:flex;gap:8px;">
-              <select class="rd-select" id="chart-anio" onchange="renderChart()"><option value="">Todos los anios</option></select>
-              <select class="rd-select" id="chart-mes" onchange="renderChart()">
-                <option value="">Todo el anio</option>
-                <option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option>
-                <option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option>
-                <option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option>
-                <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
-              </select>
+            <span class="rd-label">Resultado neto por mes <span id="chart-anio-label" style="color:var(--rd-text3);"></span></span>
+            <div style="display:flex;align-items:center;gap:16px;">
+              <div style="display:flex;align-items:center;gap:14px;">
+                <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--rd-text2);"><span style="width:8px;height:8px;border-radius:50%;background:var(--rd-green);display:inline-block;"></span>Ingresos</span>
+                <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--rd-text2);"><span style="width:8px;height:8px;border-radius:50%;background:var(--rd-red);display:inline-block;"></span>Egresos</span>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <select class="rd-select" id="chart-anio" onchange="renderChart()"><option value="">Todos los anios</option></select>
+                <select class="rd-select" id="chart-mes" onchange="renderChart()">
+                  <option value="">Todo el anio</option>
+                  <option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option>
+                  <option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option>
+                  <option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option>
+                  <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+                </select>
+              </div>
             </div>
           </div>
           <canvas id="chartMes" height="195"></canvas>
         </div>
         <div style="display:flex;flex-direction:column;gap:14px;">
           <div class="rd-card" style="padding:16px 18px;">
-            <span class="rd-label">Caja total</span>
+            <span class="rd-label">🟢 Caja disponible</span>
             <div class="rd-mono" style="font-size:16px;font-weight:700;color:var(--rd-green);margin-top:8px;" id="d-caja-ars">-</div>
             <div style="height:1px;background:var(--rd-border);margin:6px 0;"></div>
             <div class="rd-mono" style="font-size:16px;font-weight:700;color:var(--rd-text);" id="d-caja-usd">-</div>
@@ -462,12 +563,12 @@ tr:hover td{background:var(--bg3);}
           <div class="rd-card" style="padding:16px 18px;">
             <span class="rd-label">📈 Facturacion</span>
             <div class="rd-mono" style="font-size:16px;font-weight:700;color:var(--rd-green);margin-top:8px;" id="d-ing">-</div>
-            <div style="font-size:10px;color:var(--rd-text3);margin-top:4px;">ARS total</div>
+            <div style="font-size:10px;color:var(--rd-text3);margin-top:4px;">total del año</div>
           </div>
           <div class="rd-card" style="padding:16px 18px;">
             <span class="rd-label">📉 Gastos</span>
             <div class="rd-mono" style="font-size:16px;font-weight:700;color:var(--rd-red);margin-top:8px;" id="d-egr">-</div>
-            <div style="font-size:10px;color:var(--rd-text3);margin-top:4px;">ARS total</div>
+            <div style="font-size:10px;color:var(--rd-text3);margin-top:4px;">total del año</div>
           </div>
         </div>
       </div>
@@ -686,7 +787,7 @@ tr:hover td{background:var(--bg3);}
           <div id="venta-form-ext" style="display:none;">
             <div class="cel-form-grid">
               <div class="cel-fgroup"><label>Precio de venta (ARS) *</label><input type="number" id="venta-precio" placeholder="0" oninput="ventaCalcGanancia()"></div>
-              <div class="cel-fgroup"><label>Cliente</label><input type="text" id="venta-cliente" placeholder="Nombre..."></div>
+              <div class="cel-fgroup"><label>Cliente</label><div class="ac-wrap"><input type="text" id="venta-cliente" placeholder="Nombre..." autocomplete="off" oninput="cliAutocomplete(this,'venta-cliente-ac')"><div class="ac-dropdown" id="venta-cliente-ac"></div></div></div>
               <div class="cel-fgroup cel-form-full">
                 <label>Metodo de pago (podes dividir en hasta 3 metodos)</label>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">
@@ -823,7 +924,7 @@ tr:hover td{background:var(--bg3);}
             <div class="ganancia-val" id="ftventa-total" style="color:var(--green);">$0</div>
           </div>
           <div class="cel-form-grid">
-            <div class="cel-fgroup"><label>Cliente</label><input type="text" id="ftventa-cliente" placeholder="Nombre (opcional)"></div>
+            <div class="cel-fgroup"><label>Cliente</label><div class="ac-wrap"><input type="text" id="ftventa-cliente" placeholder="Nombre (opcional)" autocomplete="off" oninput="cliAutocomplete(this,'ftventa-cliente-ac')"><div class="ac-dropdown" id="ftventa-cliente-ac"></div></div></div>
             <div class="cel-fgroup cel-form-full">
               <label>Metodo de pago (podes dividir en hasta 3 metodos)</label>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">
@@ -945,6 +1046,271 @@ tr:hover td{background:var(--bg3);}
       <div class="tw"><table><thead><tr>
         <th>Fecha</th><th>Unidad</th><th>Operacion</th><th>Categoria</th><th>Canal</th><th>Descripcion</th><th>Ingreso</th><th>Egreso</th><th>Metodo</th><th>Estado de garantia</th><th></th>
       </tr></thead><tbody id="movs-body"></tbody></table></div>
+    </div>
+
+    <!-- AGENDA -->
+    <div class="screen rd" id="screen-agenda">
+      <div class="rd-toolbar">
+        <button class="rd-btn rd-btn-active" id="ag-btn-vista-lista" onclick="agendaSetVista('lista')">📋 Lista</button>
+        <button class="rd-btn" id="ag-btn-vista-cal" onclick="agendaSetVista('calendario')">📅 Calendario</button>
+        <input type="text" class="rd-input" id="ag-search" placeholder="Buscar actividad..." style="flex:1;" oninput="renderAgenda()">
+        <select class="rd-select" id="ag-fil-tipo" onchange="renderAgenda()">
+          <option value="">Todos los tipos</option>
+          <option value="TAREA">Tarea</option>
+          <option value="EVENTO">Evento</option>
+          <option value="REUNION">Reunion</option>
+          <option value="PAGO">Pago a realizar</option>
+          <option value="COBRO">Cobro programado</option>
+          <option value="VENCIMIENTO">Vencimiento</option>
+          <option value="RECORDATORIO">Recordatorio</option>
+        </select>
+        <select class="rd-select" id="ag-fil-prioridad" onchange="renderAgenda()">
+          <option value="">Toda prioridad</option>
+          <option value="URGENTE">Urgente</option>
+          <option value="ALTA">Alta</option>
+          <option value="MEDIA">Media</option>
+          <option value="BAJA">Baja</option>
+        </select>
+        <button class="rd-btn rd-btn-active" onclick="agendaAbrirNuevo()">+ Nueva actividad</button>
+      </div>
+      <div id="ag-lista"></div>
+      <div id="ag-calendario" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <button class="rd-btn" onclick="agendaCalMes(-1)">←</button>
+          <div id="ag-cal-titulo" style="font-size:15px;font-weight:700;color:var(--rd-text);"></div>
+          <button class="rd-btn" onclick="agendaCalMes(1)">→</button>
+        </div>
+        <div class="rd-cal-grid" id="ag-cal-dow"></div>
+        <div class="rd-cal-grid" id="ag-cal-body"></div>
+      </div>
+    </div>
+
+    <!-- NUEVA/EDITAR ACTIVIDAD (Agenda) -->
+    <div class="rd-modal-bg rd" id="agenda-modal">
+      <div class="rd-modal" style="max-width:560px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+          <h3 id="ag-modal-title" style="font-size:17px;font-weight:700;color:var(--rd-text);">Nueva actividad</h3>
+          <span onclick="agendaCerrarModal()" style="cursor:pointer;color:var(--rd-text3);font-size:14px;">✕</span>
+        </div>
+        <div id="ag-origen-info" style="display:none;font-size:12px;color:var(--rd-text3);margin-bottom:14px;padding:10px 12px;background:var(--rd-bg);border-radius:8px;"></div>
+        <div class="rd-fgrid">
+          <div class="rd-fgroup"><label>Tipo *</label>
+            <select id="ag-tipo" onchange="agendaTipoCambio()">
+              <option value="TAREA">Tarea</option>
+              <option value="EVENTO">Evento</option>
+              <option value="REUNION">Reunion</option>
+              <option value="PAGO">Pago a realizar</option>
+              <option value="COBRO">Cobro programado</option>
+              <option value="VENCIMIENTO">Vencimiento</option>
+              <option value="RECORDATORIO">Recordatorio</option>
+            </select>
+          </div>
+          <div class="rd-fgroup"><label>Prioridad *</label>
+            <select id="ag-prioridad">
+              <option value="BAJA">Baja</option>
+              <option value="MEDIA" selected>Media</option>
+              <option value="ALTA">Alta</option>
+              <option value="URGENTE">Urgente</option>
+            </select>
+          </div>
+          <div class="rd-fgroup rd-full"><label>Titulo *</label><input type="text" id="ag-titulo" placeholder="Ej: Llamar a proveedor, Reunion con..."></div>
+          <div class="rd-fgroup rd-full"><label>Descripcion</label><textarea id="ag-descripcion" rows="2" placeholder="Detalle (opcional)"></textarea></div>
+          <div class="rd-fgroup"><label>Fecha *</label><input type="date" id="ag-fecha"></div>
+          <div class="rd-fgroup"><label>Hora</label><input type="time" id="ag-hora"></div>
+          <div class="rd-fgroup" id="ag-importe-wrap" style="display:none;"><label>Importe</label><input type="number" id="ag-importe" placeholder="0" min="0" step="0.01"></div>
+          <div class="rd-fgroup" id="ag-estado-wrap" style="display:none;"><label>Estado</label>
+            <select id="ag-estado">
+              <option value="PENDIENTE">Pendiente</option>
+              <option value="EN_PROGRESO">En progreso</option>
+              <option value="COMPLETADA">Completada</option>
+              <option value="CANCELADA">Cancelada</option>
+            </select>
+          </div>
+          <div class="rd-fgroup rd-full"><label>Observaciones</label><textarea id="ag-observaciones" rows="2" placeholder="Opcional"></textarea></div>
+        </div>
+        <div class="rd-modal-actions">
+          <button class="rd-btn" onclick="agendaCerrarModal()">Cancelar</button>
+          <button class="rd-btn rd-btn-active" id="ag-btn-guardar" onclick="agendaGuardar()">Guardar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIENTES (CRM) -->
+    <div class="screen rd" id="screen-clientes">
+      <div class="rd-toolbar">
+        <input type="text" class="rd-input" id="cli-search" placeholder="Buscar cliente..." style="flex:1;" oninput="renderClientes()">
+        <button class="rd-btn rd-btn-active" onclick="cliAbrirNuevo()">+ Nuevo cliente</button>
+      </div>
+      <div class="rd-table">
+        <div class="rd-thead" style="grid-template-columns:2fr 1fr 1fr 1fr 60px;">
+          <span>Nombre</span><span>Telefono</span><span>WhatsApp</span><span>Zona</span><span></span>
+        </div>
+        <div id="cli-tbody"></div>
+      </div>
+    </div>
+
+    <!-- FICHA DE CLIENTE -->
+    <div class="rd-modal-bg rd" id="cli-ficha-modal">
+      <div class="rd-modal" style="max-width:820px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+          <h3 id="cli-ficha-title" style="font-size:17px;font-weight:700;color:var(--rd-text);">Nuevo cliente</h3>
+          <span onclick="cliCerrarFicha()" style="cursor:pointer;color:var(--rd-text3);font-size:14px;">✕</span>
+        </div>
+        <div class="rd-fgrid">
+          <div class="rd-fgroup rd-full"><label>Nombre completo *</label><input type="text" id="cli-nombre" placeholder="Nombre y apellido"></div>
+          <div class="rd-fgroup"><label>DNI</label><input type="text" id="cli-dni" placeholder="DNI"></div>
+          <div class="rd-fgroup"><label>Telefono</label><input type="text" id="cli-telefono" placeholder="Telefono"></div>
+          <div class="rd-fgroup"><label>WhatsApp</label><input type="text" id="cli-whatsapp" placeholder="WhatsApp"></div>
+          <div class="rd-fgroup"><label>Instagram</label><input type="text" id="cli-instagram" placeholder="@usuario"></div>
+          <div class="rd-fgroup"><label>Correo electronico</label><input type="email" id="cli-email" placeholder="correo@ejemplo.com"></div>
+          <div class="rd-fgroup"><label>Zona / barrio</label><input type="text" id="cli-zona" placeholder="Zona o barrio"></div>
+          <div class="rd-fgroup"><label>Rango de edad</label>
+            <select id="cli-rango-edad">
+              <option value="">Sin especificar</option>
+              <option value="<18">&lt;18</option>
+              <option value="18-25">18-25</option>
+              <option value="26-35">26-35</option>
+              <option value="36-50">36-50</option>
+              <option value="51-65">51-65</option>
+              <option value="65+">65+</option>
+            </select>
+          </div>
+          <div class="rd-fgroup rd-full"><label>Notas internas (nunca se muestran en comprobantes)</label><textarea id="cli-notas" rows="2" placeholder="Ej: llegó por Instagram, cliente frecuente, prefiere efectivo..."></textarea></div>
+        </div>
+        <div class="rd-modal-actions">
+          <button class="rd-btn" onclick="cliCerrarFicha()">Cancelar</button>
+          <button class="rd-btn rd-btn-active" id="cli-btn-guardar" onclick="cliGuardar()">Guardar</button>
+        </div>
+
+        <div id="cli-ficha-historial" style="display:none;">
+          <div class="rd-section-title">Compras</div>
+          <div id="cli-hist-compras"></div>
+          <div class="rd-section-title">Servicios tecnicos</div>
+          <div id="cli-hist-servicios"></div>
+          <div class="rd-section-title">Deudas y pagos</div>
+          <div id="cli-hist-deudas"></div>
+          <div class="rd-section-title">Garantias vigentes</div>
+          <div id="cli-hist-garantias"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICIO TECNICO -->
+    <div class="screen rd" id="screen-serv-pendientes">
+      <div class="rd-toolbar">
+        <input type="text" class="rd-input" id="serv-pend-search" placeholder="Buscar cliente..." style="flex:1;" oninput="servRenderPendientes()">
+        <select class="rd-select" id="serv-pend-fil-estado" onchange="servRenderPendientes()">
+          <option value="">Todos los estados</option>
+          <option value="DIAGNOSTICO">En diagnostico</option>
+          <option value="PENDIENTE_REPARACION">Pendiente de reparacion</option>
+          <option value="ESPERANDO_APROBACION">Esperando aprobacion</option>
+          <option value="ESPERANDO_REPUESTO">Esperando repuesto</option>
+          <option value="EN_REPARACION">En reparacion</option>
+          <option value="REPARADO">Reparado</option>
+        </select>
+        <button class="rd-btn rd-btn-active" onclick="servAbrirNueva()">+ Nueva reparacion</button>
+      </div>
+      <div class="rd-table">
+        <div class="rd-thead" style="grid-template-columns:1.2fr 0.9fr 1.1fr 1.3fr 0.8fr 0.7fr 110px;gap:10px;">
+          <span>Cliente</span><span>Equipo</span><span>Trabajo</span><span>Estado</span><span>Ingreso</span><span>Dias</span><span></span>
+        </div>
+        <div id="serv-pend-tbody"></div>
+      </div>
+    </div>
+    <div class="screen rd" id="screen-serv-entregados">
+      <div class="rd-toolbar">
+        <input type="text" class="rd-input" id="serv-entr-search" placeholder="Buscar cliente..." style="flex:1;" oninput="servRenderEntregados()">
+      </div>
+      <div class="rd-table">
+        <div class="rd-thead" style="grid-template-columns:1fr 0.8fr 0.8fr 1.2fr 1fr 0.9fr 0.9fr 0.7fr 0.8fr 0.8fr;">
+          <span>Cliente</span><span>Marca</span><span>Modelo</span><span>Trabajo</span><span>Repuesto</span><span>F. ingreso</span><span>F. entrega</span><span>Dias</span><span>Garantia</span><span>Pago</span>
+        </div>
+        <div id="serv-entr-tbody"></div>
+      </div>
+    </div>
+
+    <!-- NUEVA REPARACION (Servicio Tecnico) -->
+    <div class="rd-modal-bg rd" id="serv-nueva-modal">
+      <div class="rd-modal" style="max-width:640px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+          <h3 id="serv-n-modal-title" style="font-size:17px;font-weight:700;color:var(--rd-text);">Nueva reparacion</h3>
+          <span onclick="document.getElementById('serv-nueva-modal').classList.remove('show')" style="cursor:pointer;color:var(--rd-text3);font-size:14px;">✕</span>
+        </div>
+
+        <div class="rd-section-title" style="margin-top:0;padding-top:0;border-top:none;">Cliente</div>
+        <div class="rd-fgrid">
+          <div class="rd-fgroup rd-full"><label>Nombre completo *</label><div class="ac-wrap"><input type="text" id="serv-n-cliente" placeholder="Nombre del cliente..." autocomplete="off" oninput="cliAutocomplete(this,'serv-n-cliente-ac')"><div class="ac-dropdown" id="serv-n-cliente-ac"></div></div></div>
+          <div class="rd-fgroup"><label>DNI</label><input type="text" id="serv-n-dni" placeholder="DNI"></div>
+          <div class="rd-fgroup"><label>Telefono</label><input type="text" id="serv-n-telefono" placeholder="Telefono"></div>
+          <div class="rd-fgroup"><label>Email</label><input type="email" id="serv-n-email" placeholder="correo@ejemplo.com"></div>
+          <div class="rd-fgroup"><label>Instagram</label><input type="text" id="serv-n-instagram" placeholder="@usuario"></div>
+        </div>
+
+        <div class="rd-section-title">Equipo</div>
+        <div class="rd-fgrid">
+          <div class="rd-fgroup"><label>Marca *</label><input type="text" id="serv-n-marca" placeholder="Samsung, Apple..."></div>
+          <div class="rd-fgroup"><label>Modelo *</label><input type="text" id="serv-n-modelo" placeholder="A55, iPhone 13..."></div>
+          <div class="rd-fgroup rd-full"><label>Caracteristicas del equipo</label><input type="text" id="serv-n-caracteristicas" placeholder="Ej: Negro 128 GB, Equipo liberado, Pantalla original..."></div>
+        </div>
+
+        <div class="rd-section-title">Estado en que se recibe</div>
+        <div id="serv-n-checklist" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;"></div>
+        <div class="rd-fgroup rd-full" style="margin-bottom:14px;"><label>Detalles adicionales</label><textarea id="serv-n-detalle" rows="2" placeholder="Ej: equipo con leves marcas de uso y una pequeña fisura en la esquina superior"></textarea></div>
+
+        <div class="rd-section-title">Falla declarada por el cliente</div>
+        <div class="rd-fgroup rd-full" style="margin-bottom:14px;"><textarea id="serv-n-falla" rows="3" placeholder="Ej: se cayo al agua y dejo de encender"></textarea></div>
+
+        <div class="rd-section-title">Trabajo a realizar</div>
+        <div class="rd-fgrid">
+          <div class="rd-fgroup"><label>Trabajo *</label>
+            <select id="serv-n-trabajo" onchange="servTrabajoCambio()"></select>
+          </div>
+          <div class="rd-fgroup" id="serv-n-trabajo-otro-wrap" style="display:none;"><label>Especificar</label><input type="text" id="serv-n-trabajo-otro" placeholder="Detalle el trabajo"></div>
+          <div class="rd-fgroup"><label>Presupuesto</label><input type="number" id="serv-n-presupuesto" placeholder="0" min="0" step="0.01"></div>
+          <div class="rd-fgroup"><label>Fecha de ingreso *</label><input type="date" id="serv-n-fecha-ingreso"></div>
+          <div class="rd-fgroup"><label>Fecha estimada de entrega</label><input type="date" id="serv-n-fecha-estimada"></div>
+          <div class="rd-fgroup" id="serv-n-estado-wrap" style="display:none;"><label>Estado</label>
+            <select id="serv-n-estado">
+              <option value="DIAGNOSTICO">En diagnostico</option>
+              <option value="PENDIENTE_REPARACION">Pendiente de reparacion</option>
+              <option value="ESPERANDO_APROBACION">Esperando aprobacion</option>
+              <option value="ESPERANDO_REPUESTO">Esperando repuesto</option>
+              <option value="EN_REPARACION">En reparacion</option>
+              <option value="REPARADO">Reparado</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="rd-modal-actions">
+          <button class="rd-btn" onclick="document.getElementById('serv-nueva-modal').classList.remove('show')">Cancelar</button>
+          <button class="rd-btn rd-btn-active" id="serv-n-btn-guardar" onclick="servGuardarNueva()">Guardar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARCAR COMO ENTREGADO (Servicio Tecnico) -->
+    <div class="rd-modal-bg rd" id="serv-entrega-modal">
+      <div class="rd-modal" style="max-width:560px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+          <h3 style="font-size:17px;font-weight:700;color:var(--rd-text);">Marcar como entregado</h3>
+          <span onclick="document.getElementById('serv-entrega-modal').classList.remove('show')" style="cursor:pointer;color:var(--rd-text3);font-size:14px;">✕</span>
+        </div>
+        <div class="rd-fgrid">
+          <div class="rd-fgroup rd-full"><label>Trabajo realizado *</label><textarea id="serv-e-trabajo" rows="2" placeholder="Ej: se reemplazo la pantalla"></textarea></div>
+          <div class="rd-fgroup rd-full"><label>Repuesto utilizado</label><input type="text" id="serv-e-repuesto" placeholder="Ej: pantalla OLED generica"></div>
+          <div class="rd-fgroup"><label>Fecha de entrega *</label><input type="date" id="serv-e-fecha-entrega"></div>
+          <div class="rd-fgroup"><label>Monto *</label><input type="number" id="serv-e-monto" placeholder="0" min="0"></div>
+          <div class="rd-fgroup"><label>Metodo de pago *</label><select id="serv-e-metodo"></select></div>
+          <div class="rd-fgroup"><label>¿Tiene garantia? *</label>
+            <select id="serv-entrega-tiene-garantia" onchange="garantiaToggle('serv-entrega')"><option value="NO">No</option><option value="SI">Si</option></select></div>
+          <div class="rd-fgroup" id="serv-entrega-dias-garantia-wrap" style="display:none;"><label>Dias de garantia</label>
+            <input type="number" id="serv-entrega-dias-garantia" value="30" min="1"></div>
+        </div>
+        <div class="rd-modal-actions">
+          <button class="rd-btn" onclick="document.getElementById('serv-entrega-modal').classList.remove('show')">Cancelar</button>
+          <button class="rd-btn rd-btn-active" id="serv-e-btn-guardar" onclick="servGuardarEntrega()">Confirmar entrega</button>
+        </div>
+      </div>
     </div>
 
     <!-- PROVEEDORES -->
@@ -1240,7 +1606,7 @@ tr:hover td{background:var(--bg3);}
       </div>
       <div class="cel-form-grid">
         <div class="cel-fgroup"><label>Fecha</label><input type="date" id="tventa-fecha"></div>
-        <div class="cel-fgroup"><label>Cliente</label><input type="text" id="tventa-cliente" placeholder="Nombre (opcional)"></div>
+        <div class="cel-fgroup"><label>Cliente</label><div class="ac-wrap"><input type="text" id="tventa-cliente" placeholder="Nombre (opcional)" autocomplete="off" oninput="cliAutocomplete(this,'tventa-cliente-ac')"><div class="ac-dropdown" id="tventa-cliente-ac"></div></div></div>
         <div class="cel-fgroup cel-form-full">
           <label>Metodo de pago (podes dividir en hasta 3 metodos)</label>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">
@@ -1638,9 +2004,21 @@ var METC={MP:'#1D9E75',EFECTIVO:'#EF9F27',USD:'#378ADD','NARANJA X':'#D85A30','A
 var UCOLORS={CELULARES:'#7F77DD',TIENDAS:'#1D9E75','SERVICIO TECNICO':'#378ADD'};
 var NOM=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 var CATC=['#7F77DD','#1D9E75','#378ADD','#EF9F27','#D85A30','#888780','#D4537E','#639922'];
-var TITLES={dashboard:'Dashboard',caja:'Caja',cargar:'Cargar movimiento',movimientos:'Movimientos',metricas:'Metricas',config:'Configuracion',unidad:'Unidad',proveedores:'Proveedores',deudores:'Deudores'};
+var TITLES={dashboard:'Dashboard',caja:'Caja',cargar:'Cargar movimiento',movimientos:'Movimientos',metricas:'Metricas',config:'Configuracion',unidad:'Unidad',proveedores:'Proveedores',deudores:'Deudores',clientes:'Clientes',agenda:'Agenda'};
 var movs=[],cMes=null,cCaja=null,cU=null,cUCat=null,curU='CELULARES';
 var dolarBlue=0,pendingDelId=null,currentCurrency='USD';
+var MESES_LARGO=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+var AGTIPO_META={
+  TAREA:{icon:'✅',label:'Tarea'},EVENTO:{icon:'📅',label:'Evento'},REUNION:{icon:'🤝',label:'Reunion'},
+  PAGO:{icon:'💰',label:'Pago a realizar'},COBRO:{icon:'💵',label:'Cobro programado'},
+  VENCIMIENTO:{icon:'⏰',label:'Vencimiento'},RECORDATORIO:{icon:'🔔',label:'Recordatorio'}
+};
+var AGPRIOR_COLORS={BAJA:'#5c5e66',MEDIA:'#378ADD',ALTA:'#EF9F27',URGENTE:'#D85A30'};
+var AGESTADO_META={
+  PENDIENTE:{label:'Pendiente',color:'#94969c'},EN_PROGRESO:{label:'En progreso',color:'#378ADD'},
+  COMPLETADA:{label:'Completada',color:'#3ecf8e'},CANCELADA:{label:'Cancelada',color:'#5c5e66'}
+};
+var agenda=[],agendaEditingId=null,agendaVista='lista',agendaCalRef=new Date();
 
 Chart.defaults.color='#5A5856';
 Chart.defaults.borderColor='rgba(255,255,255,0.06)';
@@ -1665,6 +2043,10 @@ function fmtMov(n,metodo){
   // Pure USD
   if(metodo==='USD')return fmtUSD(n);
   return fmtARS(n);
+}
+function fmtAxisM(n){
+  if(!n)return'0';
+  return(n/1000000).toFixed(1).replace('.0','')+' M';
 }
 function fmtShort(n){
   var abs=Math.abs(n);
@@ -1889,6 +2271,8 @@ function go(name,el){
   if(name==='config')renderConfig();
   if(name==='proveedores')renderProveedores();
   if(name==='deudores')renderDeudores();
+  if(name==='clientes')renderClientes();
+  if(name==='agenda'){if(agendaVista==='calendario')renderAgendaCalendario();else renderAgenda();}
 }
 
 function populateSelects(){
@@ -2059,6 +2443,7 @@ function onFDescInput(){
   var unidad=document.getElementById('f-unidad').value;
   var op=document.getElementById('f-operacion').value;
   if(op==='COMPRA')provAutocomplete(document.getElementById('f-desc'),unidad,'f-desc-ac');
+  else if(op==='VENTAS'||op==='SERVICIOS')cliAutocomplete(document.getElementById('f-desc'),'f-desc-ac');
 }
 
 function updateCats(){
@@ -2234,6 +2619,7 @@ async function guardar(){
     });
     if(res.ok){
       if(operacion==='COMPRA'&&desc)await ensureProveedor(unidad,desc);
+      if((operacion==='VENTAS'||operacion==='SERVICIOS')&&desc)await ensureCliente(desc);
       if((operacion==='VENTAS'||operacion==='SERVICIOS')&&ingreso>0){
         var creado=await res.json();
         await crearDeudaSiCorresponde(unidad,desc,fecha,ingreso,metodo,creado&&creado[0]?creado[0].id:null);
@@ -2273,9 +2659,91 @@ async function confirmDelete(){
       method:'DELETE',
       headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
     });
-    if(res.ok){showToast('Movimiento eliminado');await cargarDatos();}
+    if(res.ok){
+      await revertirRegistrosDeVenta(delMov,delId);
+      showToast('Movimiento eliminado');
+      await cargarDatos();
+      await Promise.all([celCargarDatos(),tieCargarDatos(),cargarClientes(),cargarReparaciones(),cargarDeudas()]);
+    }
     else{var e=await res.text();showToast('Error: '+e.slice(0,60),true);ss('err','ERROR');}
   }catch(e){showToast('Error de conexion',true);ss('err','ERROR');}
+}
+
+// Al borrar un movimiento de VENTAS/SERVICIOS, la fila de venta/reparacion (ventas_tiendas, celulares,
+// reparaciones_servicio_tecnico) y la deuda que pudo haberse generado quedaban huerfanas -- el cliente
+// seguia viendo la compra y el stock no se recuperaba. Esta funcion revierte todo lo que ese movimiento
+// genero, usando el movimiento_id que ahora se guarda en cada tabla al crear la venta/entrega.
+async function revertirRegistrosDeVenta(delMov,delId){
+  try{
+    var rD=await fetch(SUPA_URL+'/rest/v1/deudas?movimiento_id=eq.'+delId+'&select=*',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+    var deudasVinc=await rD.json();
+    if(Array.isArray(deudasVinc)){
+      for(var i=0;i<deudasVinc.length;i++){
+        var d=deudasVinc[i];
+        var rP=await fetch(SUPA_URL+'/rest/v1/pagos_deuda?deuda_id=eq.'+d.id,{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+        var pagos=await rP.json();
+        if(Array.isArray(pagos)&&pagos.length){
+          showToast('La deuda de '+d.cliente+' ya tenia pagos registrados: revisala manualmente en Deudores',true);
+          continue;
+        }
+        await fetch(SUPA_URL+'/rest/v1/promesas_pago?deuda_id=eq.'+d.id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+        await fetch(SUPA_URL+'/rest/v1/deudas?id=eq.'+d.id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+      }
+    }
+  }catch(e){console.log('revertir deuda error',e);}
+
+  if(!delMov)return;
+
+  if(delMov.unidad==='TIENDAS'&&delMov.operacion==='VENTAS'){
+    try{
+      var rV=await fetch(SUPA_URL+'/rest/v1/ventas_tiendas?movimiento_id=eq.'+delId+'&select=*',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+      var ventas=await rV.json();
+      if(Array.isArray(ventas)){
+        for(var j=0;j<ventas.length;j++){
+          var v=ventas[j];
+          var prod=productosTiendas.find(function(p){return p.codigo===v.codigo;});
+          if(prod){
+            var nuevoStock=(parseInt(prod.stock)||0)+(parseInt(v.cantidad)||0);
+            await fetch(SUPA_URL+'/rest/v1/productos_tiendas?id=eq.'+prod.id,{
+              method:'PATCH',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+              body:JSON.stringify({stock:nuevoStock})
+            });
+          }
+          await fetch(SUPA_URL+'/rest/v1/ventas_tiendas?id=eq.'+v.id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+        }
+      }
+    }catch(e){console.log('revertir venta tienda error',e);}
+  }
+
+  if(delMov.unidad==='CELULARES'&&delMov.operacion==='VENTAS'){
+    try{
+      var rC=await fetch(SUPA_URL+'/rest/v1/celulares?movimiento_id=eq.'+delId+'&select=*',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+      var cels=await rC.json();
+      if(Array.isArray(cels)){
+        for(var k=0;k<cels.length;k++){
+          await fetch(SUPA_URL+'/rest/v1/celulares?id=eq.'+cels[k].id,{
+            method:'PATCH',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+            body:JSON.stringify({estado:'EN STOCK',fecha_venta:null,precio_venta:null,cliente:null,metodo_pago_venta:null,canal_venta:null,movimiento_id:null})
+          });
+        }
+      }
+    }catch(e){console.log('revertir venta celular error',e);}
+  }
+
+  if(delMov.unidad==='SERVICIO TECNICO'&&delMov.operacion==='SERVICIOS'){
+    try{
+      var rR=await fetch(SUPA_URL+'/rest/v1/reparaciones_servicio_tecnico?movimiento_id=eq.'+delId+'&select=*',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+      var reps=await rR.json();
+      if(Array.isArray(reps)){
+        for(var m=0;m<reps.length;m++){
+          await fetch(SUPA_URL+'/rest/v1/reparaciones_servicio_tecnico?id=eq.'+reps[m].id,{
+            method:'PATCH',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+            body:JSON.stringify({estado:'PENDIENTE',fecha_entrega:null,trabajo_realizado:null,repuesto_utilizado:null,pagado:false,monto:null,metodo_pago:null,movimiento_id:null})
+          });
+        }
+      }
+    }catch(e){console.log('revertir reparacion error',e);}
+  }
 }
 
 function trend(data){
@@ -2292,6 +2760,8 @@ function trend(data){
 function renderChart(){
   var anio=document.getElementById('chart-anio').value;
   var mes=document.getElementById('chart-mes').value;
+  var anioLabelEl=document.getElementById('chart-anio-label');
+  if(anioLabelEl)anioLabelEl.textContent=anio?('· '+anio):('· '+new Date().getFullYear());
   var filtered=movs.filter(function(m){return m.metodo!=='DEUDA'&&m.operacion!=='FINANCIERO';});
   if(anio)filtered=filtered.filter(function(m){return String(m.fecha).slice(0,4)===anio;});
 
@@ -2339,12 +2809,11 @@ function renderChart(){
         {label:'Egresos',data:egrData,borderColor:'#ef7b63',backgroundColor:'rgba(239,123,99,0.1)',borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#ef7b63',fill:true,tension:0.3}
       ]},
       options:{responsive:true,
-        plugins:{legend:{position:'bottom',labels:{font:{size:11,family:'Inter'},boxWidth:12,color:'#94969c'}},
+        plugins:{legend:{display:false},
           tooltip:{callbacks:{label:function(ctx){return' '+ctx.dataset.label+': '+fmtShort(ctx.raw);}}}},
         scales:{
           x:{ticks:{font:{size:10,family:'JetBrains Mono'},color:'#5c5e66'},grid:{color:'rgba(255,255,255,0.04)'}},
-          y:{ticks:{font:{size:10,family:'JetBrains Mono'},color:'#5c5e66',callback:function(v){return fmtShort(v);}},grid:{color:'rgba(255,255,255,0.04)'},
-            title:{display:true,text:'ARS',color:'#5c5e66',font:{size:10}}}
+          y:{ticks:{font:{size:10,family:'JetBrains Mono'},color:'#5c5e66',maxTicksLimit:5,callback:function(v){return fmtAxisM(v);}},grid:{color:'rgba(255,255,255,0.04)'}}
         }
       }
     });
@@ -2394,11 +2863,52 @@ function calcCajaDisponible(){
   return{cajaTot:cajaTot,cajaUSD:cajaUSD};
 }
 
+// KPIs del mes (Ventas/Ganancia/Margen/Ticket promedio) para las tarjetas superiores de Metricas.
+// Reutiliza exactamente las mismas reglas de exclusion que ya usan Dashboard/Metricas
+// (metodo!=='DEUDA' && operacion!=='FINANCIERO'), solo acotadas a un rango de fechas.
+function calcKpisRango(desde,hasta){
+  var enRango=movs.filter(function(m){return m.fecha>=desde&&m.fecha<=hasta&&m.metodo!=='DEUDA'&&m.operacion!=='FINANCIERO';});
+  var ventas=enRango.filter(function(m){return m.operacion==='VENTAS';});
+  var ventasTotal=ventas.reduce(function(s,m){return s+m.ingresoCaja;},0);
+  var ingresosTotal=enRango.reduce(function(s,m){return s+m.ingresoCaja;},0);
+  var egresosTotal=enRango.reduce(function(s,m){return s+m.egreso;},0);
+  var ganancia=ingresosTotal-egresosTotal;
+  var margen=ingresosTotal>0?(ganancia/ingresosTotal)*100:0;
+  var ticket=ventas.length?ventasTotal/ventas.length:0;
+  return{ventas:ventasTotal,ganancia:ganancia,margen:margen,ticket:ticket};
+}
+function kpiTrendHtml(actual,anterior,esPuntos){
+  if(!anterior){return'<span style="font-size:11px;color:var(--rd-text3);">sin datos del mes anterior</span>';}
+  var mesAnteriorNombre=NOM[new Date().getMonth()===0?11:new Date().getMonth()-1].slice(0,3).toLowerCase();
+  var dif=esPuntos?(actual-anterior):((actual-anterior)/Math.abs(anterior))*100;
+  var subio=dif>=0;
+  var texto=esPuntos?(Math.abs(dif).toFixed(1)+'pts'):(Math.abs(dif).toFixed(1)+'%');
+  return'<span style="font-size:11px;font-weight:600;color:'+(subio?'var(--rd-green)':'var(--rd-red)')+';">'+(subio?'↑':'↓')+' '+texto+' vs. '+mesAnteriorNombre+'</span>';
+}
+
 function renderMetricas(){
-  var nonDeuda=movs.filter(function(m){return m.metodo!=='DEUDA'&&m.operacion!=='FINANCIERO';});
+  var anioActual=String(new Date().getFullYear());
+  var nonDeuda=movs.filter(function(m){return m.metodo!=='DEUDA'&&m.operacion!=='FINANCIERO'&&String(m.fecha).slice(0,4)===anioActual;});
   var tIng=nonDeuda.reduce(function(s,m){return s+m.ingresoCaja;},0);
   var tEgr=nonDeuda.reduce(function(s,m){return s+m.egreso;},0);
   var caja=calcCajaDisponible();
+
+  // Tarjetas KPI del mes
+  var hoy=new Date();
+  var inicioMes=new Date(hoy.getFullYear(),hoy.getMonth(),1).toISOString().slice(0,10);
+  var finMes=hoy.toISOString().slice(0,10);
+  var inicioMesAnt=new Date(hoy.getFullYear(),hoy.getMonth()-1,1).toISOString().slice(0,10);
+  var finMesAnt=new Date(hoy.getFullYear(),hoy.getMonth(),0).toISOString().slice(0,10);
+  var kpiActual=calcKpisRango(inicioMes,finMes);
+  var kpiAnterior=calcKpisRango(inicioMesAnt,finMesAnt);
+  document.getElementById('kpi-ventas').textContent=fmtSmart(kpiActual.ventas);
+  document.getElementById('kpi-ventas-trend').innerHTML=kpiTrendHtml(kpiActual.ventas,kpiAnterior.ventas,false);
+  document.getElementById('kpi-ganancia').textContent=fmtSmart(kpiActual.ganancia);
+  document.getElementById('kpi-ganancia-trend').innerHTML=kpiTrendHtml(kpiActual.ganancia,kpiAnterior.ganancia,false);
+  document.getElementById('kpi-margen').textContent=kpiActual.margen.toFixed(1)+'%';
+  document.getElementById('kpi-margen-trend').innerHTML=kpiTrendHtml(kpiActual.margen,kpiAnterior.margen,true);
+  document.getElementById('kpi-ticket').textContent=fmtSmart(kpiActual.ticket);
+  document.getElementById('kpi-ticket-trend').innerHTML=kpiTrendHtml(kpiActual.ticket,kpiAnterior.ticket,false);
   document.getElementById('d-caja-ars').textContent=fmtSmart(caja.cajaTot);
   var usdEl=document.getElementById('d-caja-usd');
   usdEl.textContent=fmtUSD(caja.cajaUSD);
@@ -2409,7 +2919,7 @@ function renderMetricas(){
   var dEl=document.getElementById('d-deudores');
   dEl.textContent=fmtARS(saldoDeuda);
   dEl.style.color=saldoDeuda>0?'var(--rd-red)':'var(--rd-green)';
-  document.getElementById('d-deuda-label').textContent='pendiente de cobro (deudores)';
+  document.getElementById('d-deuda-label').textContent='a favor (deudores)';
   document.getElementById('d-deuda-label').style.color=saldoDeuda>0?'var(--rd-red)':'var(--rd-green)';
   document.getElementById('d-ing').textContent=fmtSmart(tIng);
   document.getElementById('d-egr').textContent=fmtSmart(tEgr);
@@ -2439,7 +2949,22 @@ function dashTasksHoy(){
   var key='dm_dash_tasks_'+new Date().toISOString().slice(0,10);
   return{key:key,done:JSON.parse(localStorage.getItem(key)||'{}')};
 }
+// Las tareas detectadas automaticamente (stock bajo, reparaciones, deudas vencidas) se marcan
+// "completadas hoy" con localStorage porque no son un registro real en la base. Las que vienen
+// de la Agenda si son un registro real (tabla agenda), asi que se completan/reabren en la base.
 function dashToggleTask(id){
+  if(String(id).indexOf('ag-')===0){
+    var agId=parseInt(String(id).slice(3));
+    var a=agenda.find(function(x){return x.id===agId;});
+    if(!a)return;
+    var nuevoEstado=a.estado==='COMPLETADA'?'PENDIENTE':'COMPLETADA';
+    fetch(SUPA_URL+'/rest/v1/agenda?id=eq.'+agId,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+      body:JSON.stringify({estado:nuevoEstado})
+    }).then(function(){cargarAgenda();});
+    return;
+  }
   var t=dashTasksHoy();
   if(t.done[id])delete t.done[id];else t.done[id]=true;
   localStorage.setItem(t.key,JSON.stringify(t.done));
@@ -2474,9 +2999,19 @@ function renderDashboardHome(){
   if(enReparacion.length)tasks.push({id:'reparaciones',emoji:'🔧',label:enReparacion.length+' reparacion'+(enReparacion.length>1?'es':'')+' en curso',onClick:"goCel('cel-reparacion')"});
   if(deudasVencidas.length)tasks.push({id:'deudas-vencidas',emoji:'💸',label:'Cobrar '+deudasVencidas.length+' deuda'+(deudasVencidas.length>1?'s':'')+' vencida'+(deudasVencidas.length>1?'s':''),onClick:"go('deudores',null)"});
 
+  // Actividades de la Agenda para hoy: se suman a la misma lista de "Operaciones de hoy"
+  // (no van en un widget aparte) para que el usuario vea todo lo que tiene que hacer en un solo lugar.
+  var hoyStr=hoy.toISOString().slice(0,10);
+  agenda.filter(function(a){return a.fecha===hoyStr&&a.estado!=='CANCELADA';}).forEach(function(a){
+    var meta=AGTIPO_META[a.tipo]||{icon:'📌'};
+    var horaTxt=a.hora?a.hora.slice(0,5)+' · ':'';
+    tasks.push({id:'ag-'+a.id,emoji:meta.icon,label:horaTxt+a.titulo,onClick:"agendaAbrirEditar("+a.id+")",linkLabel:'Editar →',agendaDone:a.estado==='COMPLETADA'});
+  });
+
   var st=dashTasksHoy();
-  var pendientes=tasks.filter(function(t){return!st.done[t.id];});
-  var completadas=tasks.filter(function(t){return st.done[t.id];});
+  function isDone(t){return t.agendaDone!==undefined?t.agendaDone:!!st.done[t.id];}
+  var pendientes=tasks.filter(function(t){return!isDone(t);});
+  var completadas=tasks.filter(function(t){return isDone(t);});
 
   // Tarjeta "Atencion"
   var atEl=document.getElementById('dash-atencion');
@@ -2501,7 +3036,7 @@ function renderDashboardHome(){
       '<div class="rd-check">'+(done?'<svg width="10" height="10" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 5.5" stroke="#3ecf8e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+'</div>'+
       '<span style="font-size:16px;">'+t.emoji+'</span>'+
       '<span style="flex:1;font-size:13.5px;font-weight:600;color:'+(done?'var(--rd-text2)':'var(--rd-text)')+';">'+t.label+'</span>'+
-      (done?'':'<span onclick="event.stopPropagation();'+t.onClick+'" style="font-size:11px;color:var(--rd-text3);font-weight:600;">Ir →</span>')+
+      (done?'':'<span onclick="event.stopPropagation();'+t.onClick+'" style="font-size:11px;color:var(--rd-text3);font-weight:600;">'+(t.linkLabel||'Ir →')+'</span>')+
       '</div>';
   }
   document.getElementById('dash-tasks').innerHTML=pendientes.length
@@ -2532,6 +3067,8 @@ function renderDashboardHome(){
         '</div>';
     }).join('')
     :'<div style="font-size:12.5px;color:var(--rd-text3);padding:8px 0;">Sin movimientos todavia.</div>';
+
+  renderDashProximos();
 }
 
 function renderCaja(){
@@ -3099,6 +3636,879 @@ function provAcSelect(el,inputId,dropdownId){
   dd.classList.remove('show');dd.innerHTML='';
 }
 
+// ============ AGENDA ============
+async function cargarAgenda(){
+  try{
+    var res=await fetch(SUPA_URL+'/rest/v1/agenda?select=*&order=fecha.asc,hora.asc',{
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    });
+    var data=await res.json();
+    if(Array.isArray(data))agenda=data;
+    var activeId=document.querySelector('.screen.active')?document.querySelector('.screen.active').id:'';
+    if(activeId==='screen-agenda'){
+      if(agendaVista==='calendario')renderAgendaCalendario();else renderAgenda();
+    }
+    if(activeId==='screen-dashboard')renderDashboardHome();
+  }catch(e){console.log('Agenda load error',e);}
+}
+
+function agendaFechaCorta(fecha,hora){
+  var hoy=new Date();hoy.setHours(0,0,0,0);
+  var hoyStr=hoy.toISOString().slice(0,10);
+  var manana=new Date(hoy);manana.setDate(manana.getDate()+1);
+  var horaTxt=hora?' '+hora.slice(0,5):'';
+  if(fecha===hoyStr)return'Hoy'+horaTxt;
+  if(fecha===manana.toISOString().slice(0,10))return'Mañana'+horaTxt;
+  var d=new Date(fecha+'T12:00:00');
+  return d.getDate()+' de '+MESES_LARGO[d.getMonth()]+horaTxt;
+}
+
+// Fila reutilizada tanto en la pantalla Agenda como en el widget "Agenda de hoy" del Dashboard.
+function agendaRowHtml(a){
+  var meta=AGTIPO_META[a.tipo]||{icon:'📌',label:a.tipo};
+  var done=a.estado==='COMPLETADA'||a.estado==='CANCELADA';
+  var priorColor=AGPRIOR_COLORS[a.prioridad]||'#94969c';
+  var estadoMeta=AGESTADO_META[a.estado]||{label:a.estado,color:'#94969c'};
+  var horaTxt=a.hora?a.hora.slice(0,5)+' · ':'';
+  return'<div class="rd-task'+(done?' rd-task-done':'')+'" onclick="agendaAbrirEditar('+a.id+')">'+
+    '<div class="rd-check" onclick="event.stopPropagation();'+(done?'':'agendaMarcarCompletada('+a.id+')')+'">'+
+      (done?'<svg width="10" height="10" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 5.5" stroke="#3ecf8e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+
+    '</div>'+
+    '<span style="font-size:16px;">'+meta.icon+'</span>'+
+    '<div style="flex:1;min-width:0;">'+
+      '<div style="font-size:13.5px;font-weight:600;color:'+(done?'var(--rd-text2)':'var(--rd-text)')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+horaTxt+a.titulo+'</div>'+
+      '<div style="font-size:11px;color:var(--rd-text3);margin-top:2px;">'+meta.label+(a.importe?' · '+fmtARS(a.importe):'')+'</div>'+
+    '</div>'+
+    '<span class="rd-badge" style="background:'+priorColor+'22;color:'+priorColor+';">'+a.prioridad+'</span>'+
+    '<span class="rd-badge" style="background:'+estadoMeta.color+'22;color:'+estadoMeta.color+';">'+estadoMeta.label+'</span>'+
+    (done?'':'<span onclick="event.stopPropagation();agendaPosponer('+a.id+')" title="Posponer 1 dia" style="cursor:pointer;font-size:14px;color:var(--rd-text3);">⏰</span>')+
+    '<span onclick="event.stopPropagation();agendaEliminar('+a.id+')" title="Eliminar" style="cursor:pointer;font-size:14px;color:var(--rd-text3);">🗑</span>'+
+    '</div>';
+}
+
+function renderAgenda(){
+  var q=(document.getElementById('ag-search').value||'').toLowerCase();
+  var filTipo=document.getElementById('ag-fil-tipo').value;
+  var filPrior=document.getElementById('ag-fil-prioridad').value;
+  var hoy=new Date().toISOString().slice(0,10);
+  var en7=new Date();en7.setDate(en7.getDate()+7);
+  var en7str=en7.toISOString().slice(0,10);
+
+  var filtered=agenda.filter(function(a){
+    if(filTipo&&a.tipo!==filTipo)return false;
+    if(filPrior&&a.prioridad!==filPrior)return false;
+    if(q&&a.titulo.toLowerCase().indexOf(q)===-1)return false;
+    return true;
+  });
+
+  var activos=filtered.filter(function(a){return a.estado!=='COMPLETADA'&&a.estado!=='CANCELADA';});
+  var terminados=filtered.filter(function(a){return a.estado==='COMPLETADA'||a.estado==='CANCELADA';});
+  var vencidas=activos.filter(function(a){return a.fecha<hoy;});
+  var hoyList=activos.filter(function(a){return a.fecha===hoy;});
+  var proximos=activos.filter(function(a){return a.fecha>hoy&&a.fecha<=en7str;});
+  var masAdelante=activos.filter(function(a){return a.fecha>en7str;});
+
+  function seccion(titulo,items){
+    if(!items.length)return'';
+    return'<div class="rd-section-title" style="margin-top:22px;">'+titulo+' ('+items.length+')</div>'+
+      '<div style="display:flex;flex-direction:column;gap:8px;">'+items.map(agendaRowHtml).join('')+'</div>';
+  }
+
+  var html=seccion('Vencidas',vencidas)+seccion('Hoy',hoyList)+seccion('Proximos 7 dias',proximos)+seccion('Mas adelante',masAdelante);
+
+  if(!vencidas.length&&!hoyList.length&&!proximos.length&&!masAdelante.length){
+    html+='<div class="rd-empty">No hay actividades que coincidan con el filtro.</div>';
+  }
+
+  if(terminados.length){
+    html+='<div class="rd-section-title" style="margin-top:22px;cursor:pointer;" onclick="agendaToggleTerminadas()">Completadas y canceladas ('+terminados.length+') <span id="ag-term-arrow">▸</span></div>'+
+      '<div id="ag-terminadas-wrap" style="display:none;flex-direction:column;gap:8px;">'+terminados.map(agendaRowHtml).join('')+'</div>';
+  }
+
+  document.getElementById('ag-lista').innerHTML=html;
+}
+
+function agendaToggleTerminadas(){
+  var w=document.getElementById('ag-terminadas-wrap');
+  var open=w.style.display==='flex';
+  w.style.display=open?'none':'flex';
+  document.getElementById('ag-term-arrow').textContent=open?'▸':'▾';
+}
+
+function agendaSetVista(v){
+  agendaVista=v;
+  document.getElementById('ag-lista').style.display=v==='lista'?'block':'none';
+  document.getElementById('ag-calendario').style.display=v==='calendario'?'block':'none';
+  document.getElementById('ag-btn-vista-lista').classList.toggle('rd-btn-active',v==='lista');
+  document.getElementById('ag-btn-vista-cal').classList.toggle('rd-btn-active',v==='calendario');
+  if(v==='calendario')renderAgendaCalendario();else renderAgenda();
+}
+
+function agendaCalMes(delta){
+  agendaCalRef.setMonth(agendaCalRef.getMonth()+delta);
+  renderAgendaCalendario();
+}
+
+// Vista mensual: cada celda muestra hasta 3 actividades de ese dia (coloreadas por prioridad);
+// clickear una actividad la edita, clickear el dia vacio crea una actividad nueva en esa fecha.
+function renderAgendaCalendario(){
+  var year=agendaCalRef.getFullYear(),month=agendaCalRef.getMonth();
+  var mesNombre=MESES_LARGO[month];
+  document.getElementById('ag-cal-titulo').textContent=mesNombre.charAt(0).toUpperCase()+mesNombre.slice(1)+' '+year;
+
+  var dow=['Dom','Lun','Mar','Mie','Jue','Vie','Sab'];
+  document.getElementById('ag-cal-dow').innerHTML=dow.map(function(d){
+    return'<div style="text-align:center;font-size:10.5px;font-weight:600;color:var(--rd-text3);text-transform:uppercase;">'+d+'</div>';
+  }).join('');
+
+  var first=new Date(year,month,1);
+  var startOffset=first.getDay();
+  var daysInMonth=new Date(year,month+1,0).getDate();
+  var daysInPrevMonth=new Date(year,month,0).getDate();
+  var hoyStr=new Date().toISOString().slice(0,10);
+
+  var cells=[];
+  for(var i=0;i<startOffset;i++)cells.push({dnum:daysInPrevMonth-startOffset+1+i,other:true,dateStr:null});
+  for(var d=1;d<=daysInMonth;d++)cells.push({dnum:d,other:false,dateStr:year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0')});
+  var remain=(7-(cells.length%7))%7;
+  for(var j=1;j<=remain;j++)cells.push({dnum:j,other:true,dateStr:null});
+
+  document.getElementById('ag-cal-body').innerHTML=cells.map(function(c){
+    var itemsDia=c.dateStr?agenda.filter(function(a){return a.fecha===c.dateStr;}):[];
+    var isToday=c.dateStr===hoyStr;
+    var itemsHtml=itemsDia.slice(0,3).map(function(a){
+      var meta=AGTIPO_META[a.tipo]||{icon:'📌'};
+      var done=a.estado==='COMPLETADA'||a.estado==='CANCELADA';
+      var priorColor=AGPRIOR_COLORS[a.prioridad]||'#94969c';
+      return'<div class="rd-cal-item" style="background:'+priorColor+'22;color:'+priorColor+';'+(done?'opacity:0.5;text-decoration:line-through;':'')+'" onclick="event.stopPropagation();agendaAbrirEditar('+a.id+')" title="'+String(a.titulo||'').replace(/"/g,'')+'">'+meta.icon+' '+a.titulo+'</div>';
+    }).join('');
+    var masTxt=itemsDia.length>3?'<div style="font-size:9px;color:var(--rd-text3);">+'+(itemsDia.length-3)+' mas</div>':'';
+    return'<div class="rd-cal-day'+(c.other?' is-other-month':'')+(isToday?' is-today':'')+'"'+(c.dateStr?' onclick="agendaAbrirNuevoEnFecha(\''+c.dateStr+'\')"':'')+'>'+
+      '<div class="rd-cal-daynum">'+c.dnum+'</div>'+itemsHtml+masTxt+
+      '</div>';
+  }).join('');
+}
+
+function agendaAbrirNuevoEnFecha(fecha){
+  agendaAbrirNuevo();
+  document.getElementById('ag-fecha').value=fecha;
+}
+
+// Widget del Dashboard "Proximos compromisos" (solo lectura, 7 dias). Las actividades de HOY
+// no van aca: se muestran fusionadas en "Operaciones de hoy" junto a las demas señales del dia.
+function renderDashProximos(){
+  var hoy=new Date().toISOString().slice(0,10);
+  var en7=new Date();en7.setDate(en7.getDate()+7);
+  var en7str=en7.toISOString().slice(0,10);
+  var activos=agenda.filter(function(a){return a.estado!=='COMPLETADA'&&a.estado!=='CANCELADA';});
+
+  var proximos=activos.filter(function(a){return a.fecha>hoy&&a.fecha<=en7str;})
+    .sort(function(a,b){return(a.fecha+(a.hora||'')).localeCompare(b.fecha+(b.hora||''));}).slice(0,8);
+  document.getElementById('dash-agenda-proximos').innerHTML=proximos.length
+    ?proximos.map(function(a){
+      var meta=AGTIPO_META[a.tipo]||{icon:'📌'};
+      return'<div class="rd-activity-row" style="display:flex;align-items:center;gap:8px;">'+
+        '<span>'+meta.icon+'</span><span style="flex:1;font-size:12.5px;color:var(--rd-text);">'+a.titulo+'</span>'+
+        '<span class="rd-mono" style="color:var(--rd-text3);font-size:11px;">'+agendaFechaCorta(a.fecha,a.hora)+'</span>'+
+        '</div>';
+    }).join('')
+    :'<div style="font-size:12.5px;color:var(--rd-text3);padding:8px 0;">Sin compromisos en los proximos 7 dias.</div>';
+}
+
+function agendaTipoCambio(){
+  var tipo=document.getElementById('ag-tipo').value;
+  document.getElementById('ag-importe-wrap').style.display=(tipo==='PAGO'||tipo==='COBRO')?'block':'none';
+}
+
+function agendaAbrirNuevo(tipoPre){
+  agendaEditingId=null;
+  document.getElementById('ag-modal-title').textContent='Nueva actividad';
+  document.getElementById('ag-tipo').value=tipoPre||'TAREA';
+  document.getElementById('ag-prioridad').value='MEDIA';
+  document.getElementById('ag-titulo').value='';
+  document.getElementById('ag-descripcion').value='';
+  document.getElementById('ag-fecha').value=new Date().toISOString().slice(0,10);
+  document.getElementById('ag-hora').value='';
+  document.getElementById('ag-importe').value='';
+  document.getElementById('ag-observaciones').value='';
+  document.getElementById('ag-estado').value='PENDIENTE';
+  document.getElementById('ag-estado-wrap').style.display='none';
+  document.getElementById('ag-origen-info').style.display='none';
+  agendaTipoCambio();
+  document.getElementById('agenda-modal').classList.add('show');
+}
+
+function agendaAbrirEditar(id){
+  var a=agenda.find(function(x){return x.id===id;});
+  if(!a)return;
+  agendaEditingId=id;
+  document.getElementById('ag-modal-title').textContent='Editar actividad';
+  document.getElementById('ag-tipo').value=a.tipo;
+  document.getElementById('ag-prioridad').value=a.prioridad;
+  document.getElementById('ag-titulo').value=a.titulo||'';
+  document.getElementById('ag-descripcion').value=a.descripcion||'';
+  document.getElementById('ag-fecha').value=a.fecha;
+  document.getElementById('ag-hora').value=a.hora||'';
+  document.getElementById('ag-importe').value=a.importe||'';
+  document.getElementById('ag-observaciones').value=a.observaciones||'';
+  document.getElementById('ag-estado').value=a.estado;
+  document.getElementById('ag-estado-wrap').style.display='block';
+  var origenEl=document.getElementById('ag-origen-info');
+  if(a.origen==='DEUDOR'){
+    origenEl.style.display='block';
+    origenEl.innerHTML='Generado automaticamente desde una promesa de pago. <span style="color:var(--rd-green);cursor:pointer;font-weight:600;" onclick="agendaCerrarModal();deuAbrirDetalle('+a.origen_id+')">Ver deudor →</span>';
+  }else if(a.origen==='SERVICIO_TECNICO'){
+    origenEl.style.display='block';
+    origenEl.innerHTML='Generado automaticamente desde una reparacion de Servicio Tecnico. <span style="color:var(--rd-green);cursor:pointer;font-weight:600;" onclick="agendaCerrarModal();goServ(\'serv-pendientes\',null)">Ver reparaciones →</span>';
+  }else{
+    origenEl.style.display='none';
+  }
+  agendaTipoCambio();
+  document.getElementById('agenda-modal').classList.add('show');
+}
+
+function agendaCerrarModal(){
+  document.getElementById('agenda-modal').classList.remove('show');
+  agendaEditingId=null;
+}
+
+async function agendaGuardar(){
+  var tipo=document.getElementById('ag-tipo').value;
+  var titulo=document.getElementById('ag-titulo').value.trim();
+  var fecha=document.getElementById('ag-fecha').value;
+  if(!titulo||!fecha){showToast('Completa Titulo y Fecha',true);return;}
+  var payload={
+    tipo:tipo,
+    titulo:titulo,
+    descripcion:document.getElementById('ag-descripcion').value.trim()||null,
+    fecha:fecha,
+    hora:document.getElementById('ag-hora').value||null,
+    prioridad:document.getElementById('ag-prioridad').value,
+    estado:document.getElementById('ag-estado').value||'PENDIENTE',
+    importe:(tipo==='PAGO'||tipo==='COBRO')?(parseFloat(document.getElementById('ag-importe').value)||null):null,
+    observaciones:document.getElementById('ag-observaciones').value.trim()||null
+  };
+  var btn=document.getElementById('ag-btn-guardar');
+  btn.disabled=true;btn.textContent='Guardando...';
+  try{
+    var res;
+    if(agendaEditingId){
+      res=await fetch(SUPA_URL+'/rest/v1/agenda?id=eq.'+agendaEditingId,{
+        method:'PATCH',
+        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+        body:JSON.stringify(payload)
+      });
+    }else{
+      payload.origen='MANUAL';
+      res=await fetch(SUPA_URL+'/rest/v1/agenda',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+        body:JSON.stringify(payload)
+      });
+    }
+    if(!res.ok){var e=await res.text();showToast('Error: '+e.slice(0,80),true);return;}
+    showToast('Actividad guardada');
+    agendaCerrarModal();
+    await cargarAgenda();
+  }catch(e){showToast('Error de conexion',true);}
+  finally{btn.disabled=false;btn.textContent='Guardar';}
+}
+
+async function agendaMarcarCompletada(id){
+  await fetch(SUPA_URL+'/rest/v1/agenda?id=eq.'+id,{
+    method:'PATCH',
+    headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+    body:JSON.stringify({estado:'COMPLETADA'})
+  });
+  showToast('Actividad completada');
+  await cargarAgenda();
+}
+
+// "Posponer" es un snooze simple de 1 dia; para elegir una fecha puntual se edita la actividad.
+async function agendaPosponer(id){
+  var a=agenda.find(function(x){return x.id===id;});
+  if(!a)return;
+  var nueva=new Date(a.fecha+'T12:00:00');
+  nueva.setDate(nueva.getDate()+1);
+  await fetch(SUPA_URL+'/rest/v1/agenda?id=eq.'+id,{
+    method:'PATCH',
+    headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+    body:JSON.stringify({fecha:nueva.toISOString().slice(0,10)})
+  });
+  showToast('Actividad pospuesta 1 dia');
+  await cargarAgenda();
+}
+
+async function agendaEliminar(id){
+  if(!confirm('¿Eliminar esta actividad de la Agenda? Esta accion no se puede deshacer.'))return;
+  await fetch(SUPA_URL+'/rest/v1/agenda?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+  showToast('Actividad eliminada');
+  await cargarAgenda();
+}
+
+// ============ CLIENTES (CRM) ============
+function cliNorm(s){return(s||'').toString().trim().toLowerCase();}
+
+var clientes=[];
+var cliEditingId=null;
+var cliAcActiveIdx=-1;
+var reparaciones=[]; // tickets de Servicio Tecnico (ver mas abajo), usados aca solo para el historial de la ficha
+
+async function cargarClientes(){
+  try{
+    var res=await fetch(SUPA_URL+'/rest/v1/clientes?select=*&order=nombre.asc',{
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    });
+    var data=await res.json();
+    if(Array.isArray(data))clientes=data;
+    if(document.querySelector('.screen.active')&&document.querySelector('.screen.active').id==='screen-clientes')renderClientes();
+  }catch(e){console.log('Clientes load error',e);}
+}
+
+// Guarda automaticamente un cliente nuevo (si no existe ya) al registrar una venta o un servicio tecnico.
+// datos es opcional: {dni,telefono,email,instagram}. Si el cliente no existe se crea con esos
+// datos; si ya existe, solo se completan los campos que estaban vacios (nunca pisa datos ya
+// cargados en el CRM). Los llamados existentes sin segundo argumento siguen funcionando igual.
+async function ensureCliente(nombre,datos){
+  nombre=(nombre||'').trim();
+  if(!nombre)return;
+  var existente=clientes.find(function(c){return cliNorm(c.nombre)===cliNorm(nombre);});
+  try{
+    if(!existente){
+      var payload=Object.assign({nombre:nombre},datos||{});
+      var res=await fetch(SUPA_URL+'/rest/v1/clientes',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=representation'},
+        body:JSON.stringify(payload)
+      });
+      if(res.ok){
+        var created=await res.json();
+        if(created&&created[0])clientes.push(created[0]);
+      }
+      return;
+    }
+    if(!datos)return;
+    var faltantes={};
+    ['dni','telefono','email','instagram'].forEach(function(campo){
+      if(datos[campo]&&!existente[campo])faltantes[campo]=datos[campo];
+    });
+    if(!Object.keys(faltantes).length)return;
+    var resPatch=await fetch(SUPA_URL+'/rest/v1/clientes?id=eq.'+existente.id,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+      body:JSON.stringify(faltantes)
+    });
+    if(resPatch.ok)Object.assign(existente,faltantes);
+  }catch(e){console.log('ensureCliente error',e);}
+}
+
+function renderClientes(){
+  var tbody=document.getElementById('cli-tbody');
+  if(!tbody)return;
+  var search=cliNorm(document.getElementById('cli-search')?document.getElementById('cli-search').value:'');
+  var filtrado=clientes.filter(function(c){return!search||cliNorm(c.nombre).indexOf(search)>-1;});
+  if(!filtrado.length){tbody.innerHTML='<div class="rd-empty">No hay clientes</div>';return;}
+  tbody.innerHTML=filtrado.map(function(c){
+    return'<div class="rd-trow" style="grid-template-columns:2fr 1fr 1fr 1fr 60px;" onclick="cliAbrirFicha('+c.id+')">'+
+      '<span class="rd-mono" style="font-family:Inter,sans-serif;font-weight:600;color:var(--rd-text);">'+c.nombre+'</span>'+
+      '<span>'+(c.telefono||'-')+'</span>'+
+      '<span>'+(c.whatsapp||'-')+'</span>'+
+      '<span>'+(c.zona||'-')+'</span>'+
+      '<span><button class="btn-del" onclick="event.stopPropagation();cliEliminar('+c.id+')" title="Eliminar">x</button></span>'+
+      '</div>';
+  }).join('');
+}
+
+function cliAbrirNuevo(){
+  cliEditingId=null;
+  document.getElementById('cli-ficha-title').textContent='Nuevo cliente';
+  document.getElementById('cli-nombre').value='';
+  document.getElementById('cli-dni').value='';
+  document.getElementById('cli-telefono').value='';
+  document.getElementById('cli-whatsapp').value='';
+  document.getElementById('cli-instagram').value='';
+  document.getElementById('cli-email').value='';
+  document.getElementById('cli-zona').value='';
+  document.getElementById('cli-rango-edad').value='';
+  document.getElementById('cli-notas').value='';
+  document.getElementById('cli-ficha-historial').style.display='none';
+  document.getElementById('cli-ficha-modal').classList.add('show');
+}
+
+function cliAbrirFicha(id){
+  var c=clientes.find(function(x){return x.id===id;});
+  if(!c)return;
+  cliEditingId=id;
+  document.getElementById('cli-ficha-title').textContent=c.nombre;
+  document.getElementById('cli-nombre').value=c.nombre||'';
+  document.getElementById('cli-dni').value=c.dni||'';
+  document.getElementById('cli-telefono').value=c.telefono||'';
+  document.getElementById('cli-whatsapp').value=c.whatsapp||'';
+  document.getElementById('cli-instagram').value=c.instagram||'';
+  document.getElementById('cli-email').value=c.email||'';
+  document.getElementById('cli-zona').value=c.zona||'';
+  document.getElementById('cli-rango-edad').value=c.rango_edad||'';
+  document.getElementById('cli-notas').value=c.notas||'';
+  document.getElementById('cli-ficha-historial').style.display='block';
+  cliRenderHistorial(c.nombre);
+  document.getElementById('cli-ficha-modal').classList.add('show');
+}
+
+function cliCerrarFicha(){
+  document.getElementById('cli-ficha-modal').classList.remove('show');
+  cliEditingId=null;
+}
+
+function cliRenderHistorial(nombreCliente){
+  var n=cliNorm(nombreCliente);
+  var hoy=new Date().toISOString().slice(0,10);
+
+  // Compras: celulares vendidos + ventas de tiendas, cada uno con su propio campo cliente
+  var comprasCel=celulares.filter(function(c){return c.estado==='VENDIDO'&&cliNorm(c.cliente)===n;});
+  var comprasTie=(typeof ventasTiendas!=='undefined'?ventasTiendas:[]).filter(function(v){return cliNorm(v.cliente)===n;});
+  var elCompras=document.getElementById('cli-hist-compras');
+  var filasCompras=[];
+  comprasCel.forEach(function(c){filasCompras.push({fecha:c.fecha_venta,texto:(c.marca||'')+' '+(c.modelo||''),monto:c.precio_venta});});
+  comprasTie.forEach(function(v){filasCompras.push({fecha:v.fecha,texto:v.descripcion||v.codigo||'Venta tienda',monto:v.total||v.monto});});
+  filasCompras.sort(function(a,b){return(b.fecha||'').localeCompare(a.fecha||'');});
+  elCompras.innerHTML=filasCompras.length?filasCompras.map(function(f){
+    return'<div class="rd-hist-row"><span>'+fd(f.fecha)+' — '+f.texto+'</span><span class="rd-mono" style="color:var(--rd-green);">'+fmtSmart(parseFloat(f.monto)||0)+'</span></div>';
+  }).join(''):'<div class="rd-hist-row" style="justify-content:center;color:var(--rd-text3);">Sin compras registradas</div>';
+
+  // Servicios tecnicos
+  var servicios=reparaciones.filter(function(r){return cliNorm(r.cliente)===n;});
+  var elServ=document.getElementById('cli-hist-servicios');
+  elServ.innerHTML=servicios.length?servicios.map(function(r){
+    var estadoTxt=servEstadoLabel(r.estado);
+    return'<div class="rd-hist-row"><span>'+fd(r.fecha_ingreso)+' — '+(r.marca||'')+' '+(r.modelo||'')+' ('+estadoTxt+')</span><span>'+(r.trabajo_realizado||'-')+'</span></div>';
+  }).join(''):'<div class="rd-hist-row" style="justify-content:center;color:var(--rd-text3);">Sin servicios tecnicos</div>';
+
+  // Deudas y pagos (reusa deudaInfo() tal cual)
+  var deudasCliente=deudas.filter(function(d){return cliNorm(d.cliente)===n;});
+  var elDeudas=document.getElementById('cli-hist-deudas');
+  elDeudas.innerHTML=deudasCliente.length?deudasCliente.map(function(d){
+    var info=deudaInfo(d);
+    var color=info.saldo>0.01?'var(--rd-red)':'var(--rd-green)';
+    return'<div class="rd-hist-row"><span>'+fd(d.fecha)+' — '+d.unidad+' ('+info.estado+')</span><span class="rd-mono" style="color:'+color+';">Saldo '+fmtSmart(info.saldo)+'</span></div>';
+  }).join(''):'<div class="rd-hist-row" style="justify-content:center;color:var(--rd-text3);">Sin deudas registradas</div>';
+
+  // Garantias vigentes: celulares (garantia_venta en meses desde fecha_venta) + reparaciones de Servicio Tecnico
+  var garantiasCel=comprasCel.filter(function(c){
+    if(!c.garantia_venta||!c.fecha_venta)return false;
+    var venc=new Date(c.fecha_venta);venc.setMonth(venc.getMonth()+parseInt(c.garantia_venta));
+    return venc.toISOString().slice(0,10)>=hoy;
+  });
+  var garantiasServ=servicios.filter(function(r){return r.tiene_garantia&&r.fecha_vencimiento_garantia&&r.fecha_vencimiento_garantia>=hoy;});
+  var elGar=document.getElementById('cli-hist-garantias');
+  var filasGar=[];
+  garantiasCel.forEach(function(c){filasGar.push((c.marca||'')+' '+(c.modelo||'')+' — vence '+fd((function(){var v=new Date(c.fecha_venta);v.setMonth(v.getMonth()+parseInt(c.garantia_venta));return v.toISOString().slice(0,10);})()));});
+  garantiasServ.forEach(function(r){filasGar.push((r.marca||'')+' '+(r.modelo||'')+' — vence '+fd(r.fecha_vencimiento_garantia));});
+  elGar.innerHTML=filasGar.length?filasGar.map(function(t){return'<div class="rd-hist-row"><span>🟢 '+t+'</span></div>';}).join(''):'<div class="rd-hist-row" style="justify-content:center;color:var(--rd-text3);">Sin garantias vigentes</div>';
+}
+
+async function cliGuardar(){
+  var nombre=document.getElementById('cli-nombre').value.trim();
+  if(!nombre){showToast('Completa el nombre',true);return;}
+  var payload={
+    nombre:nombre,
+    dni:document.getElementById('cli-dni').value.trim()||null,
+    telefono:document.getElementById('cli-telefono').value.trim()||null,
+    whatsapp:document.getElementById('cli-whatsapp').value.trim()||null,
+    instagram:document.getElementById('cli-instagram').value.trim()||null,
+    email:document.getElementById('cli-email').value.trim()||null,
+    zona:document.getElementById('cli-zona').value.trim()||null,
+    rango_edad:document.getElementById('cli-rango-edad').value||null,
+    notas:document.getElementById('cli-notas').value.trim()||null
+  };
+  var btn=document.getElementById('cli-btn-guardar');
+  btn.disabled=true;btn.textContent='Guardando...';
+  try{
+    var res;
+    if(cliEditingId){
+      res=await fetch(SUPA_URL+'/rest/v1/clientes?id=eq.'+cliEditingId,{
+        method:'PATCH',
+        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+        body:JSON.stringify(payload)
+      });
+    }else{
+      res=await fetch(SUPA_URL+'/rest/v1/clientes',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+        body:JSON.stringify(payload)
+      });
+    }
+    if(!res.ok){var e=await res.text();showToast('Error: '+e.slice(0,80),true);return;}
+    showToast('Cliente guardado');
+    cliCerrarFicha();
+    await cargarClientes();
+  }catch(e){showToast('Error de conexion',true);}
+  finally{btn.disabled=false;btn.textContent='Guardar';}
+}
+
+async function cliEliminar(id){
+  if(!confirm('Eliminar este cliente?'))return;
+  try{
+    var res=await fetch(SUPA_URL+'/rest/v1/clientes?id=eq.'+id,{
+      method:'DELETE',
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'}
+    });
+    if(res.ok){showToast('Cliente eliminado');await cargarClientes();}
+    else{showToast('Error al eliminar',true);}
+  }catch(e){showToast('Error de conexion',true);}
+}
+
+// Autocompletado de clientes (reutilizado en formularios de venta y servicio tecnico)
+function cliAutocomplete(input,dropdownId){
+  var q=input.value.trim().toLowerCase();
+  var dd=document.getElementById(dropdownId);
+  if(!dd)return;
+  cliAcActiveIdx=-1;
+  if(!q){dd.classList.remove('show');dd.innerHTML='';return;}
+  var matches=clientes.filter(function(c){return c.nombre.toLowerCase().indexOf(q)>-1;}).slice(0,8);
+  if(!matches.length){dd.classList.remove('show');dd.innerHTML='';return;}
+  dd.innerHTML=matches.map(function(c,i){
+    return'<div class="ac-item" data-idx="'+i+'" data-nom="'+c.nombre.replace(/"/g,'&quot;')+'" onclick="cliAcSelect(this,\''+input.id+'\',\''+dropdownId+'\')">'+
+      '<span class="ac-item-code">'+c.nombre+'</span>'+
+      (c.telefono?'<span class="ac-item-desc">'+c.telefono+'</span>':'')+
+      '</div>';
+  }).join('');
+  dd.classList.add('show');
+}
+function cliAcSelect(el,inputId,dropdownId){
+  document.getElementById(inputId).value=el.dataset.nom;
+  var dd=document.getElementById(dropdownId);
+  dd.classList.remove('show');dd.innerHTML='';
+  // Autocompleta datos de contacto en formularios que tengan campos hermanos con el mismo
+  // prefijo del input de cliente (convencion "<prefijo>-dni/-telefono/-email/-instagram").
+  // No rompe los demas usos de cliAutocomplete (ventas, etc.) porque esos ids no existen ahi.
+  if(inputId.slice(-8)==='-cliente'){
+    var prefix=inputId.slice(0,-8);
+    var c=clientes.find(function(x){return cliNorm(x.nombre)===cliNorm(el.dataset.nom);});
+    if(c){
+      ['dni','telefono','email','instagram'].forEach(function(campo){
+        var campoEl=document.getElementById(prefix+'-'+campo);
+        if(campoEl&&c[campo])campoEl.value=c[campo];
+      });
+    }
+  }
+}
+
+// ============ SERVICIO TECNICO (tickets de reparacion de clientes) ============
+// Modulo nuevo e independiente de Celulares > Reparacion (esa es refaccion de stock propio por IMEI,
+// esto es un ticket de reparacion de un equipo del cliente). "reparaciones" ya se declaro junto a Clientes.
+var servEntregaId=null,servEditingId=null;
+var SERV_CHECKLIST_ITEMS=['Pantalla rota','Tapa trasera rota','Marco golpeado','Cámara dañada','No enciende','Mojado','Sin señal','No carga','Botones defectuosos','Face ID / Huella no funciona','Parlante defectuoso','Micrófono defectuoso','Otro'];
+var SERV_TRABAJO_OPCIONES=['Diagnostico','Cambio de modulo','Cambio de bateria','Cambio de pin de carga','Cambio de pantalla','Cambio de camara','Cambio de parlante','Cambio de microfono','Limpieza','Actualizacion de software','Restauracion','Otro'];
+// Los 6 estados anteriores a "Entregado" (ese se maneja aparte, con su propio modal de entrega).
+var SERV_ESTADO_META={
+  DIAGNOSTICO:{label:'En diagnostico',color:'#378ADD'},
+  PENDIENTE_REPARACION:{label:'Pendiente de reparacion',color:'#EF9F27'},
+  ESPERANDO_APROBACION:{label:'Esperando aprobacion',color:'#D4537E'},
+  ESPERANDO_REPUESTO:{label:'Esperando repuesto',color:'#888780'},
+  EN_REPARACION:{label:'En reparacion',color:'#7F77DD'},
+  REPARADO:{label:'Reparado',color:'#3ecf8e'},
+  ENTREGADO:{label:'Entregado',color:'#5c5e66'}
+};
+function servEstadoLabel(estado){return(SERV_ESTADO_META[estado]||{}).label||estado;}
+
+async function cargarReparaciones(){
+  try{
+    var res=await fetch(SUPA_URL+'/rest/v1/reparaciones_servicio_tecnico?select=*&order=fecha_ingreso.desc',{
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    });
+    var data=await res.json();
+    if(Array.isArray(data))reparaciones=data;
+    var active=document.querySelector('.screen.active');
+    if(active){
+      if(active.id==='screen-serv-pendientes')servRenderPendientes();
+      else if(active.id==='screen-serv-entregados')servRenderEntregados();
+    }
+  }catch(e){console.log('Reparaciones load error',e);}
+}
+
+function servRenderTabla(tab){
+  if(tab==='pendientes')servRenderPendientes();
+  else if(tab==='entregados')servRenderEntregados();
+}
+
+function servDiasEnTaller(r){
+  var hoy=new Date().toISOString().slice(0,10);
+  return Math.round((new Date(hoy+'T12:00:00')-new Date(r.fecha_ingreso+'T12:00:00'))/(1000*60*60*24));
+}
+function servTiempoTotalReparacion(r){
+  if(!r.fecha_entrega)return null;
+  return Math.round((new Date(r.fecha_entrega+'T12:00:00')-new Date(r.fecha_ingreso+'T12:00:00'))/(1000*60*60*24));
+}
+function servGarantiaTexto(r){
+  return garantiaEstadoTexto({tieneGarantia:r.tiene_garantia,fechaVencimientoGarantia:r.fecha_vencimiento_garantia});
+}
+
+// Los 6 estados anteriores a "Entregado" (ese vive en su propia pantalla/tab).
+var SERV_ESTADOS_NO_ENTREGADO=Object.keys(SERV_ESTADO_META).filter(function(e){return e!=='ENTREGADO';});
+
+function servRenderPendientes(){
+  var tbody=document.getElementById('serv-pend-tbody');
+  if(!tbody)return;
+  var search=cliNorm(document.getElementById('serv-pend-search')?document.getElementById('serv-pend-search').value:'');
+  var filEstado=document.getElementById('serv-pend-fil-estado')?document.getElementById('serv-pend-fil-estado').value:'';
+  var filtrado=reparaciones.filter(function(r){
+    if(SERV_ESTADOS_NO_ENTREGADO.indexOf(r.estado)===-1)return false;
+    if(filEstado&&r.estado!==filEstado)return false;
+    if(search&&cliNorm(r.cliente).indexOf(search)===-1)return false;
+    return true;
+  });
+  if(!filtrado.length){tbody.innerHTML='<div class="rd-empty">No hay reparaciones que coincidan</div>';return;}
+  tbody.innerHTML=filtrado.map(function(r){
+    var estadoOpts=SERV_ESTADOS_NO_ENTREGADO.map(function(e){return'<option value="'+e+'"'+(r.estado===e?' selected':'')+'>'+SERV_ESTADO_META[e].label+'</option>';}).join('');
+    return'<div class="rd-trow" style="grid-template-columns:1.2fr 0.9fr 1.1fr 1.3fr 0.8fr 0.7fr 110px;gap:10px;">'+
+      '<span style="font-weight:600;">'+r.cliente+'</span>'+
+      '<span>'+(r.marca||'-')+' '+(r.modelo||'')+'</span>'+
+      '<span style="font-size:12px;color:var(--rd-text2);">'+(r.trabajo_a_realizar||'-')+'</span>'+
+      '<span><select class="rd-select" onchange="servCambiarEstadoInline('+r.id+',this.value)">'+estadoOpts+'</select></span>'+
+      '<span class="rd-mono">'+fd(r.fecha_ingreso)+'</span>'+
+      '<span class="rd-mono">'+servDiasEnTaller(r)+'</span>'+
+      '<span style="display:flex;align-items:center;gap:10px;">'+
+        '<span onclick="servAbrirNueva('+r.id+')" title="Editar" style="cursor:pointer;font-size:14px;color:var(--rd-text3);">✎</span>'+
+        '<button class="rd-btn" onclick="servAbrirEntrega('+r.id+')">Entregar</button>'+
+      '</span>'+
+      '</div>';
+  }).join('');
+}
+
+async function servCambiarEstadoInline(id,nuevoEstado){
+  await fetch(SUPA_URL+'/rest/v1/reparaciones_servicio_tecnico?id=eq.'+id,{
+    method:'PATCH',
+    headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+    body:JSON.stringify({estado:nuevoEstado})
+  });
+  showToast('Estado actualizado');
+  await cargarReparaciones();
+}
+
+function servRenderEntregados(){
+  var tbody=document.getElementById('serv-entr-tbody');
+  if(!tbody)return;
+  var search=cliNorm(document.getElementById('serv-entr-search')?document.getElementById('serv-entr-search').value:'');
+  var filtrado=reparaciones.filter(function(r){return r.estado==='ENTREGADO'&&(!search||cliNorm(r.cliente).indexOf(search)>-1);});
+  if(!filtrado.length){tbody.innerHTML='<div class="rd-empty">No hay reparaciones entregadas</div>';return;}
+  tbody.innerHTML=filtrado.map(function(r){
+    var pagoBadge=r.pagado?'<span class="rd-badge rd-badge-green">Pagado</span>':'<span class="rd-badge rd-badge-red">Pendiente</span>';
+    return'<div class="rd-trow" style="grid-template-columns:1fr 0.8fr 0.8fr 1.2fr 1fr 0.9fr 0.9fr 0.7fr 0.8fr 0.8fr;">'+
+      '<span style="font-weight:600;">'+r.cliente+'</span>'+
+      '<span>'+(r.marca||'-')+'</span>'+
+      '<span>'+(r.modelo||'-')+'</span>'+
+      '<span style="font-size:12px;color:var(--rd-text2);">'+(r.trabajo_realizado||'-')+'</span>'+
+      '<span style="font-size:12px;color:var(--rd-text2);">'+(r.repuesto_utilizado||'-')+'</span>'+
+      '<span class="rd-mono">'+fd(r.fecha_ingreso)+'</span>'+
+      '<span class="rd-mono">'+fd(r.fecha_entrega)+'</span>'+
+      '<span class="rd-mono">'+(servTiempoTotalReparacion(r)!==null?servTiempoTotalReparacion(r)+'d':'-')+'</span>'+
+      '<span>'+servGarantiaTexto(r)+'</span>'+
+      '<span>'+pagoBadge+'</span>'+
+      '</div>';
+  }).join('');
+}
+
+function servRenderChecklist(seleccionados){
+  var set={};
+  (seleccionados||[]).forEach(function(s){set[s]=true;});
+  document.getElementById('serv-n-checklist').innerHTML=SERV_CHECKLIST_ITEMS.map(function(item){
+    return'<label class="rd-check-pill"><input type="checkbox" value="'+item.replace(/"/g,'&quot;')+'"'+(set[item]?' checked':'')+'> '+item+'</label>';
+  }).join('');
+}
+
+function servTrabajoCambio(){
+  var v=document.getElementById('serv-n-trabajo').value;
+  document.getElementById('serv-n-trabajo-otro-wrap').style.display=v==='Otro'?'block':'none';
+}
+
+// id opcional: si viene, es edicion (precarga y hace PATCH al guardar); si no, alta nueva.
+function servAbrirNueva(id){
+  servEditingId=id||null;
+  var r=id?reparaciones.find(function(x){return x.id===id;}):null;
+  document.getElementById('serv-n-modal-title').textContent=r?'Editar reparacion':'Nueva reparacion';
+  document.getElementById('serv-n-cliente').value=r?r.cliente||'':'';
+  document.getElementById('serv-n-dni').value='';
+  document.getElementById('serv-n-telefono').value='';
+  document.getElementById('serv-n-email').value='';
+  document.getElementById('serv-n-instagram').value='';
+  if(r){
+    var c=clientes.find(function(x){return cliNorm(x.nombre)===cliNorm(r.cliente);});
+    if(c){
+      document.getElementById('serv-n-dni').value=c.dni||'';
+      document.getElementById('serv-n-telefono').value=c.telefono||'';
+      document.getElementById('serv-n-email').value=c.email||'';
+      document.getElementById('serv-n-instagram').value=c.instagram||'';
+    }
+  }
+  document.getElementById('serv-n-marca').value=r?r.marca||'':'';
+  document.getElementById('serv-n-modelo').value=r?r.modelo||'':'';
+  document.getElementById('serv-n-caracteristicas').value=r?r.caracteristicas||'':'';
+  servRenderChecklist(r&&r.checklist_estado?r.checklist_estado:[]);
+  document.getElementById('serv-n-detalle').value=r?r.estado_detalle||'':'';
+  document.getElementById('serv-n-falla').value=r?r.falla_declarada||'':'';
+
+  var selTrabajo=document.getElementById('serv-n-trabajo');
+  selTrabajo.innerHTML=SERV_TRABAJO_OPCIONES.map(function(o){return'<option>'+o+'</option>';}).join('');
+  var trabajoActual=r?(r.trabajo_a_realizar||'Diagnostico'):'Diagnostico';
+  var esConocido=SERV_TRABAJO_OPCIONES.indexOf(trabajoActual)>-1;
+  selTrabajo.value=esConocido?trabajoActual:'Otro';
+  document.getElementById('serv-n-trabajo-otro').value=esConocido?'':trabajoActual;
+  servTrabajoCambio();
+
+  document.getElementById('serv-n-presupuesto').value=(r&&r.presupuesto)?r.presupuesto:'';
+  document.getElementById('serv-n-fecha-ingreso').value=r?r.fecha_ingreso:new Date().toISOString().slice(0,10);
+  document.getElementById('serv-n-fecha-estimada').value=r?(r.fecha_estimada_entrega||''):'';
+
+  var estadoWrap=document.getElementById('serv-n-estado-wrap');
+  if(r){
+    estadoWrap.style.display='block';
+    document.getElementById('serv-n-estado').value=r.estado;
+  }else{
+    estadoWrap.style.display='none';
+  }
+  document.getElementById('serv-nueva-modal').classList.add('show');
+}
+
+async function servGuardarNueva(){
+  var cliente=document.getElementById('serv-n-cliente').value.trim();
+  var marca=document.getElementById('serv-n-marca').value.trim();
+  var modelo=document.getElementById('serv-n-modelo').value.trim();
+  var fechaIngreso=document.getElementById('serv-n-fecha-ingreso').value;
+  if(!cliente||!marca||!modelo||!fechaIngreso){showToast('Completa Nombre, Marca, Modelo y Fecha de ingreso',true);return;}
+  var fechaEstimada=document.getElementById('serv-n-fecha-estimada').value||null;
+  var caracteristicas=document.getElementById('serv-n-caracteristicas').value.trim()||null;
+  var checklist=Array.prototype.slice.call(document.querySelectorAll('#serv-n-checklist input:checked')).map(function(cb){return cb.value;});
+  var detalle=document.getElementById('serv-n-detalle').value.trim()||null;
+  var falla=document.getElementById('serv-n-falla').value.trim()||null;
+  var trabajoSel=document.getElementById('serv-n-trabajo').value;
+  var trabajoFinal=trabajoSel==='Otro'?(document.getElementById('serv-n-trabajo-otro').value.trim()||'Otro'):trabajoSel;
+  var presupuestoVal=document.getElementById('serv-n-presupuesto').value;
+  var presupuesto=presupuestoVal?parseFloat(presupuestoVal):null;
+
+  var payload={
+    cliente:cliente,marca:marca,modelo:modelo,fecha_ingreso:fechaIngreso,fecha_estimada_entrega:fechaEstimada,
+    caracteristicas:caracteristicas,checklist_estado:checklist,estado_detalle:detalle,falla_declarada:falla,
+    trabajo_a_realizar:trabajoFinal,presupuesto:presupuesto
+  };
+  // Regla del rediseño: si el trabajo es "Diagnostico" el equipo entra en diagnostico; cualquier
+  // otro trabajo definido entra directo como pendiente de reparacion. En edicion se respeta el
+  // estado que el tecnico haya elegido a mano (no se recalcula).
+  if(servEditingId)payload.estado=document.getElementById('serv-n-estado').value;
+  else payload.estado=(trabajoFinal==='Diagnostico')?'DIAGNOSTICO':'PENDIENTE_REPARACION';
+
+  var btn=document.getElementById('serv-n-btn-guardar');
+  btn.disabled=true;btn.textContent='Guardando...';
+  try{
+    var res,repId=servEditingId;
+    if(servEditingId){
+      res=await fetch(SUPA_URL+'/rest/v1/reparaciones_servicio_tecnico?id=eq.'+servEditingId,{
+        method:'PATCH',
+        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+        body:JSON.stringify(payload)
+      });
+    }else{
+      res=await fetch(SUPA_URL+'/rest/v1/reparaciones_servicio_tecnico',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=representation'},
+        body:JSON.stringify(payload)
+      });
+    }
+    if(!res.ok){var e=await res.text();showToast('Error: '+e.slice(0,80),true);return;}
+    await ensureCliente(cliente,{
+      dni:document.getElementById('serv-n-dni').value.trim()||null,
+      telefono:document.getElementById('serv-n-telefono').value.trim()||null,
+      email:document.getElementById('serv-n-email').value.trim()||null,
+      instagram:document.getElementById('serv-n-instagram').value.trim()||null
+    });
+    if(!servEditingId){
+      var creada=await res.json();
+      repId=creada&&creada[0]?creada[0].id:null;
+    }
+    // Si hay fecha estimada de entrega y todavia no existe un recordatorio pendiente para esta
+    // reparacion, se crea uno (integracion con el modulo Agenda).
+    if(fechaEstimada&&repId){
+      var yaExiste=agenda.some(function(a){return a.origen==='SERVICIO_TECNICO'&&a.origen_id===repId&&(a.estado==='PENDIENTE'||a.estado==='EN_PROGRESO');});
+      if(!yaExiste){
+        await fetch(SUPA_URL+'/rest/v1/agenda',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+          body:JSON.stringify({
+            tipo:'RECORDATORIO',titulo:'Entregar equipo: '+cliente+' ('+marca+' '+modelo+')',fecha:fechaEstimada,
+            prioridad:'MEDIA',estado:'PENDIENTE',origen:'SERVICIO_TECNICO',origen_id:repId
+          })
+        });
+        await cargarAgenda();
+      }
+    }
+    showToast(servEditingId?'Reparacion actualizada':'Reparacion registrada');
+    document.getElementById('serv-nueva-modal').classList.remove('show');
+    await cargarReparaciones();
+  }catch(e){showToast('Error de conexion',true);}
+  finally{btn.disabled=false;btn.textContent='Guardar';}
+}
+
+function servAbrirEntrega(id){
+  var r=reparaciones.find(function(x){return x.id===id;});
+  if(!r)return;
+  servEntregaId=id;
+  document.getElementById('serv-e-trabajo').value='';
+  document.getElementById('serv-e-repuesto').value='';
+  document.getElementById('serv-e-fecha-entrega').value=new Date().toISOString().slice(0,10);
+  document.getElementById('serv-e-monto').value='';
+  var sel=document.getElementById('serv-e-metodo');
+  sel.innerHTML='<option value="">Selecciona...</option>'+cfg.metodos.map(function(m){return'<option>'+m+'</option>';}).join('');
+  garantiaResetForm('serv-entrega');
+  document.getElementById('serv-entrega-modal').classList.add('show');
+}
+
+async function servGuardarEntrega(){
+  var r=reparaciones.find(function(x){return x.id===servEntregaId;});
+  if(!r)return;
+  var trabajo=document.getElementById('serv-e-trabajo').value.trim();
+  var repuesto=document.getElementById('serv-e-repuesto').value.trim();
+  var fechaEntrega=document.getElementById('serv-e-fecha-entrega').value;
+  var monto=parseFloat(document.getElementById('serv-e-monto').value)||0;
+  var metodo=document.getElementById('serv-e-metodo').value;
+  if(!trabajo||!fechaEntrega||!monto||!metodo){showToast('Completa Trabajo realizado, Fecha de entrega, Monto y Metodo de pago',true);return;}
+  var garantia=garantiaLeer('serv-entrega',fechaEntrega);
+  if(!garantia.valido){showToast('Ingresa una cantidad valida de dias de garantia',true);return;}
+  var pagado=metodo!=='DEUDA';
+  var btn=document.getElementById('serv-e-btn-guardar');
+  btn.disabled=true;btn.textContent='Guardando...';
+  try{
+    var movId=await guardarMovimientoInternoConId({
+      fecha:fechaEntrega,unidad:'SERVICIO TECNICO',operacion:'SERVICIOS',categoria:'REPARACION',
+      descripcion:r.cliente,mensaje:trabajo,marca_equipo:r.marca,modelo_equipo:r.modelo,
+      ingreso:monto,egreso:0,metodo:metodo,
+      tiene_garantia:garantia.tiene_garantia,dias_garantia:garantia.dias_garantia,fecha_vencimiento_garantia:garantia.fecha_vencimiento_garantia
+    });
+    await crearDeudaSiCorresponde('SERVICIO TECNICO',r.cliente,fechaEntrega,monto,metodo,movId);
+    var res=await fetch(SUPA_URL+'/rest/v1/reparaciones_servicio_tecnico?id=eq.'+r.id,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+      body:JSON.stringify({
+        estado:'ENTREGADO',fecha_entrega:fechaEntrega,trabajo_realizado:trabajo,repuesto_utilizado:repuesto||null,
+        tiene_garantia:garantia.tiene_garantia,dias_garantia:garantia.dias_garantia,fecha_vencimiento_garantia:garantia.fecha_vencimiento_garantia,
+        pagado:pagado,monto:monto,metodo_pago:metodo,movimiento_id:movId
+      })
+    });
+    if(!res.ok){var e=await res.text();showToast('Error: '+e.slice(0,80),true);return;}
+    // El recordatorio de entrega en la Agenda (si existia) ya se cumplio.
+    await fetch(SUPA_URL+'/rest/v1/agenda?origen=eq.SERVICIO_TECNICO&origen_id=eq.'+r.id+'&estado=in.(PENDIENTE,EN_PROGRESO)',{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+      body:JSON.stringify({estado:'COMPLETADA'})
+    });
+    showToast('Reparacion entregada');
+    document.getElementById('serv-entrega-modal').classList.remove('show');
+    servEntregaId=null;
+    await cargarReparaciones();
+    await cargarDatos();
+    await cargarAgenda();
+  }catch(e){showToast('Error de conexion',true);}
+  finally{btn.disabled=false;btn.textContent='Confirmar entrega';}
+}
+
 // ============ DEUDORES ============
 var deudas=[];
 var pagosDeuda=[];
@@ -3280,6 +4690,16 @@ async function deuRegistrarPago(){
   showToast('Pago registrado');
   await cargarDeudas();
   await cargarDatos();
+  // Si el pago cancela la deuda, el recordatorio de cobro en la Agenda (si lo habia) ya no tiene sentido.
+  var dUpd=deudas.find(function(x){return x.id===deudaActualId;});
+  if(dUpd&&deudaInfo(dUpd).saldo<=0.01){
+    await fetch(SUPA_URL+'/rest/v1/agenda?origen=eq.DEUDOR&origen_id=eq.'+deudaActualId+'&estado=in.(PENDIENTE,EN_PROGRESO)',{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+      body:JSON.stringify({estado:'COMPLETADA'})
+    });
+    await cargarAgenda();
+  }
   deuAbrirDetalle(deudaActualId);
 }
 
@@ -3295,8 +4715,20 @@ async function deuRegistrarPromesa(){
     body:JSON.stringify({deuda_id:deudaActualId,fecha_comprometida:fecha,monto_comprometido:monto?parseFloat(monto):null,observaciones:obs})
   });
   if(!res.ok){showToast('Error al registrar la promesa',true);return;}
+  // La Agenda es donde se organiza el seguimiento futuro: cada promesa de pago genera
+  // automaticamente un "Cobro programado" con la fecha comprometida (ver spec del modulo Agenda).
+  var dProm=deudas.find(function(x){return x.id===deudaActualId;});
+  await fetch(SUPA_URL+'/rest/v1/agenda',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+    body:JSON.stringify({
+      tipo:'COBRO',titulo:'Cobrar deuda: '+(dProm?dProm.cliente:''),fecha:fecha,prioridad:'MEDIA',estado:'PENDIENTE',
+      importe:monto?parseFloat(monto):null,observaciones:obs,origen:'DEUDOR',origen_id:deudaActualId
+    })
+  });
   showToast('Promesa de pago registrada');
   await cargarDeudas();
+  await cargarAgenda();
   deuAbrirDetalle(deudaActualId);
 }
 
@@ -3486,7 +4918,7 @@ function celRenderTabla(tipo){
 // ABRIR OPERACION - redirect to cargar form
 function celAbrirOp(op, imeiPre){
   // Navigate to cargar screen
-  go('cargar', document.querySelectorAll('.nav-item')[2]);
+  go('cargar', document.getElementById('nav-cargar'));
   // Set unidad to CELULARES
   setTimeout(function(){
     var unidadSel=document.getElementById('f-unidad');
@@ -3858,13 +5290,24 @@ async function celGuardarOp(){
       var ventaFecha=document.getElementById('venta-fecha').value||document.getElementById('f-fecha').value||new Date().toISOString().slice(0,10);
       var garantiaVenta=garantiaLeer('venta',ventaFecha);
       if(!garantiaVenta.valido){showToast('Ingresa una cantidad valida de dias de garantia',true);return false;}
+      var ventaCliente=document.getElementById('venta-cliente').value||null;
+      var ventaMetodo=ventaGetMetodoStr();
+      // Movimiento se crea primero para poder enlazar el celular a su venta (movimiento_id)
+      // y poder revertir la venta completa si el movimiento se borra despues (ver revertirRegistrosDeVenta).
+      var movIdVenta=await guardarMovimientoInternoConId({
+        fecha:ventaFecha,unidad:'CELULARES',operacion:'VENTAS',
+        categoria:'DIRECTA',descripcion:ventaImeiActual.marca+' '+ventaImeiActual.modelo+' IMEI:'+ventaImeiActual.imei,
+        ingreso:precio,egreso:0,metodo:ventaMetodo,mensaje:ventaCliente||'',canal_venta:canalVenta,
+        tiene_garantia:garantiaVenta.tiene_garantia,dias_garantia:garantiaVenta.dias_garantia,fecha_vencimiento_garantia:garantiaVenta.fecha_vencimiento_garantia
+      });
       var updPayload={
         estado:'VENDIDO',
         fecha_venta:ventaFecha||null,
         precio_venta:precio,
-        cliente:document.getElementById('venta-cliente').value||null,
-        metodo_pago_venta:ventaGetMetodoStr(),
-        canal_venta:canalVenta
+        cliente:ventaCliente,
+        metodo_pago_venta:ventaMetodo,
+        canal_venta:canalVenta,
+        movimiento_id:movIdVenta
       };
       var res=await fetch(SUPA_URL+'/rest/v1/celulares?id=eq.'+ventaImeiActual.id,{
         method:'PATCH',
@@ -3876,13 +5319,8 @@ async function celGuardarOp(){
         var eMsg='';try{var eJson=JSON.parse(eBody);eMsg=eJson.message||eBody.slice(0,80);}catch(ex){eMsg=eBody.slice(0,80);}
         showToast('Error venta: '+eMsg,true);return false;
       }
-      var movIdVenta=await guardarMovimientoInternoConId({
-        fecha:ventaFecha,unidad:'CELULARES',operacion:'VENTAS',
-        categoria:'DIRECTA',descripcion:ventaImeiActual.marca+' '+ventaImeiActual.modelo+' IMEI:'+ventaImeiActual.imei,
-        ingreso:precio,egreso:0,metodo:updPayload.metodo_pago_venta,mensaje:updPayload.cliente||'',canal_venta:canalVenta,
-        tiene_garantia:garantiaVenta.tiene_garantia,dias_garantia:garantiaVenta.dias_garantia,fecha_vencimiento_garantia:garantiaVenta.fecha_vencimiento_garantia
-      });
       await crearDeudaSiCorresponde('CELULARES',updPayload.cliente,ventaFecha,precio,updPayload.metodo_pago_venta,movIdVenta);
+      if(updPayload.cliente)await ensureCliente(updPayload.cliente);
       // Parte de pago - add to stock
       for(var i=0;i<ppListaTemp.length;i++){
         var pp=ppListaTemp[i];
@@ -4104,6 +5542,28 @@ function goTie(name,el){
   document.getElementById('page-title').textContent=titles[name]||name;
   if(name==='tie-resumen')tieRenderResumen();
   else tieRenderTabla(name.replace('tie-',''));
+}
+
+var servSubMenuOpen=false;
+function toggleServSubMenu(){
+  servSubMenuOpen=!servSubMenuOpen;
+  document.getElementById('serv-submenu').style.display=servSubMenuOpen?'block':'none';
+  document.getElementById('serv-arrow').style.transform=servSubMenuOpen?'rotate(180deg)':'';
+}
+function goServ(name,el){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.nav-item,.nav-subitem').forEach(function(n){n.classList.remove('active');});
+  if(name==='serv-resumen'){
+    document.getElementById('screen-unidad').classList.add('active');
+    if(el)el.classList.add('active');
+    setU('SERVICIO TECNICO');
+    return;
+  }
+  document.getElementById('screen-'+name).classList.add('active');
+  if(el)el.classList.add('active');
+  var titles={'serv-pendientes':'Servicio Técnico — Pendientes','serv-entregados':'Servicio Técnico — Entregados'};
+  document.getElementById('page-title').textContent=titles[name]||name;
+  servRenderTabla(name.replace('serv-',''));
 }
 
 async function tieCargarDatos(){
@@ -4806,6 +6266,15 @@ async function tieGuardarOp(){
       var total=tventaUpdateTotal();
       var descGeneral=tventaCarritoTemp.map(function(c){var d=c.precio_lista>c.precio_cobrado?' (desc.)':'';return c.codigo+' x'+c.cantidad+d;}).join(', ');
 
+      // Movimiento se crea primero para enlazar cada fila de ventas_tiendas a su movimiento_id
+      // y poder revertir la venta completa (stock incluido) si el movimiento se borra despues.
+      var movIdTVenta=await guardarMovimientoInternoConId({
+        fecha:fecha,unidad:'TIENDAS',operacion:'VENTAS',
+        categoria:'DIRECTA',descripcion:descGeneral,
+        ingreso:total,egreso:0,metodo:metodoStr,mensaje:cliente||'',canal_venta:canalVenta,
+        tiene_garantia:garantiaVenta.tiene_garantia,dias_garantia:garantiaVenta.dias_garantia,fecha_vencimiento_garantia:garantiaVenta.fecha_vencimiento_garantia
+      });
+
       // Update stock for each item
       for(var i=0;i<tventaCarritoTemp.length;i++){
         var item=tventaCarritoTemp[i];
@@ -4826,19 +6295,13 @@ async function tieGuardarOp(){
           body:JSON.stringify({
             fecha:fecha,codigo:item.codigo,descripcion:item.descripcion,cantidad:item.cantidad,
             precio_unitario:item.precio_cobrado,precio_lista:item.precio_lista,total:item.precio_cobrado*item.cantidad,
-            metodo_pago:metodoStr,cliente:cliente,canal_venta:canalVenta
+            metodo_pago:metodoStr,cliente:cliente,canal_venta:canalVenta,movimiento_id:movIdTVenta
           })
         });
       }
 
-      // Register single movimiento for the whole sale
-      var movIdTVenta=await guardarMovimientoInternoConId({
-        fecha:fecha,unidad:'TIENDAS',operacion:'VENTAS',
-        categoria:'DIRECTA',descripcion:descGeneral,
-        ingreso:total,egreso:0,metodo:metodoStr,mensaje:cliente||'',canal_venta:canalVenta,
-        tiene_garantia:garantiaVenta.tiene_garantia,dias_garantia:garantiaVenta.dias_garantia,fecha_vencimiento_garantia:garantiaVenta.fecha_vencimiento_garantia
-      });
       await crearDeudaSiCorresponde('TIENDAS',cliente,fecha,total,metodoStr,movIdTVenta);
+      if(cliente)await ensureCliente(cliente);
       showToast('Venta registrada: '+fmtARS(total));
     }
 
@@ -5374,6 +6837,13 @@ async function tieGuardarDesdeForm(op){
       var total=ftventaUpdateTotal();
       var descGeneral=ftventaCarritoTemp.map(function(c){var d=c.precio_lista>c.precio_cobrado?' (desc.)':'';return c.codigo+' x'+c.cantidad+d;}).join(', ');
 
+      var movIdFtVenta=await guardarMovimientoInternoConId({
+        fecha:fecha,unidad:'TIENDAS',operacion:'VENTAS',
+        categoria:'DIRECTA',descripcion:descGeneral,
+        ingreso:total,egreso:0,metodo:metodoStr,mensaje:cliente||'',canal_venta:canalVenta,
+        tiene_garantia:garantiaVenta.tiene_garantia,dias_garantia:garantiaVenta.dias_garantia,fecha_vencimiento_garantia:garantiaVenta.fecha_vencimiento_garantia
+      });
+
       for(var i=0;i<ftventaCarritoTemp.length;i++){
         var item=ftventaCarritoTemp[i];
         var prod=productosTiendas.find(function(p){return p.codigo===item.codigo;});
@@ -5392,18 +6862,13 @@ async function tieGuardarDesdeForm(op){
           body:JSON.stringify({
             fecha:fecha,codigo:item.codigo,descripcion:item.descripcion,cantidad:item.cantidad,
             precio_unitario:item.precio_cobrado,precio_lista:item.precio_lista,total:item.precio_cobrado*item.cantidad,
-            metodo_pago:metodoStr,cliente:cliente,canal_venta:canalVenta
+            metodo_pago:metodoStr,cliente:cliente,canal_venta:canalVenta,movimiento_id:movIdFtVenta
           })
         });
       }
 
-      var movIdFtVenta=await guardarMovimientoInternoConId({
-        fecha:fecha,unidad:'TIENDAS',operacion:'VENTAS',
-        categoria:'DIRECTA',descripcion:descGeneral,
-        ingreso:total,egreso:0,metodo:metodoStr,mensaje:cliente||'',canal_venta:canalVenta,
-        tiene_garantia:garantiaVenta.tiene_garantia,dias_garantia:garantiaVenta.dias_garantia,fecha_vencimiento_garantia:garantiaVenta.fecha_vencimiento_garantia
-      });
       await crearDeudaSiCorresponde('TIENDAS',cliente,fecha,total,metodoStr,movIdFtVenta);
+      if(cliente)await ensureCliente(cliente);
       showToast('Venta registrada: '+fmtARS(total));
     }
 
@@ -5516,6 +6981,9 @@ window.addEventListener('DOMContentLoaded',function(){
   tieCargarDatos();
   cargarProveedores();
   cargarDeudas();
+  cargarClientes();
+  cargarReparaciones();
+  cargarAgenda();
 });
 </script>
 
