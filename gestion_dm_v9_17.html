@@ -134,13 +134,6 @@ tr:hover td{background:var(--bg3);}
 .cm-val.pos{color:var(--green);}
 .cm-val.neg{color:var(--red);}
 .cm-ars{font-size:12px;font-family:monospace;color:var(--text3);text-align:center;margin-top:4px;display:block;}
-.cm-val-sm{font-size:16px;font-weight:700;font-family:monospace;text-align:center;width:100%;display:block;margin-bottom:2px;}
-.cm-val-sm.pos{color:var(--green);}
-.cm-val-sm.neg{color:var(--red);}
-.cm-row-label{font-size:10px;color:var(--text3);font-family:monospace;text-align:center;text-transform:uppercase;letter-spacing:0.06em;margin-top:4px;}
-.cm-input{width:100%;padding:7px 10px;border:1px solid var(--border-md);border-radius:var(--r);font-family:monospace;font-size:14px;color:var(--text);background:var(--bg3);outline:none;text-align:center;margin-top:4px;}
-.cm-input:focus{border-color:var(--border-hi);}
-.cm-divider-line{height:1px;background:var(--border);margin:10px 0 6px;}
 .cm-ars-line{font-size:11px;color:var(--blue);font-family:monospace;text-align:center;margin-top:3px;}
 .caja-chart-wrap{display:flex;justify-content:center;margin-bottom:18px;}
 .caja-chart-inner{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px;width:50%;}
@@ -366,6 +359,9 @@ tr:hover td{background:var(--bg3);}
       <div class="nav-subitem" onclick="goCel('cel-reparacion',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Reparacion
       </div>
+      <div class="nav-subitem" onclick="goCel('cel-reservas',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Reservas
+      </div>
       <div class="nav-subitem" onclick="goCel('cel-resumen',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Resumen
       </div>
@@ -459,7 +455,7 @@ tr:hover td{background:var(--bg3);}
           <div class="rd-grid-4">
             <div class="rd-quick" onclick="dashAbrirNuevaVenta()"><span style="font-size:20px;">🛒</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Nueva venta</span></div>
             <div class="rd-quick" onclick="go('cargar',document.getElementById('nav-cargar'))"><span style="font-size:20px;">💳</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Registrar movimiento</span></div>
-            <div class="rd-quick" onclick="celAbrirOp('reparacion')"><span style="font-size:20px;">🔧</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Nueva reparacion</span></div>
+            <div class="rd-quick" onclick="servAbrirNueva()"><span style="font-size:20px;">🔧</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Nueva reparacion</span></div>
             <div class="rd-quick" onclick="go('movimientos',document.getElementById('nav-movimientos'))"><span style="font-size:20px;">📄</span><span style="font-size:13px;font-weight:600;color:var(--rd-text);">Ver movimientos</span></div>
           </div>
         </div>
@@ -749,12 +745,14 @@ tr:hover td{background:var(--bg3);}
               <div class="cel-fgroup"><label>Bateria %</label><input type="number" id="nc-bat" placeholder="100" min="0" max="100"></div>
               <div class="cel-fgroup"><label>Estado equipo</label>
                 <select id="nc-estado-eq"><option>NUEVO</option><option>SEMI NUEVO</option><option>USADO</option></select></div>
-              <div class="cel-fgroup"><label>Precio costo (ARS)</label><input type="number" id="nc-costo" placeholder="0" min="0"></div>
+              <div class="cel-fgroup"><label>Precio costo</label><div style="display:flex;gap:4px;"><input type="number" id="nc-costo" placeholder="0" min="0" style="flex:1;min-width:0;"><select id="nc-costo-moneda" style="width:72px;flex-shrink:0;"><option value="ARS">ARS</option><option value="USD">USD</option></select></div></div>
               <div class="cel-fgroup"><label>Precio lista (ARS)</label><input type="number" id="nc-lista" placeholder="0" min="0"></div>
               <div class="cel-fgroup"><label>Gtia proveedor (m)</label><input type="number" id="nc-gtia" placeholder="0" min="0"></div>
               <div class="cel-fgroup cel-form-full"><label>Proveedor</label>
                 <div class="ac-wrap"><input type="text" id="nc-proveedor" autocomplete="off" oninput="provAutocomplete(this,'CELULARES','nc-proveedor-ac')"><div class="ac-dropdown" id="nc-proveedor-ac"></div></div></div>
               <div class="cel-fgroup cel-form-full"><label>Observaciones</label><input type="text" id="nc-obs" placeholder="Estado del equipo, accesorios incluidos, etc..."></div>
+              <div class="cel-fgroup cel-form-full"><label>Asignar a reserva (opcional)</label>
+                <select id="nc-reserva"><option value="">Sin asignar</option></select></div>
             </div>
             <button class="btn btn-sm" onclick="compraAgregarCelular()" style="margin-top:4px;">+ Agregar a la lista</button>
           </div>
@@ -771,22 +769,14 @@ tr:hover td{background:var(--bg3);}
 
         <!-- CELULARES: VENTA -->
         <div id="f-cel-venta" style="display:none;">
-          <div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Buscar celular por IMEI</div>
-          <div style="display:flex;gap:8px;margin-bottom:12px;">
-            <input type="text" id="venta-imei-input" placeholder="Escribi el IMEI del celular a vender..." style="flex:1;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-            <button class="btn" onclick="ventaBuscarIMEI()">Buscar</button>
+          <div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Agregar celulares a la venta (marca, modelo, color, capacidad o IMEI)</div>
+          <div class="ac-wrap" style="margin-bottom:12px;display:block;">
+            <input type="text" id="venta-cel-search" placeholder="Ej: 17 Pro Max, negro, 256GB..." autocomplete="off" oninput="ventaBuscarCelular(this)" onkeydown="ventaCelSearchKey(event)" style="width:100%;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+            <div class="ac-dropdown" id="venta-cel-search-ac"></div>
           </div>
-          <div id="venta-cel-info" style="display:none;background:var(--bg3);border-radius:var(--r);padding:14px;margin-bottom:14px;">
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
-              <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">MODELO</div><div style="font-size:13px;font-weight:600;" id="venta-info-modelo">-</div></div>
-              <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">COLOR / GB</div><div style="font-size:13px;" id="venta-info-detalle">-</div></div>
-              <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">COSTO TOTAL</div><div style="font-size:13px;font-weight:600;color:var(--red);" id="venta-info-costo">-</div></div>
-              <div><div style="font-size:10px;color:var(--text3);font-family:monospace;">PRECIO LISTA</div><div style="font-size:13px;font-weight:600;color:var(--green);" id="venta-info-lista">-</div></div>
-            </div>
-          </div>
-          <div id="venta-form-ext" style="display:none;">
+          <div id="venta-carrito" style="margin-bottom:14px;"></div>
+          <div id="venta-form-ext">
             <div class="cel-form-grid">
-              <div class="cel-fgroup"><label>Precio de venta (ARS) *</label><input type="number" id="venta-precio" placeholder="0" oninput="ventaCalcGanancia()"></div>
               <div class="cel-fgroup"><label>Cliente</label><div class="ac-wrap"><input type="text" id="venta-cliente" placeholder="Nombre..." autocomplete="off" oninput="cliAutocomplete(this,'venta-cliente-ac')"><div class="ac-dropdown" id="venta-cliente-ac"></div></div></div>
               <div class="cel-fgroup cel-form-full">
                 <label>Metodo de pago (podes dividir en hasta 3 metodos)</label>
@@ -1450,6 +1440,19 @@ tr:hover td{background:var(--bg3);}
       </div>
     </div>
 
+    <!-- CEL RESERVAS -->
+    <div class="screen" id="screen-cel-reservas">
+      <div class="cel-filters">
+        <input type="text" id="cel-reservas-search" placeholder="Buscar cliente..." oninput="celRenderReservas()">
+        <button class="btn btn-p btn-sm" onclick="celReservaAbrirNueva()">+ Venta con entrega pendiente</button>
+      </div>
+      <div class="tw"><div class="tw-head"><div class="tw-title">Reservas / pagos anticipados</div></div>
+        <table><thead><tr>
+          <th>Cliente</th><th>Equipo</th><th>Importe</th><th>Fecha reserva</th><th>Fecha entrega</th><th>Estado</th><th></th>
+        </tr></thead><tbody id="cel-tbody-reservas"></tbody></table>
+      </div>
+    </div>
+
     <!-- CEL OPERACION MODAL TRIGGER SCREEN (not visible, just for ops) -->
 
     <!-- TIE STOCK -->
@@ -1886,6 +1889,65 @@ tr:hover td{background:var(--bg3);}
   </div>
 </div>
 
+<!-- CELULARES: NUEVA RESERVA (venta con entrega pendiente) -->
+<div class="cel-modal-bg" id="cel-reserva-modal">
+  <div class="cel-modal" style="max-width:520px;">
+    <h3>Venta con entrega pendiente</h3>
+    <div class="cel-form-grid" style="margin-top:14px;">
+      <div class="cel-fgroup cel-form-full"><label>Cliente *</label><div class="ac-wrap"><input type="text" id="cr-cliente" placeholder="Nombre del cliente..." autocomplete="off" oninput="cliAutocomplete(this,'cr-cliente-ac')"><div class="ac-dropdown" id="cr-cliente-ac"></div></div></div>
+      <div class="cel-fgroup cel-form-full"><label>Equipo deseado *</label><input type="text" id="cr-modelo" placeholder="Ej: iPhone 17 Negro 128GB"></div>
+      <div class="cel-fgroup"><label>Importe *</label><div style="display:flex;gap:4px;"><input type="number" id="cr-importe" placeholder="0" min="0" style="flex:1;min-width:0;"><select id="cr-importe-moneda" style="width:72px;flex-shrink:0;"><option value="ARS">ARS</option><option value="USD">USD</option></select></div></div>
+      <div class="cel-fgroup"><label>Metodo de pago</label><select id="cr-metodo"><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select></div>
+      <div class="cel-fgroup"><label>Fecha *</label><input type="date" id="cr-fecha"></div>
+    </div>
+    <div class="cel-modal-actions">
+      <button class="btn" onclick="celReservaCerrarModal()">Cancelar</button>
+      <button class="btn btn-p" id="cr-btn-guardar" onclick="celReservaGuardar()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- CELULARES: ASIGNAR IMEI a una reserva -->
+<div class="cel-modal-bg" id="cel-asignar-modal">
+  <div class="cel-modal" style="max-width:480px;">
+    <h3>Asignar equipo a la reserva</h3>
+    <div id="ca-reserva-info" style="font-size:12px;color:var(--text2);margin:10px 0;"></div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <input type="text" id="ca-imei-input" placeholder="Escribi el IMEI del equipo a entregar..." style="flex:1;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+      <button class="btn" onclick="celAsignarBuscarIMEI()">Buscar</button>
+    </div>
+    <div id="ca-imei-info" style="display:none;background:var(--bg3);border-radius:var(--r);padding:12px;margin-bottom:12px;font-size:12px;"></div>
+    <div class="cel-form-grid">
+      <div class="cel-fgroup"><label>¿Tiene garantia? *</label>
+        <select id="ca-tiene-garantia" onchange="garantiaToggle('ca')"><option value="NO">No</option><option value="SI">Si</option></select></div>
+      <div class="cel-fgroup" id="ca-dias-garantia-wrap" style="display:none;"><label>Dias de garantia</label>
+        <input type="number" id="ca-dias-garantia" value="30" min="1"></div>
+    </div>
+    <div class="cel-modal-actions">
+      <button class="btn" onclick="celAsignarCerrarModal()">Cancelar</button>
+      <button class="btn btn-p" id="ca-btn-guardar" onclick="celAsignarConfirmar()">Confirmar entrega</button>
+    </div>
+  </div>
+</div>
+
+<!-- CELULARES: EQUIPO RECIEN INGRESADO COINCIDE CON UNA RESERVA PENDIENTE -->
+<div class="cel-modal-bg" id="cel-reserva-match-modal">
+  <div class="cel-modal" style="max-width:560px;">
+    <h3>Este equipo coincide con una reserva pendiente</h3>
+    <div id="cm-equipo-info" style="font-size:12px;color:var(--text2);margin:10px 0;"></div>
+    <div id="cm-lista" style="margin-bottom:14px;"></div>
+    <div class="cel-form-grid">
+      <div class="cel-fgroup"><label>¿Tiene garantia? *</label>
+        <select id="cm-tiene-garantia" onchange="garantiaToggle('cm')"><option value="NO">No</option><option value="SI">Si</option></select></div>
+      <div class="cel-fgroup" id="cm-dias-garantia-wrap" style="display:none;"><label>Dias de garantia</label>
+        <input type="number" id="cm-dias-garantia" value="30" min="1"></div>
+    </div>
+    <div class="cel-modal-actions">
+      <button class="btn" onclick="celMatchContinuar()">Continuar sin asignar</button>
+    </div>
+  </div>
+</div>
+
 <!-- NUEVA VENTA (selector de unidad, acceso rapido del Dashboard) -->
 <div class="cel-modal-bg rd" id="dash-venta-modal">
   <div style="background:var(--rd-card);border:1px solid var(--rd-border);border-radius:14px;padding:26px 28px;max-width:380px;width:100%;">
@@ -1944,7 +2006,7 @@ document.getElementById('sb-logo').src='data:image/png;base64,'+LOGO_B64;
 
 var DEFAULT_CONFIG={
   unidades:['CELULARES','TIENDAS','SERVICIO TECNICO','DM'],
-  operaciones:['VENTAS','SERVICIOS','COMPRA','GASTOS','INVERSION','AJUSTE','FINANCIERO'],
+  operaciones:['VENTAS','SERVICIOS','COMPRA','GASTOS','INVERSION','FINANCIERO'],
   metodos:['MP','EFECTIVO','USD','NARANJA X','A LIQUIDAR','DEUDA'],
   canales:['LOCAL','VENTA DIRECTA','INSTAGRAM','MERCADO LIBRE','TIENDA NUBE'],
   categorias:{
@@ -1953,14 +2015,16 @@ var DEFAULT_CONFIG={
     COMPRA:['MERCADERIA','REPUESTOS','HERRAMIENTAS','INSUMOS'],
     GASTOS:['RECURSOS HUMANOS','MARKETING','LOCAL','OPERATIVO','FINANCIERO','ENVIOS','SOCIOS'],
     INVERSION:['SOCIOS','INVERSORES','EQUIPAMIENTO'],
-    AJUSTE:['COMPENSACION','DEVOLUCION','FINANCIERO'],
     FINANCIERO:['TRANSFERENCIA ENTRE CUENTAS','COMPRA DE DOLARES','VENTA DE DOLARES','DEPOSITO DE EFECTIVO','EXTRACCION DE EFECTIVO','AJUSTE DE CAJA']
   }
 };
 var cfg=JSON.parse(localStorage.getItem('dm_cfg')||'null')||DEFAULT_CONFIG;
 if(cfg.metodos.indexOf('DEUDA')===-1)cfg.metodos.push('DEUDA');
 if(!cfg.canales||!cfg.canales.length)cfg.canales=DEFAULT_CONFIG.canales.slice();
-if(cfg.operaciones.indexOf('AJUSTE')===-1)cfg.operaciones.push('AJUSTE');
+// La operacion "Ajuste" se elimino de Cargar movimiento: los ajustes ahora se hacen solo desde
+// Movimientos Financieros -> Ajuste de Caja. Se limpia tambien de configs viejas guardadas en localStorage.
+cfg.operaciones=cfg.operaciones.filter(function(o){return o!=='AJUSTE';});
+delete cfg.categorias.AJUSTE;
 if(cfg.operaciones.indexOf('FINANCIERO')===-1)cfg.operaciones.push('FINANCIERO');
 if(!cfg.categorias.FINANCIERO)cfg.categorias.FINANCIERO=DEFAULT_CONFIG.categorias.FINANCIERO.slice();
 
@@ -2183,23 +2247,6 @@ async function guardarFinanciero(){
   }catch(e){showToast('Error de conexion',true);console.log(e);}
 }
 
-// Genera el asiento inverso de un movimiento financiero (nunca se elimina fisicamente, se revierte).
-async function revertirMovimientoFinanciero(id){
-  var m=movs.find(function(x){return String(x.id)===String(id);});
-  if(!m){showToast('No se encontro el movimiento',true);return;}
-  if(movs.some(function(x){return String(x.esReversoDe)===String(id);})){showToast('Este movimiento ya fue revertido',true);return;}
-  if(!confirm('Se va a generar un movimiento inverso para anular: "'+m.desc+'". El original queda en el historial. ¿Continuar?'))return;
-  await guardarMovimientoInterno({
-    fecha:new Date().toISOString().slice(0,10),unidad:m.unidad,operacion:'FINANCIERO',categoria:m.categoria,
-    descripcion:'Reverso de #'+m.id+' — '+m.desc,
-    ingreso:m.egreso,egreso:m.ingreso,metodo:m.metodo,mensaje:'Reverso',responsable:m.responsable||'',
-    es_reverso_de:parseInt(m.id)
-  });
-  showToast('Movimiento inverso generado');
-  document.getElementById('mov-det-modal').classList.remove('show');
-  await cargarDatos();
-}
-
 function ss(st,txt){document.getElementById('s-dot').className='dot '+st;document.getElementById('s-txt').textContent=txt;}
 function showToast(msg,err){var t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(err?' err':'')+' show';setTimeout(function(){t.className='toast';},3500);}
 
@@ -2339,9 +2386,9 @@ function hideAllFormSections(){
     if(el)el.style.display='none';
   });
   // Reset cel info panels
-  var panels=['venta-cel-info','venta-form-ext','rep-cel-info','rep-form-ext','pp-form-new','venta-cuotas-form'];
+  var panels=['rep-cel-info','rep-form-ext','pp-form-new','venta-cuotas-form'];
   panels.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});
-  ventaImeiActual=null;repImeiActual=null;
+  ventaCarritoTemp=[];repImeiActual=null;
   compraListaTemp=[];ppListaTemp=[];
   ventaResetForm();
   // Reset tie info panels
@@ -2354,10 +2401,13 @@ function hideAllFormSections(){
 // Limpia por completo el formulario de venta de Celulares (Cargar movimiento):
 // importes, cliente, metodos de pago, cuotas y parte de pago quedan como estaban antes de cargar cualquier venta.
 function ventaResetForm(){
-  ['venta-imei-input','venta-precio','venta-cliente','venta-monto1','venta-monto2','venta-monto3',
+  ventaCarritoTemp=[];
+  if(document.getElementById('venta-carrito'))renderVentaCarrito();
+  ['venta-cel-search','venta-cliente','venta-monto1','venta-monto2','venta-monto3',
     'vc-cantidad','vc-monto','vc-inicio','vc-limite','pp-imei-input'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.value='';
   });
+  var celAc=document.getElementById('venta-cel-search-ac');if(celAc){celAc.classList.remove('show');celAc.innerHTML='';}
   ['venta-metodo1','venta-metodo2','venta-metodo3'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   var freq=document.getElementById('vc-frecuencia');if(freq)freq.value='mensual';
   var cuotasCheck=document.getElementById('venta-cuotas-check');if(cuotasCheck)cuotasCheck.checked=false;
@@ -2410,7 +2460,7 @@ function onOperacionChange(){
         var today=new Date().toISOString().slice(0,10);
         if(celOp==='compra'&&document.getElementById('compra-fecha'))document.getElementById('compra-fecha').value=document.getElementById('f-fecha').value||today;
         if(celOp==='reparacion'&&document.getElementById('rep-fecha'))document.getElementById('rep-fecha').value=document.getElementById('f-fecha').value||today;
-        if(celOp==='compra')renderCompraLista();
+        if(celOp==='compra'){renderCompraLista();celPopularSelectReserva();}
         if(celOp==='venta')ventaResetForm();
       }
     }
@@ -2651,7 +2701,6 @@ async function confirmDelete(){
   if(!pendingDelId){closeModal();return;}
   var delId=String(pendingDelId);
   var delMov=movs.find(function(x){return x.id===delId;});
-  if(delMov&&delMov.operacion==='FINANCIERO'){closeModal();showToast('Los movimientos financieros no se eliminan: usa "Revertir"',true);return;}
   closeModal();
   ss('loading','ELIMINANDO...');
   try{
@@ -2723,7 +2772,7 @@ async function revertirRegistrosDeVenta(delMov,delId){
         for(var k=0;k<cels.length;k++){
           await fetch(SUPA_URL+'/rest/v1/celulares?id=eq.'+cels[k].id,{
             method:'PATCH',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
-            body:JSON.stringify({estado:'EN STOCK',fecha_venta:null,precio_venta:null,cliente:null,metodo_pago_venta:null,canal_venta:null,movimiento_id:null})
+            body:JSON.stringify({estado:'EN STOCK',fecha_venta:null,precio_venta:null,moneda_venta:null,precio_venta_usd:null,cotizacion_venta:null,cliente:null,metodo_pago_venta:null,canal_venta:null,movimiento_id:null})
           });
         }
       }
@@ -2831,14 +2880,7 @@ function buildMovRow(m,showUnit,showDel){
     egrHtml='<span class="egr">'+fmtMov(m.egreso,m.metodo)+'</span>';
     if(isPureUSD&&dolarBlue)egrHtml+='<span class="usd-cell">'+fmtARS(m.egreso*dolarBlue)+'</span>';
   }
-  // Los movimientos financieros nunca se eliminan: se revierten (o ya son un reverso / ya fueron revertidos).
-  var delBtn;
-  if(m.operacion==='FINANCIERO'){
-    var yaRevertido=movs.some(function(x){return String(x.esReversoDe)===String(m.id);});
-    delBtn=showDel?((yaRevertido||m.esReversoDe)?'<span style="font-size:10px;color:var(--text3);">'+(m.esReversoDe?'reverso':'revertido')+'</span>':'<button class="btn-del" style="border-color:var(--blue);color:var(--blue);" onclick="event.stopPropagation();revertirMovimientoFinanciero(\''+m.id+'\')" title="Revertir">↺</button>'):'';
-  }else{
-    delBtn=showDel?'<button class="btn-del" onclick="event.stopPropagation();askDelete(\''+m.id+'\',\''+m.desc.replace(/'/g,'')+'\')" title="Eliminar">x</button>':'';
-  }
+  var delBtn=showDel?'<button class="btn-del" onclick="event.stopPropagation();askDelete(\''+m.id+'\',\''+m.desc.replace(/'/g,'')+'\')" title="Eliminar">x</button>':'';
   var unitCell=showUnit?'<td style="font-size:11px;color:var(--text2)">'+m.unidad+'</td>':'';
   return'<tr style="cursor:pointer" data-mid="'+m.id+'" onclick="abrirDetalleMov(this.dataset.mid)">'+
     '<td class="mono" style="font-size:11px;">'+fd(m.fecha)+'</td>'+
@@ -3090,19 +3132,15 @@ function renderCaja(){
     }
   });
 
-  var saldosReales=JSON.parse(localStorage.getItem('dm_saldo_real')||'{}');
-
-  // Total unificado
+  // Total unificado (siempre el saldo calculado desde los movimientos reales: los ajustes de
+  // caja se hacen unicamente desde Movimientos Financieros -> Ajuste de Caja, no aca).
   var totalARS=metodosCaja.filter(function(m){return m!=='USD';}).reduce(function(s,m){
-    var calc=saldos[m].ing-saldos[m].egr;
-    var real=saldosReales[m]!==undefined?parseFloat(saldosReales[m]):calc;
-    return s+real;
+    return s+(saldos[m].ing-saldos[m].egr);
   },0);
   var totalUSD=saldos['USD']?(saldos['USD'].ing-saldos['USD'].egr):0;
-  var realUSD=saldosReales['USD']!==undefined?parseFloat(saldosReales['USD']):totalUSD;
   var totalUnif=currentCurrency==='USD'?
-    (totalARS/dolarBlue+realUSD):
-    (totalARS+realUSD*dolarBlue);
+    (totalARS/dolarBlue+totalUSD):
+    (totalARS+totalUSD*dolarBlue);
   var unifEl=document.getElementById('caja-total-unif');
   if(unifEl){
     unifEl.textContent=currentCurrency==='USD'?fmtUSD(totalUnif):fmtARS(totalUnif);
@@ -3110,8 +3148,8 @@ function renderCaja(){
   }
   var subEl=document.getElementById('caja-total-sub');
   if(subEl)subEl.textContent=currentCurrency==='USD'?
-    'ARS: '+fmtARS(totalARS)+' + USD: '+fmtUSD(realUSD):
-    'ARS: '+fmtARS(totalARS)+' + USD equivalente: '+fmtARS(realUSD*dolarBlue);
+    'ARS: '+fmtARS(totalARS)+' + USD: '+fmtUSD(totalUSD):
+    'ARS: '+fmtARS(totalARS)+' + USD equivalente: '+fmtARS(totalUSD*dolarBlue);
 
   // Proyeccion fin de mes
   var hoy=new Date();
@@ -3137,29 +3175,18 @@ function renderCaja(){
   // Metodos cards
   document.getElementById('caja-methods').innerHTML=metodosCaja.map(function(met){
     var calc=saldos[met].ing-saldos[met].egr;
-    var real=saldosReales[met]!==undefined?parseFloat(saldosReales[met]):null;
-    var diff=real!==null?real-calc:null;
     var isUSD=met==='USD';
     var fmtFn=function(n){return isUSD?(currentCurrency==='ARS'&&dolarBlue?fmtARS(n*dolarBlue):fmtUSD(n)):(currentCurrency==='USD'&&dolarBlue?fmtUSD(n/dolarBlue):fmtARS(n));};
-    var diffStr=diff!==null?(diff>=0?'+':'')+fmtFn(diff):'—';
-    var diffColor=diff===null?'var(--text3)':Math.abs(diff)<1000?'var(--green)':diff>=0?'var(--amber)':'var(--red)';
     return'<div class="cm">'+
       '<div class="cm-name">'+met+'</div>'+
-      '<div class="cm-row-label">Calculado</div>'+
-      '<div class="cm-val-sm '+(calc>=0?'pos':'neg')+'">'+fmtFn(calc)+'</div>'+
-      '<div class="cm-row-label" style="margin-top:8px;">Saldo real</div>'+
-      '<input class="cm-input" type="number" id="real-'+met+'" value="'+(real!==null?real:'')+'" placeholder="Ingresar..." step="0.01" data-met="'+met+'" onchange="saveReal(this.dataset.met)" onclick="this.select()">'+
-      '<div class="cm-divider-line"></div>'+
-      '<div class="cm-row-label">Diferencia</div>'+
-      '<div class="cm-val" style="font-size:18px;color:'+diffColor+'">'+diffStr+'</div>'+
+      '<div class="cm-val '+(calc>=0?'pos':'neg')+'">'+fmtFn(calc)+'</div>'+
       '</div>';
   }).join('');
 
   // Distribution chart
   if(cCaja)cCaja.destroy();
   var totales=metodosCaja.map(function(met){
-    var r=saldosReales[met];
-    return Math.max(0,r!==undefined?parseFloat(r):saldos[met].ing-saldos[met].egr);
+    return Math.max(0,saldos[met].ing-saldos[met].egr);
   });
   if(totales.some(function(v){return v>0;})){
     cCaja=new Chart(document.getElementById('chartCaja').getContext('2d'),{
@@ -3435,7 +3462,6 @@ function abrirDetalleMov(id){
   if(esFinanciero&&d.financiero){
     var fin=d.financiero;
     var yaRevertido=movs.some(function(x){return String(x.esReversoDe)===String(m.id);});
-    var revertirBtn=(fin.esReversoDe||yaRevertido)?'':'<button class="btn btn-sm" onclick="revertirMovimientoFinanciero(\''+m.id+'\')" style="margin-top:10px;">↺ Generar movimiento inverso</button>';
     financieroSection=
       '<div style="margin-top:14px;font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:6px;text-transform:uppercase;">Movimiento financiero</div>'+
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'+
@@ -3447,7 +3473,7 @@ function abrirDetalleMov(id){
         '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">SALDO REAL</div><div style="font-size:13px;">'+fmtARS(fin.saldoReal)+'</div></div>'+
         '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">DIFERENCIA</div><div style="font-size:13px;color:'+(fin.diferenciaCaja>=0?'var(--green)':'var(--red)')+';font-weight:600;">'+(fin.diferenciaCaja>0?'+':'')+fmtARS(fin.diferenciaCaja)+'</div></div>'
       ):'')+
-      '</div>'+revertirBtn;
+      '</div>';
   }
   var html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">'+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">FECHA</div><div style="font-size:13px;font-weight:600;">'+fd(m.fecha)+(m.hora?' '+m.hora:'')+'</div></div>'+
@@ -4740,7 +4766,7 @@ var celSubMenuOpen=false;
 var celCurrentOp='';
 var compraListaTemp=[];
 var ppListaTemp=[];
-var ventaImeiActual=null;
+var ventaCarritoTemp=[];
 var repImeiActual=null;
 
 function toggleCelSubMenu(){
@@ -4754,9 +4780,10 @@ function goCel(name,el){
   document.querySelectorAll('.nav-item,.nav-subitem').forEach(function(n){n.classList.remove('active');});
   document.getElementById('screen-'+name).classList.add('active');
   if(el)el.classList.add('active');
-  var titles={'cel-stock':'Celulares — Stock','cel-vendidos':'Celulares — Vendidos','cel-reparacion':'Celulares — Reparacion','cel-resumen':'Celulares — Resumen'};
+  var titles={'cel-stock':'Celulares — Stock','cel-vendidos':'Celulares — Vendidos','cel-reparacion':'Celulares — Reparacion','cel-reservas':'Celulares — Reservas','cel-resumen':'Celulares — Resumen'};
   document.getElementById('page-title').textContent=titles[name]||name;
   if(name==='cel-resumen')celRenderResumen();
+  else if(name==='cel-reservas')celRenderReservas();
   else celRenderTabla(name.replace('cel-',''));
 }
 
@@ -4772,10 +4799,245 @@ async function celCargarDatos(){
       if(active){
         var id=active.id;
         if(id==='screen-cel-resumen')celRenderResumen();
+        else if(id==='screen-cel-reservas')celRenderReservas();
         else if(id.startsWith('screen-cel-'))celRenderTabla(id.replace('screen-cel-',''));
       }
     }
   }catch(e){console.log('Cel load error',e);}
+}
+
+var celReservas=[];
+async function cargarCelularesReservas(){
+  try{
+    var res=await fetch(SUPA_URL+'/rest/v1/celulares_reservas?select=*&order=fecha.desc',{
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    });
+    var data=await res.json();
+    if(Array.isArray(data))celReservas=data;
+    if(document.getElementById('screen-cel-reservas')&&document.getElementById('screen-cel-reservas').classList.contains('active'))celRenderReservas();
+    celPopularSelectReserva();
+  }catch(e){console.log('Reservas load error',e);}
+}
+
+function celRenderReservas(){
+  var tbody=document.getElementById('cel-tbody-reservas');
+  if(!tbody)return;
+  var search=(document.getElementById('cel-reservas-search')?document.getElementById('cel-reservas-search').value:'').toLowerCase();
+  var filtrado=celReservas.filter(function(r){return!search||r.cliente.toLowerCase().indexOf(search)>-1;});
+  if(!filtrado.length){tbody.innerHTML='<tr><td colspan="7" class="empty-row">Sin reservas</td></tr>';return;}
+  tbody.innerHTML=filtrado.map(function(r){
+    var estadoBadge=r.estado==='PENDIENTE_ASIGNACION'?'<span class="badge" style="background:var(--amber-lt);color:var(--amber);">Pendiente de asignacion</span>'
+      :r.estado==='ENTREGADA'?'<span class="badge b-vendido">Entregada</span>'
+      :'<span class="badge" style="background:var(--red-lt);color:var(--red);">Cancelada</span>';
+    var accion=r.estado==='PENDIENTE_ASIGNACION'?'<button class="btn btn-sm" onclick="celAsignarAbrir('+r.id+')">Asignar IMEI</button>':'-';
+    return'<tr>'+
+      '<td>'+r.cliente+'</td>'+
+      '<td>'+(r.modelo||'-')+'</td>'+
+      '<td class="mono">'+fmtSmart(r.importe)+'</td>'+
+      '<td class="mono" style="font-size:11px;">'+fd(r.fecha)+'</td>'+
+      '<td class="mono" style="font-size:11px;">'+(r.fecha_entrega?fd(r.fecha_entrega):'-')+'</td>'+
+      '<td>'+estadoBadge+'</td>'+
+      '<td>'+accion+'</td>'+
+      '</tr>';
+  }).join('');
+}
+
+function celReservaAbrirNueva(){
+  document.getElementById('cr-cliente').value='';
+  document.getElementById('cr-modelo').value='';
+  document.getElementById('cr-importe').value='';
+  document.getElementById('cr-importe-moneda').value='ARS';
+  document.getElementById('cr-metodo').value='MP';
+  document.getElementById('cr-fecha').value=new Date().toISOString().slice(0,10);
+  document.getElementById('cel-reserva-modal').classList.add('show');
+}
+function celReservaCerrarModal(){
+  document.getElementById('cel-reserva-modal').classList.remove('show');
+}
+
+async function celReservaGuardar(){
+  var cliente=document.getElementById('cr-cliente').value.trim();
+  var modelo=document.getElementById('cr-modelo').value.trim();
+  var importeVal=parseFloat(document.getElementById('cr-importe').value)||0;
+  var moneda=document.getElementById('cr-importe-moneda').value;
+  var metodo=document.getElementById('cr-metodo').value;
+  var fecha=document.getElementById('cr-fecha').value||new Date().toISOString().slice(0,10);
+  if(!cliente||!modelo||!importeVal){showToast('Completa Cliente, Modelo deseado e Importe',true);return;}
+  if(!dolarBlue&&moneda==='USD'){showToast('No se pudo obtener la cotizacion del dolar, actualizala antes de guardar',true);return;}
+  var conv=celConvertirMoneda(importeVal,moneda);
+  var btn=document.getElementById('cr-btn-guardar');
+  btn.disabled=true;btn.textContent='Guardando...';
+  try{
+    // La plata entra hoy aunque el equipo todavia no tenga IMEI asignado.
+    var movId=await guardarMovimientoInternoConId({
+      fecha:fecha,unidad:'CELULARES',operacion:'VENTAS',categoria:'DIRECTA',
+      descripcion:'Reserva — '+modelo,
+      ingreso:conv.ars,egreso:0,metodo:metodo,mensaje:cliente
+    });
+    var res=await fetch(SUPA_URL+'/rest/v1/celulares_reservas',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+      body:JSON.stringify({
+        cliente:cliente,modelo:modelo,
+        importe:conv.ars,importe_usd:conv.usd,moneda:moneda,cotizacion:conv.cotizacion,
+        metodo_pago:metodo,fecha:fecha,estado:'PENDIENTE_ASIGNACION',movimiento_id:movId
+      })
+    });
+    if(!res.ok){var e=await res.text();showToast('Error: '+e.slice(0,80),true);return;}
+    await ensureCliente(cliente);
+    showToast('Reserva registrada');
+    celReservaCerrarModal();
+    await cargarCelularesReservas();
+    await cargarDatos();
+  }catch(e){showToast('Error de conexion',true);}
+  finally{btn.disabled=false;btn.textContent='Guardar';}
+}
+
+// ── ASIGNAR IMEI a una reserva: recien aca se descuenta stock y arranca la garantia ──
+var celAsignarReservaId=null,celAsignarCelular=null;
+
+function celAsignarAbrir(id){
+  var r=celReservas.find(function(x){return x.id===id;});
+  if(!r)return;
+  celAsignarReservaId=id;
+  celAsignarCelular=null;
+  document.getElementById('ca-reserva-info').innerHTML='<strong>'+r.cliente+'</strong> — '+(r.modelo||'-')+' — '+fmtSmart(r.importe);
+  document.getElementById('ca-imei-input').value='';
+  document.getElementById('ca-imei-info').style.display='none';
+  garantiaResetForm('ca');
+  document.getElementById('cel-asignar-modal').classList.add('show');
+}
+function celAsignarCerrarModal(){
+  document.getElementById('cel-asignar-modal').classList.remove('show');
+  celAsignarReservaId=null;celAsignarCelular=null;
+}
+function celAsignarBuscarIMEI(){
+  var imei=document.getElementById('ca-imei-input').value.trim();
+  var cel=celulares.find(function(c){return c.imei===imei&&c.estado==='EN STOCK';});
+  var infoEl=document.getElementById('ca-imei-info');
+  if(!cel){showToast('IMEI no encontrado en stock',true);infoEl.style.display='none';celAsignarCelular=null;return;}
+  celAsignarCelular=cel;
+  infoEl.innerHTML='<strong>'+cel.marca+' '+cel.modelo+'</strong> — '+(cel.color||'-')+' / '+(cel.capacidad||'-');
+  infoEl.style.display='block';
+}
+// Asigna un celular fisico a una reserva pendiente: completa la venta, activa la garantia
+// (recien ahora, en el momento de la entrega — no cuando se registro el pago) y descuenta
+// stock. La usan tanto "Reservas > Asignar IMEI" (manual) como el aviso automatico al
+// cargar stock nuevo que coincide con una reserva pendiente.
+async function celCompletarAsignacion(celular,reserva,garantia){
+  var hoy=new Date().toISOString().slice(0,10);
+  var res=await fetch(SUPA_URL+'/rest/v1/celulares?id=eq.'+celular.id,{
+    method:'PATCH',
+    headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+    body:JSON.stringify({
+      estado:'VENDIDO',fecha_venta:hoy,precio_venta:reserva.importe,moneda_venta:reserva.moneda,precio_venta_usd:reserva.importe_usd,cotizacion_venta:reserva.cotizacion,
+      cliente:reserva.cliente,metodo_pago_venta:reserva.metodo_pago,
+      movimiento_id:reserva.movimiento_id
+    })
+  });
+  if(!res.ok){var e=await res.text();return{ok:false,error:e.slice(0,80)};}
+  // La garantia (igual que en toda venta de Celulares) se guarda en el movimiento, no en celulares.
+  if(reserva.movimiento_id){
+    await fetch(SUPA_URL+'/rest/v1/movimientos?id=eq.'+reserva.movimiento_id,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+      body:JSON.stringify({
+        tiene_garantia:garantia.tiene_garantia,dias_garantia:garantia.dias_garantia,fecha_vencimiento_garantia:garantia.fecha_vencimiento_garantia
+      })
+    });
+  }
+  var resR=await fetch(SUPA_URL+'/rest/v1/celulares_reservas?id=eq.'+reserva.id,{
+    method:'PATCH',
+    headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+    body:JSON.stringify({estado:'ENTREGADA',celular_id:celular.id,fecha_entrega:hoy})
+  });
+  if(!resR.ok){var e2=await resR.text();return{ok:false,error:e2.slice(0,80)};}
+  return{ok:true};
+}
+
+async function celAsignarConfirmar(){
+  if(!celAsignarReservaId)return;
+  var r=celReservas.find(function(x){return x.id===celAsignarReservaId;});
+  if(!r)return;
+  if(!celAsignarCelular){showToast('Busca y confirma un IMEI en stock',true);return;}
+  var hoy=new Date().toISOString().slice(0,10);
+  var garantia=garantiaLeer('ca',hoy);
+  if(!garantia.valido){showToast('Ingresa una cantidad valida de dias de garantia',true);return;}
+  var btn=document.getElementById('ca-btn-guardar');
+  btn.disabled=true;btn.textContent='Guardando...';
+  try{
+    var resultado=await celCompletarAsignacion(celAsignarCelular,r,garantia);
+    if(!resultado.ok){showToast('Error: '+resultado.error,true);return;}
+    showToast('Equipo asignado y entregado');
+    celAsignarCerrarModal();
+    await celCargarDatos();
+    await cargarCelularesReservas();
+  }catch(e){showToast('Error de conexion',true);}
+  finally{btn.disabled=false;btn.textContent='Confirmar entrega';}
+}
+
+// ── Aviso automatico al cargar stock nuevo: si el modelo coincide con una reserva pendiente,
+// se puede asignar ahi mismo sin volver a "Reservas" despues ──
+function celBuscarReservasCompatibles(modelo){
+  var m=(modelo||'').trim().toLowerCase();
+  if(!m)return[];
+  return celReservas.filter(function(r){return r.estado==='PENDIENTE_ASIGNACION'&&(r.modelo||'').trim().toLowerCase()===m;});
+}
+
+// El texto del equipo reservado (ej. "iPhone 17 Negro 128GB") casi nunca coincide letra por
+// letra con el modelo que se tipea al cargar la compra, asi que ademas del aviso automatico
+// se puede elegir la reserva a mano desde el desplegable "Asignar a reserva" del alta de compra.
+function celPopularSelectReserva(){
+  var sel=document.getElementById('nc-reserva');
+  if(!sel)return;
+  var pendientes=celReservas.filter(function(r){return r.estado==='PENDIENTE_ASIGNACION';});
+  sel.innerHTML='<option value="">Sin asignar</option>'+pendientes.map(function(r){
+    return'<option value="'+r.id+'">'+r.cliente+' — '+(r.modelo||'-')+' ('+fd(r.fecha)+')</option>';
+  }).join('');
+}
+
+var celMatchResolve=null,celMatchCelularActual=null;
+
+function celMostrarMatchReservas(celular,reservas){
+  return new Promise(function(resolve){
+    celMatchResolve=resolve;
+    celMatchCelularActual=celular;
+    document.getElementById('cm-equipo-info').innerHTML='<strong>'+celular.marca+' '+celular.modelo+'</strong> — IMEI '+celular.imei;
+    document.getElementById('cm-tiene-garantia').value='NO';
+    garantiaResetForm('cm');
+    document.getElementById('cm-lista').innerHTML=reservas.map(function(r){
+      return'<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
+        '<div style="flex:1;">'+
+          '<strong>'+r.cliente+'</strong> — '+(r.modelo||'-')+
+          '<div style="font-size:10px;color:var(--text3);margin-top:2px;">Reservado el '+fd(r.fecha)+' · Abonado '+fmtSmart(r.importe)+'</div>'+
+        '</div>'+
+        '<button class="btn btn-sm" data-rid="'+r.id+'" onclick="celMatchAsignar(this.dataset.rid)">Asignar este equipo</button>'+
+        '</div>';
+    }).join('');
+    document.getElementById('cel-reserva-match-modal').classList.add('show');
+  });
+}
+
+async function celMatchAsignar(reservaId){
+  var r=celReservas.find(function(x){return String(x.id)===String(reservaId);});
+  if(!r||!celMatchCelularActual)return;
+  var hoy=new Date().toISOString().slice(0,10);
+  var garantia=garantiaLeer('cm',hoy);
+  if(!garantia.valido){showToast('Ingresa una cantidad valida de dias de garantia',true);return;}
+  var resultado=await celCompletarAsignacion(celMatchCelularActual,r,garantia);
+  document.getElementById('cel-reserva-match-modal').classList.remove('show');
+  if(!resultado.ok)showToast('Error: '+resultado.error,true);
+  else showToast('Equipo asignado a la reserva de '+r.cliente);
+  await cargarCelularesReservas();
+  await celCargarDatos();
+  var resolve=celMatchResolve;celMatchResolve=null;celMatchCelularActual=null;
+  if(resolve)resolve();
+}
+
+function celMatchContinuar(){
+  document.getElementById('cel-reserva-match-modal').classList.remove('show');
+  var resolve=celMatchResolve;celMatchResolve=null;celMatchCelularActual=null;
+  if(resolve)resolve();
 }
 
 function celCostoTotal(cel){
@@ -4936,8 +5198,9 @@ function celAbrirOp(op, imeiPre){
           if(op==='reparacion'&&document.getElementById('rep-imei-input')){
             document.getElementById('rep-imei-input').value=imeiPre;repBuscarIMEI();
           }
-          if(op==='venta'&&document.getElementById('venta-imei-input')){
-            document.getElementById('venta-imei-input').value=imeiPre;ventaBuscarIMEI();
+          if(op==='venta'){
+            var celPre=celulares.find(function(c){return c.imei===imeiPre&&c.estado==='EN STOCK';});
+            if(celPre)ventaCelSeleccionar(celPre.id);
           }
         },100);
       }
@@ -4991,7 +5254,7 @@ function celMostrarDetalle(cel){
 
 function celCerrarModal(){
   document.getElementById('cel-modal-bg').classList.remove('show');
-  compraListaTemp=[];ppListaTemp=[];ventaImeiActual=null;repImeiActual=null;
+  compraListaTemp=[];ppListaTemp=[];ventaCarritoTemp=[];repImeiActual=null;
 }
 
 // === COMPRA ===
@@ -5011,9 +5274,11 @@ function compraAgregarCelular(){
   if(dup){showToast('IMEI ya en la lista',true);return;}
   var batVal=document.getElementById('nc-bat').value;
   var costoVal=document.getElementById('nc-costo').value;
+  var costoMoneda=document.getElementById('nc-costo-moneda').value;
   var listaVal=document.getElementById('nc-lista').value;
   var gtiaVal=document.getElementById('nc-gtia').value;
   var obsVal=document.getElementById('nc-obs').value;
+  var reservaVal=document.getElementById('nc-reserva')?document.getElementById('nc-reserva').value:'';
   compraListaTemp.push({
     imei:imei,
     marca:document.getElementById('nc-marca').value.trim().toUpperCase()||'SIN MARCA',
@@ -5022,12 +5287,14 @@ function compraAgregarCelular(){
     capacidad:document.getElementById('nc-cap').value||null,
     bateria:batVal?parseInt(batVal):null,
     estado_equipo:document.getElementById('nc-estado-eq').value,
-    precio_compra:costoVal?parseFloat(costoVal):0,
+    costoValor:costoVal?parseFloat(costoVal):0,
+    costoMoneda:costoMoneda,
     precio_lista:listaVal?parseFloat(listaVal):0,
     garantia_proveedor:gtiaVal?parseInt(gtiaVal):0,
     proveedor:document.getElementById('nc-proveedor').value||null,
     notas:obsVal||null,
-    estado:'EN STOCK'
+    estado:'EN STOCK',
+    reservaId:reservaVal?parseInt(reservaVal):null
   });
   // Clear fields
   ['nc-imei','nc-marca','nc-modelo','nc-color','nc-bat','nc-costo','nc-lista','nc-gtia','nc-proveedor','nc-obs'].forEach(function(id){
@@ -5035,6 +5302,8 @@ function compraAgregarCelular(){
   });
   document.getElementById('nc-cap').value='';
   document.getElementById('nc-estado-eq').value='NUEVO';
+  if(document.getElementById('nc-reserva'))document.getElementById('nc-reserva').value='';
+  document.getElementById('nc-costo-moneda').value='ARS';
   renderCompraLista();
   showToast('Celular agregado a la lista');
 }
@@ -5057,8 +5326,9 @@ function renderCompraLista(){
           (c.bateria!==null&&c.bateria!==undefined?' '+c.bateria+'%':'')+
           '</div>'+
           (c.notas?'<div style="font-size:11px;color:var(--text3);margin-top:3px;">'+c.notas+'</div>':'')+
+          (c.reservaId?'<div style="font-size:11px;color:var(--green);margin-top:3px;">→ Se asignara a la reserva de '+((celReservas.find(function(r){return r.id===c.reservaId;})||{}).cliente||'')+'</div>':'')+
         '</div>'+
-        '<span style="color:var(--red);font-family:monospace;font-weight:600;flex-shrink:0;">'+fmtARS(c.precio_compra)+'</span>'+
+        '<span style="color:var(--red);font-family:monospace;font-weight:600;flex-shrink:0;">'+(c.costoMoneda==='USD'?fmtUSD(c.costoValor):fmtARS(c.costoValor))+'</span>'+
         '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;flex-shrink:0;" data-idx="'+i+'" onclick="compraQuitarCelular(this.dataset.idx)">x</button>'+
         '</div>';
     }).join('')+'</div>';
@@ -5066,21 +5336,112 @@ function renderCompraLista(){
 function compraQuitarCelular(idx){compraListaTemp.splice(parseInt(idx),1);renderCompraLista();}
 
 // === VENTA ===
-function ventaBuscarIMEI(){
-  var imei=document.getElementById('venta-imei-input').value.trim();
-  var cel=celulares.find(function(c){return c.imei===imei&&c.estado==='EN STOCK';});
-  if(!cel){showToast('IMEI no encontrado en stock',true);document.getElementById('venta-cel-info').style.display='none';document.getElementById('venta-form-ext').style.display='none';return;}
-  ventaImeiActual=cel;
-  var ct=celCostoTotal(cel);
-  document.getElementById('venta-info-modelo').textContent=cel.marca+' '+cel.modelo;
-  document.getElementById('venta-info-detalle').textContent=(cel.color||'-')+' / '+(cel.capacidad||'-');
-  document.getElementById('venta-info-bat').textContent=cel.bateria?cel.bateria+'%':'-';
-  document.getElementById('venta-info-costo').textContent=fmtSmart(ct);
-  document.getElementById('venta-info-lista').textContent=fmtSmart(cel.precio_lista);
-  document.getElementById('venta-precio').value=cel.precio_lista||'';
-  document.getElementById('venta-cel-info').style.display='block';
-  document.getElementById('venta-form-ext').style.display='block';
+// Buscar por IMEI ahora agrega a un carrito (venta de varios equipos en una misma operacion)
+// en vez de operar sobre un unico celular — mismo patron que ya usa compraListaTemp.
+// Buscador inteligente: en vez de pedir el IMEI (dato que nadie recuerda de memoria), filtra
+// por marca/modelo/color/capacidad/IMEI a la vez — todas las palabras escritas tienen que
+// aparecer en alguno de esos campos. El IMEI se sigue usando puertas adentro para identificar
+// el equipo, pero el usuario nunca necesita escribirlo.
+var ventaCelAcActiveIdx=-1;
+function ventaBuscarCelular(input){
+  var q=input.value.trim().toLowerCase();
+  var dd=document.getElementById('venta-cel-search-ac');
+  ventaCelAcActiveIdx=-1;
+  if(!q){dd.classList.remove('show');dd.innerHTML='';return;}
+  var terms=q.split(/\s+/).filter(Boolean);
+  var yaEnCarrito={};ventaCarritoTemp.forEach(function(c){yaEnCarrito[c.id]=true;});
+  var matches=celulares.filter(function(c){
+    if(c.estado!=='EN STOCK'||yaEnCarrito[c.id])return false;
+    var texto=((c.marca||'')+' '+(c.modelo||'')+' '+(c.color||'')+' '+(c.capacidad||'')+' '+c.imei).toLowerCase();
+    return terms.every(function(t){return texto.indexOf(t)>-1;});
+  }).slice(0,10);
+  if(!matches.length){
+    dd.innerHTML='<div class="ac-empty">Sin equipos disponibles que coincidan</div>';
+    dd.classList.add('show');
+    return;
+  }
+  dd.innerHTML=matches.map(function(c,i){
+    return'<div class="ac-item" data-idx="'+i+'" data-id="'+c.id+'" onclick="ventaCelSeleccionar(this.dataset.id)">'+
+      '<span class="ac-item-code">'+c.marca+' '+c.modelo+'</span>'+
+      '<span class="ac-item-desc">'+(c.color||'-')+' · '+(c.capacidad||'-')+' · ...'+c.imei.slice(-6)+'</span>'+
+      '</div>';
+  }).join('');
+  dd.classList.add('show');
+}
+
+function ventaCelSeleccionar(id){
+  var cel=celulares.find(function(c){return String(c.id)===String(id);});
+  if(!cel)return;
+  if(ventaCarritoTemp.some(function(c){return c.id===cel.id;})){showToast('Ese celular ya esta en la venta',true);return;}
+  ventaCarritoTemp.push({
+    id:cel.id,imei:cel.imei,marca:cel.marca,modelo:cel.modelo,color:cel.color,capacidad:cel.capacidad,
+    costoTotal:celCostoTotal(cel),
+    precioVentaMoneda:'ARS',
+    precioVentaValor:parseFloat(cel.precio_lista)||0
+  });
+  var input=document.getElementById('venta-cel-search');
+  input.value='';input.focus();
+  var dd=document.getElementById('venta-cel-search-ac');
+  dd.classList.remove('show');dd.innerHTML='';
+  renderVentaCarrito();
   ventaCalcGanancia();
+}
+
+function ventaCelSearchKey(evt){
+  var dd=document.getElementById('venta-cel-search-ac');
+  var items=dd.querySelectorAll('.ac-item');
+  if(!items.length)return;
+  if(evt.key==='ArrowDown'){
+    evt.preventDefault();
+    ventaCelAcActiveIdx=Math.min(ventaCelAcActiveIdx+1,items.length-1);
+    items.forEach(function(it,i){it.classList.toggle('ac-active',i===ventaCelAcActiveIdx);});
+    items[ventaCelAcActiveIdx].scrollIntoView({block:'nearest'});
+  }else if(evt.key==='ArrowUp'){
+    evt.preventDefault();
+    ventaCelAcActiveIdx=Math.max(ventaCelAcActiveIdx-1,0);
+    items.forEach(function(it,i){it.classList.toggle('ac-active',i===ventaCelAcActiveIdx);});
+    items[ventaCelAcActiveIdx].scrollIntoView({block:'nearest'});
+  }else if(evt.key==='Enter'){
+    evt.preventDefault();
+    var idx=ventaCelAcActiveIdx>=0?ventaCelAcActiveIdx:0;
+    if(items[idx])ventaCelSeleccionar(items[idx].dataset.id);
+  }else if(evt.key==='Escape'){
+    dd.classList.remove('show');
+  }
+}
+
+function renderVentaCarrito(){
+  var el=document.getElementById('venta-carrito');
+  if(!el)return;
+  if(!ventaCarritoTemp.length){
+    el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:8px 0;">Busca al menos un celular para agregarlo a la venta.</div>';
+    return;
+  }
+  el.innerHTML='<div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:6px;">'+ventaCarritoTemp.length+' celular(es) en la venta:</div>'+
+    ventaCarritoTemp.map(function(c,i){
+      return'<div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
+        '<div style="flex:1;min-width:0;">'+
+          '<div><span class="mono" style="color:var(--text3);font-size:10px;margin-right:8px;">'+c.imei+'</span>'+
+          '<strong>'+c.marca+' '+c.modelo+'</strong>'+
+          (c.color?' '+c.color:'')+(c.capacidad?' '+c.capacidad:'')+
+          '</div>'+
+          '<div style="font-size:10px;color:var(--text3);margin-top:2px;">Costo: '+fmtARS(c.costoTotal)+'</div>'+
+        '</div>'+
+        '<input type="number" value="'+c.precioVentaValor+'" min="0" step="0.01" placeholder="Precio venta" style="width:110px;padding:6px 8px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg2);color:var(--text);font-size:12px;" data-idx="'+i+'" onchange="ventaCarritoSetPrecio(this.dataset.idx,this.value)">'+
+        '<select data-idx="'+i+'" style="width:64px;padding:6px 4px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg2);color:var(--text);font-size:12px;" onchange="ventaCarritoSetMoneda(this.dataset.idx,this.value)">'+
+          '<option value="ARS"'+(c.precioVentaMoneda==='ARS'?' selected':'')+'>ARS</option>'+
+          '<option value="USD"'+(c.precioVentaMoneda==='USD'?' selected':'')+'>USD</option>'+
+        '</select>'+
+        '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;flex-shrink:0;" data-idx="'+i+'" onclick="ventaQuitarDelCarrito(this.dataset.idx)">x</button>'+
+        '</div>';
+    }).join('');
+}
+function ventaCarritoSetPrecio(idx,val){ventaCarritoTemp[parseInt(idx)].precioVentaValor=parseFloat(val)||0;ventaCalcGanancia();}
+function ventaCarritoSetMoneda(idx,val){ventaCarritoTemp[parseInt(idx)].precioVentaMoneda=val;renderVentaCarrito();ventaCalcGanancia();}
+function ventaQuitarDelCarrito(idx){ventaCarritoTemp.splice(parseInt(idx),1);renderVentaCarrito();ventaCalcGanancia();}
+
+function ventaTotalArs(){
+  return ventaCarritoTemp.reduce(function(s,c){return s+celConvertirMoneda(c.precioVentaValor,c.precioVentaMoneda).ars;},0);
 }
 
 function ventaUpdateMixto(){
@@ -5096,19 +5457,15 @@ function ventaUpdateMixto(){
   if(m2&&v2)parts.push(m2+': '+fmtARS(v2));
   if(m3&&v3)parts.push(m3+': '+fmtARS(v3));
   var info=document.getElementById('venta-mixto-info');
-  if(info)info.textContent=parts.length?'Total: '+fmtARS(total)+' ('+parts.join(' + ')+')'  :'';
-  // Auto-fill precio if empty
-  var precioEl=document.getElementById('venta-precio');
-  if(total>0&&precioEl)precioEl.value=total;
-  ventaCalcGanancia();
+  if(info)info.textContent=parts.length?'Total ingresado: '+fmtARS(total)+' ('+parts.join(' + ')+')':'';
 }
 
 function ventaCalcGanancia(){
-  if(!ventaImeiActual)return;
-  var ct=celCostoTotal(ventaImeiActual);
-  var venta=parseFloat(document.getElementById('venta-precio').value)||0;
-  var gan=venta-ct;
+  var totalVenta=ventaTotalArs();
+  var totalCosto=ventaCarritoTemp.reduce(function(s,c){return s+c.costoTotal;},0);
+  var gan=totalVenta-totalCosto;
   var el=document.getElementById('venta-ganancia');
+  if(!el)return;
   el.textContent=fmtARS(gan);el.style.color=gan>=0?'var(--green)':'var(--red)';
 }
 
@@ -5224,17 +5581,29 @@ function ventaGetMetodoStr(){
   return parts.length?parts.join('|'):(document.getElementById('venta-metodo1')?document.getElementById('venta-metodo1').value||'EFECTIVO':'EFECTIVO');
 }
 
+// Convierte un importe cargado en ARS o USD a ambas monedas usando la cotizacion vigente
+// en el momento de guardar (no una historica): asi la rentabilidad ya guardada no cambia
+// aunque el dolar se mueva despues, porque ambos valores quedan fijos en la base.
+function celConvertirMoneda(valor,moneda){
+  valor=parseFloat(valor)||0;
+  if(moneda==='USD')return{ars:dolarBlue?valor*dolarBlue:valor,usd:valor,cotizacion:dolarBlue||null};
+  return{ars:valor,usd:dolarBlue?valor/dolarBlue:null,cotizacion:dolarBlue||null};
+}
+
 async function celGuardarOp(){
   var op=celCurrentOp;
   try{
     if(op==='compra'){
       if(!compraListaTemp.length){showToast('Agrega al menos un celular',true);return false;}
+      if(!dolarBlue&&compraListaTemp.some(function(c){return c.costoMoneda==='USD';})){showToast('No se pudo obtener la cotizacion del dolar, actualizala antes de guardar',true);return false;}
       var fecha=document.getElementById('compra-fecha')?document.getElementById('compra-fecha').value:'';
       if(!fecha)fecha=document.getElementById('f-fecha').value||new Date().toISOString().slice(0,10);
       var metodo=document.getElementById('compra-metodo')?document.getElementById('compra-metodo').value:'EFECTIVO';
+      var celularesInsertados=[];
       // Insert all celulares
       for(var i=0;i<compraListaTemp.length;i++){
         var c=compraListaTemp[i];
+        var costoConv=celConvertirMoneda(c.costoValor,c.costoMoneda);
         // Build clean payload - no undefined/empty strings for numeric fields
         var payload={
           imei:c.imei,
@@ -5244,7 +5613,10 @@ async function celGuardarOp(){
           capacidad:c.capacidad||null,
           bateria:c.bateria!==null&&c.bateria!==undefined&&c.bateria!==''?parseInt(c.bateria):null,
           estado_equipo:c.estado_equipo||'NUEVO',
-          precio_compra:parseFloat(c.precio_compra)||0,
+          precio_compra:costoConv.ars,
+          moneda_costo:c.costoMoneda,
+          precio_compra_usd:costoConv.usd,
+          cotizacion_compra:costoConv.cotizacion,
           precio_lista:parseFloat(c.precio_lista)||0,
           garantia_proveedor:parseInt(c.garantia_proveedor)||0,
           proveedor:c.proveedor||null,
@@ -5255,7 +5627,7 @@ async function celGuardarOp(){
         };
         var res=await fetch(SUPA_URL+'/rest/v1/celulares',{
           method:'POST',
-          headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+          headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=representation'},
           body:JSON.stringify(payload)
         });
         if(!res.ok){
@@ -5265,12 +5637,14 @@ async function celGuardarOp(){
           showToast('Error en celular '+c.imei+': '+eMsg,true);
           return false;
         }
+        var creado=await res.json();
+        if(creado&&creado[0])celularesInsertados.push(creado[0]);
       }
       // Guardar proveedores nuevos automaticamente
       var proveedoresNuevos=compraListaTemp.map(function(c){return c.proveedor;}).filter(function(p,i,arr){return p&&arr.indexOf(p)===i;});
       for(var pi=0;pi<proveedoresNuevos.length;pi++){await ensureProveedor('CELULARES',proveedoresNuevos[pi]);}
       // Register movimiento egreso
-      var totalCosto=compraListaTemp.reduce(function(s,c){return s+(parseFloat(c.precio_compra)||0);},0);
+      var totalCosto=compraListaTemp.reduce(function(s,c){return s+celConvertirMoneda(c.costoValor,c.costoMoneda).ars;},0);
       if(totalCosto>0){
         await guardarMovimientoInterno({
           fecha:fecha,unidad:'CELULARES',operacion:'COMPRA',
@@ -5279,48 +5653,71 @@ async function celGuardarOp(){
         });
       }
       showToast(compraListaTemp.length+' celular(es) agregado(s) al stock');
+      celulares=celulares.concat(celularesInsertados);
+      // Si el usuario eligio una reserva a mano en "Asignar a reserva", se respeta esa eleccion
+      // tal cual (el texto del equipo reservado rara vez coincide letra por letra con el modelo
+      // cargado). Si no eligio ninguna, se ofrece igual como aviso si el modelo coincide.
+      for(var mi=0;mi<celularesInsertados.length;mi++){
+        var reservaElegidaId=compraListaTemp[mi]?compraListaTemp[mi].reservaId:null;
+        var matches;
+        if(reservaElegidaId){
+          var reservaElegida=celReservas.find(function(r){return r.id===reservaElegidaId;});
+          matches=reservaElegida?[reservaElegida]:[];
+        }else{
+          matches=celBuscarReservasCompatibles(celularesInsertados[mi].modelo);
+        }
+        if(matches.length)await celMostrarMatchReservas(celularesInsertados[mi],matches);
+      }
     }
 
     else if(op==='venta'){
-      if(!ventaImeiActual){showToast('Busca el IMEI primero',true);return false;}
-      var precio=parseFloat(document.getElementById('venta-precio').value)||0;
-      if(!precio){showToast('Ingresa el precio de venta',true);return false;}
+      if(!ventaCarritoTemp.length){showToast('Agrega al menos un celular a la venta',true);return false;}
+      if(!dolarBlue&&ventaCarritoTemp.some(function(c){return c.precioVentaMoneda==='USD';})){showToast('No se pudo obtener la cotizacion del dolar, actualizala antes de guardar',true);return false;}
       var canalVenta=document.getElementById('f-canal-venta').value;
       if(!canalVenta){showToast('Selecciona el Canal de venta',true);return false;}
-      var ventaFecha=document.getElementById('venta-fecha').value||document.getElementById('f-fecha').value||new Date().toISOString().slice(0,10);
+      var ventaFecha=document.getElementById('f-fecha').value||new Date().toISOString().slice(0,10);
       var garantiaVenta=garantiaLeer('venta',ventaFecha);
       if(!garantiaVenta.valido){showToast('Ingresa una cantidad valida de dias de garantia',true);return false;}
       var ventaCliente=document.getElementById('venta-cliente').value||null;
       var ventaMetodo=ventaGetMetodoStr();
-      // Movimiento se crea primero para poder enlazar el celular a su venta (movimiento_id)
+      var totalVenta=ventaTotalArs();
+      var descVenta=ventaCarritoTemp.map(function(c){return c.marca+' '+c.modelo+' IMEI:'+c.imei;}).join(', ');
+      // Movimiento se crea primero para poder enlazar los celulares a su venta (movimiento_id)
       // y poder revertir la venta completa si el movimiento se borra despues (ver revertirRegistrosDeVenta).
       var movIdVenta=await guardarMovimientoInternoConId({
         fecha:ventaFecha,unidad:'CELULARES',operacion:'VENTAS',
-        categoria:'DIRECTA',descripcion:ventaImeiActual.marca+' '+ventaImeiActual.modelo+' IMEI:'+ventaImeiActual.imei,
-        ingreso:precio,egreso:0,metodo:ventaMetodo,mensaje:ventaCliente||'',canal_venta:canalVenta,
+        categoria:'DIRECTA',descripcion:descVenta,
+        ingreso:totalVenta,egreso:0,metodo:ventaMetodo,mensaje:ventaCliente||'',canal_venta:canalVenta,
         tiene_garantia:garantiaVenta.tiene_garantia,dias_garantia:garantiaVenta.dias_garantia,fecha_vencimiento_garantia:garantiaVenta.fecha_vencimiento_garantia
       });
-      var updPayload={
-        estado:'VENDIDO',
-        fecha_venta:ventaFecha||null,
-        precio_venta:precio,
-        cliente:ventaCliente,
-        metodo_pago_venta:ventaMetodo,
-        canal_venta:canalVenta,
-        movimiento_id:movIdVenta
-      };
-      var res=await fetch(SUPA_URL+'/rest/v1/celulares?id=eq.'+ventaImeiActual.id,{
-        method:'PATCH',
-        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
-        body:JSON.stringify(updPayload)
-      });
-      if(!res.ok){
-        var eBody=await res.text();
-        var eMsg='';try{var eJson=JSON.parse(eBody);eMsg=eJson.message||eBody.slice(0,80);}catch(ex){eMsg=eBody.slice(0,80);}
-        showToast('Error venta: '+eMsg,true);return false;
+      for(var vi=0;vi<ventaCarritoTemp.length;vi++){
+        var item=ventaCarritoTemp[vi];
+        var conv=celConvertirMoneda(item.precioVentaValor,item.precioVentaMoneda);
+        var updPayload={
+          estado:'VENDIDO',
+          fecha_venta:ventaFecha||null,
+          precio_venta:conv.ars,
+          moneda_venta:item.precioVentaMoneda,
+          precio_venta_usd:conv.usd,
+          cotizacion_venta:conv.cotizacion,
+          cliente:ventaCliente,
+          metodo_pago_venta:ventaMetodo,
+          canal_venta:canalVenta,
+          movimiento_id:movIdVenta
+        };
+        var res=await fetch(SUPA_URL+'/rest/v1/celulares?id=eq.'+item.id,{
+          method:'PATCH',
+          headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+          body:JSON.stringify(updPayload)
+        });
+        if(!res.ok){
+          var eBody=await res.text();
+          var eMsg='';try{var eJson=JSON.parse(eBody);eMsg=eJson.message||eBody.slice(0,80);}catch(ex){eMsg=eBody.slice(0,80);}
+          showToast('Error venta ('+item.imei+'): '+eMsg,true);return false;
+        }
       }
-      await crearDeudaSiCorresponde('CELULARES',updPayload.cliente,ventaFecha,precio,updPayload.metodo_pago_venta,movIdVenta);
-      if(updPayload.cliente)await ensureCliente(updPayload.cliente);
+      await crearDeudaSiCorresponde('CELULARES',ventaCliente,ventaFecha,totalVenta,ventaMetodo,movIdVenta);
+      if(ventaCliente)await ensureCliente(ventaCliente);
       // Parte de pago - add to stock
       for(var i=0;i<ppListaTemp.length;i++){
         var pp=ppListaTemp[i];
@@ -5337,7 +5734,7 @@ async function celGuardarOp(){
             precio_lista:0,
             estado:'EN STOCK',
             fecha_compra:ventaFecha||null,
-            notas:'Parte de pago — venta IMEI:'+ventaImeiActual.imei
+            notas:'Parte de pago — venta a '+(ventaCliente||'cliente')+' ('+ventaCarritoTemp.map(function(c){return c.imei;}).join(', ')+')'
           };
           await fetch(SUPA_URL+'/rest/v1/celulares',{
             method:'POST',
@@ -5432,9 +5829,6 @@ function ventaCalcCuota(){
   var info=document.getElementById('vc-info');
   if(info&&cant&&monto){
     info.textContent='Total en cuotas: '+fmtARS(total)+' ('+cant+' x '+fmtARS(monto)+')';
-    // Auto-fill precio venta
-    if(total>0)document.getElementById('venta-precio').value=total;
-    ventaCalcGanancia();
   }
 }
 
@@ -6984,6 +7378,7 @@ window.addEventListener('DOMContentLoaded',function(){
   cargarClientes();
   cargarReparaciones();
   cargarAgenda();
+  cargarCelularesReservas();
 });
 </script>
 
