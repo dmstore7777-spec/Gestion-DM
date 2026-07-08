@@ -2615,6 +2615,10 @@ async function cargarDatos(){
         diferenciaCaja:r.diferencia_caja,
         referenciaFinanciera:r.referencia_financiera||null,
         esReversoDe:r.es_reverso_de||null,
+        monedaOperacion:r.moneda_operacion||null,
+        importeOriginal:r.importe_original,
+        cotizacionOperacion:r.cotizacion_operacion,
+        importeEquivalente:r.importe_equivalente,
         createdAt:r.created_at||'',
         id:String(r.id||'')
       };});
@@ -2879,6 +2883,13 @@ function buildMovRow(m,showUnit,showDel){
   if(m.egreso){
     egrHtml='<span class="egr">'+fmtMov(m.egreso,m.metodo)+'</span>';
     if(isPureUSD&&dolarBlue)egrHtml+='<span class="usd-cell">'+fmtARS(m.egreso*dolarBlue)+'</span>';
+  }
+  // La operacion se pacto en USD pero el metodo de pago no es literalmente "USD" (ej. Celulares
+  // vendido en dolares y cobrado por transferencia) — sin esto, esa info quedaria invisible.
+  if(m.monedaOperacion==='USD'&&!isPureUSD){
+    var usdTag='<span class="usd-cell">'+fmtUSD(m.importeOriginal)+'</span>';
+    if(m.ingreso)ingHtml+=usdTag;
+    if(m.egreso)egrHtml+=usdTag;
   }
   var delBtn=showDel?'<button class="btn-del" onclick="event.stopPropagation();askDelete(\''+m.id+'\',\''+m.desc.replace(/'/g,'')+'\')" title="Eliminar">x</button>':'';
   var unitCell=showUnit?'<td style="font-size:11px;color:var(--text2)">'+m.unidad+'</td>':'';
@@ -3475,6 +3486,15 @@ function abrirDetalleMov(id){
       ):'')+
       '</div>';
   }
+  var monedaSection=m.monedaOperacion?(
+    '<div style="margin-top:14px;font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:6px;text-transform:uppercase;">Moneda</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">MONEDA ORIGINAL</div><div style="font-size:13px;">'+m.monedaOperacion+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">IMPORTE ORIGINAL</div><div style="font-size:13px;">'+(m.monedaOperacion==='USD'?fmtUSD(m.importeOriginal):fmtARS(m.importeOriginal))+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">COTIZACION UTILIZADA</div><div style="font-size:13px;">'+(m.cotizacionOperacion?fmtARS(m.cotizacionOperacion):'-')+'</div></div>'+
+    '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">EQUIVALENTE</div><div style="font-size:13px;">'+(m.monedaOperacion==='USD'?fmtARS(m.importeEquivalente):fmtUSD(m.importeEquivalente))+'</div></div>'+
+    '</div>'
+  ):'';
   var html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">'+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">FECHA</div><div style="font-size:13px;font-weight:600;">'+fd(m.fecha)+(m.hora?' '+m.hora:'')+'</div></div>'+
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">UNIDAD DE NEGOCIO</div><div style="font-size:13px;font-weight:600;">'+m.unidad+'</div></div>'+
@@ -3486,6 +3506,7 @@ function abrirDetalleMov(id){
     '<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">TOTAL</div><div style="font-size:16px;font-weight:700;color:'+(m.ingreso?'var(--green)':'var(--red)')+';">'+fmtMov(total,m.metodo)+'</div></div>'+
     '</div>'+
     (esFinanciero?'':('<div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:4px;text-transform:uppercase;">Productos</div>'+itemsHtml))+
+    monedaSection+
     garantiaSection+
     financieroSection+
     '<div style="margin-top:14px;font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;text-transform:uppercase;">Observaciones</div>'+
@@ -4864,7 +4885,7 @@ async function celReservaGuardar(){
   var fecha=document.getElementById('cr-fecha').value||new Date().toISOString().slice(0,10);
   if(!cliente||!modelo||!importeVal){showToast('Completa Cliente, Modelo deseado e Importe',true);return;}
   if(!dolarBlue&&moneda==='USD'){showToast('No se pudo obtener la cotizacion del dolar, actualizala antes de guardar',true);return;}
-  var conv=celConvertirMoneda(importeVal,moneda);
+  var conv=convertirMoneda(importeVal,moneda);
   var btn=document.getElementById('cr-btn-guardar');
   btn.disabled=true;btn.textContent='Guardando...';
   try{
@@ -4872,7 +4893,8 @@ async function celReservaGuardar(){
     var movId=await guardarMovimientoInternoConId({
       fecha:fecha,unidad:'CELULARES',operacion:'VENTAS',categoria:'DIRECTA',
       descripcion:'Reserva — '+modelo,
-      ingreso:conv.ars,egreso:0,metodo:metodo,mensaje:cliente
+      ingreso:conv.ars,egreso:0,metodo:metodo,mensaje:cliente,
+      moneda:moneda,importe_original:importeVal
     });
     var res=await fetch(SUPA_URL+'/rest/v1/celulares_reservas',{
       method:'POST',
@@ -5441,7 +5463,7 @@ function ventaCarritoSetMoneda(idx,val){ventaCarritoTemp[parseInt(idx)].precioVe
 function ventaQuitarDelCarrito(idx){ventaCarritoTemp.splice(parseInt(idx),1);renderVentaCarrito();ventaCalcGanancia();}
 
 function ventaTotalArs(){
-  return ventaCarritoTemp.reduce(function(s,c){return s+celConvertirMoneda(c.precioVentaValor,c.precioVentaMoneda).ars;},0);
+  return ventaCarritoTemp.reduce(function(s,c){return s+convertirMoneda(c.precioVentaValor,c.precioVentaMoneda).ars;},0);
 }
 
 function ventaUpdateMixto(){
@@ -5581,10 +5603,11 @@ function ventaGetMetodoStr(){
   return parts.length?parts.join('|'):(document.getElementById('venta-metodo1')?document.getElementById('venta-metodo1').value||'EFECTIVO':'EFECTIVO');
 }
 
-// Convierte un importe cargado en ARS o USD a ambas monedas usando la cotizacion vigente
-// en el momento de guardar (no una historica): asi la rentabilidad ya guardada no cambia
-// aunque el dolar se mueva despues, porque ambos valores quedan fijos en la base.
-function celConvertirMoneda(valor,moneda){
+// Servicio unico de conversion de moneda, usado por todo el sistema (Celulares y el guardado
+// centralizado de movimientos): convierte un importe cargado en ARS o USD a ambas monedas
+// usando la cotizacion vigente en el momento de guardar (no una historica), asi la
+// rentabilidad ya guardada no cambia aunque el dolar se mueva despues.
+function convertirMoneda(valor,moneda){
   valor=parseFloat(valor)||0;
   if(moneda==='USD')return{ars:dolarBlue?valor*dolarBlue:valor,usd:valor,cotizacion:dolarBlue||null};
   return{ars:valor,usd:dolarBlue?valor/dolarBlue:null,cotizacion:dolarBlue||null};
@@ -5603,7 +5626,7 @@ async function celGuardarOp(){
       // Insert all celulares
       for(var i=0;i<compraListaTemp.length;i++){
         var c=compraListaTemp[i];
-        var costoConv=celConvertirMoneda(c.costoValor,c.costoMoneda);
+        var costoConv=convertirMoneda(c.costoValor,c.costoMoneda);
         // Build clean payload - no undefined/empty strings for numeric fields
         var payload={
           imei:c.imei,
@@ -5644,12 +5667,21 @@ async function celGuardarOp(){
       var proveedoresNuevos=compraListaTemp.map(function(c){return c.proveedor;}).filter(function(p,i,arr){return p&&arr.indexOf(p)===i;});
       for(var pi=0;pi<proveedoresNuevos.length;pi++){await ensureProveedor('CELULARES',proveedoresNuevos[pi]);}
       // Register movimiento egreso
-      var totalCosto=compraListaTemp.reduce(function(s,c){return s+celConvertirMoneda(c.costoValor,c.costoMoneda).ars;},0);
+      var totalCosto=compraListaTemp.reduce(function(s,c){return s+convertirMoneda(c.costoValor,c.costoMoneda).ars;},0);
       if(totalCosto>0){
+        // Si todos los equipos de la compra se cargaron en la misma moneda, el movimiento la
+        // conserva tal cual; si estan mezclados (algunos ARS, algunos USD) no hay una "moneda
+        // original" unica para todo el lote, asi que se registra en ARS (ya convertido, sigue
+        // siendo exacto, solo que sin una etiqueta de moneda que aplique a todo el conjunto).
+        var monedaUniforme=compraListaTemp.every(function(c){return c.costoMoneda===compraListaTemp[0].costoMoneda;})?compraListaTemp[0].costoMoneda:'ARS';
+        var importeOriginalCompra=monedaUniforme==='ARS'&&compraListaTemp.some(function(c){return c.costoMoneda!=='ARS';})
+          ?totalCosto
+          :compraListaTemp.reduce(function(s,c){return s+(parseFloat(c.costoValor)||0);},0);
         await guardarMovimientoInterno({
           fecha:fecha,unidad:'CELULARES',operacion:'COMPRA',
           categoria:'MERCADERIA',descripcion:compraListaTemp.length+' celular(es) comprado(s)',
-          ingreso:0,egreso:totalCosto,metodo:metodo,mensaje:''
+          ingreso:0,egreso:totalCosto,metodo:metodo,mensaje:'',
+          moneda:monedaUniforme,importe_original:importeOriginalCompra
         });
       }
       showToast(compraListaTemp.length+' celular(es) agregado(s) al stock');
@@ -5682,17 +5714,24 @@ async function celGuardarOp(){
       var ventaMetodo=ventaGetMetodoStr();
       var totalVenta=ventaTotalArs();
       var descVenta=ventaCarritoTemp.map(function(c){return c.marca+' '+c.modelo+' IMEI:'+c.imei;}).join(', ');
+      // Igual que en la compra: si todos los equipos se vendieron en la misma moneda, el
+      // movimiento la conserva; si estan mezclados, se registra en ARS (ya convertido).
+      var monedaUniformeVenta=ventaCarritoTemp.every(function(c){return c.precioVentaMoneda===ventaCarritoTemp[0].precioVentaMoneda;})?ventaCarritoTemp[0].precioVentaMoneda:'ARS';
+      var importeOriginalVenta=monedaUniformeVenta==='ARS'&&ventaCarritoTemp.some(function(c){return c.precioVentaMoneda!=='ARS';})
+        ?totalVenta
+        :ventaCarritoTemp.reduce(function(s,c){return s+(parseFloat(c.precioVentaValor)||0);},0);
       // Movimiento se crea primero para poder enlazar los celulares a su venta (movimiento_id)
       // y poder revertir la venta completa si el movimiento se borra despues (ver revertirRegistrosDeVenta).
       var movIdVenta=await guardarMovimientoInternoConId({
         fecha:ventaFecha,unidad:'CELULARES',operacion:'VENTAS',
         categoria:'DIRECTA',descripcion:descVenta,
         ingreso:totalVenta,egreso:0,metodo:ventaMetodo,mensaje:ventaCliente||'',canal_venta:canalVenta,
+        moneda:monedaUniformeVenta,importe_original:importeOriginalVenta,
         tiene_garantia:garantiaVenta.tiene_garantia,dias_garantia:garantiaVenta.dias_garantia,fecha_vencimiento_garantia:garantiaVenta.fecha_vencimiento_garantia
       });
       for(var vi=0;vi<ventaCarritoTemp.length;vi++){
         var item=ventaCarritoTemp[vi];
-        var conv=celConvertirMoneda(item.precioVentaValor,item.precioVentaMoneda);
+        var conv=convertirMoneda(item.precioVentaValor,item.precioVentaMoneda);
         var updPayload={
           estado:'VENDIDO',
           fecha_venta:ventaFecha||null,
@@ -5799,7 +5838,36 @@ async function celGuardarOp(){
 async function guardarMovimientoInterno(data){
   var meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   var fdate=new Date((data.fecha||new Date().toISOString().slice(0,10))+'T12:00:00');
-  var payload=Object.assign({},data,{mes:meses[fdate.getMonth()],anio:fdate.getFullYear()});
+  // Servicio centralizado de moneda: todo movimiento queda con moneda_operacion/importe_original/
+  // cotizacion_operacion/importe_equivalente, sin que cada modulo tenga que calcularlo por su cuenta.
+  var monedaInfo;
+  if(data.moneda!==undefined){
+    // El llamador ya conoce la moneda real de la operacion, independiente del metodo de pago
+    // (hoy solo Celulares venta/compra/reserva la distinguen por separado).
+    var conv=convertirMoneda(data.importe_original,data.moneda);
+    monedaInfo={
+      moneda_operacion:data.moneda,
+      importe_original:parseFloat(data.importe_original)||0,
+      cotizacion_operacion:conv.cotizacion,
+      importe_equivalente:data.moneda==='USD'?conv.ars:conv.usd
+    };
+  }else{
+    // El resto de los modulos no distinguen moneda de metodo de pago: se infiere con el mismo
+    // criterio que ya usan Caja/fmtMov (metodo==='USD' puro = el ingreso/egreso ya viene crudo
+    // en dolares, sin convertir).
+    var montoRef=data.ingreso||data.egreso||0;
+    var esUsdPuro=data.metodo==='USD';
+    var conv2=convertirMoneda(montoRef,esUsdPuro?'USD':'ARS');
+    monedaInfo={
+      moneda_operacion:esUsdPuro?'USD':'ARS',
+      importe_original:montoRef,
+      cotizacion_operacion:conv2.cotizacion,
+      importe_equivalente:esUsdPuro?conv2.ars:conv2.usd
+    };
+  }
+  var dataLimpia=Object.assign({},data);
+  delete dataLimpia.moneda;
+  var payload=Object.assign({},dataLimpia,monedaInfo,{mes:meses[fdate.getMonth()],anio:fdate.getFullYear()});
   return fetch(SUPA_URL+'/rest/v1/movimientos',{
     method:'POST',
     headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=representation'},
