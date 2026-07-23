@@ -2737,6 +2737,7 @@ async function confirmDelete(){
   try{
     if(type==='movimiento')await ejecutarBorrarMovimiento(id);
     else if(type==='celular')await ejecutarBorrarCelular(id);
+    else if(type==='venta-celular')await ejecutarBorrarVentaCelular(id);
     else if(type==='reserva')await ejecutarBorrarReserva(id);
     else if(type==='reparacion')await ejecutarBorrarReparacion(id);
     else if(type==='agenda')await ejecutarBorrarAgenda(id);
@@ -2770,6 +2771,27 @@ async function ejecutarBorrarCelular(id){
   await fetch(SUPA_URL+'/rest/v1/celulares?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
   if(c&&c.movimiento_id)await borrarMovimientoYCascada(c.movimiento_id);
   showToast('Equipo eliminado');
+  await refrescarTodo();
+}
+
+// Elimina una VENTA de celular (desde la pestaña Vendidos) sin borrar el equipo: a diferencia
+// de ejecutarBorrarCelular (que borra el IMEI del sistema por completo, usado desde Stock), esto
+// deshace la venta -- borra el movimiento que la registro (con toda su cascada: reserva, deuda,
+// garantia) y el equipo vuelve a EN STOCK, listo para venderse de nuevo. Si la venta se hizo
+// antes de que existiera el seguimiento por movimiento_id, no hay nada que borrar en Movimientos
+// y el equipo se revierte directo.
+async function ejecutarBorrarVentaCelular(id){
+  var c=celulares.find(function(x){return String(x.id)===String(id);});
+  if(!c)return;
+  if(c.movimiento_id){
+    await borrarMovimientoYCascada(c.movimiento_id);
+  }else{
+    await fetch(SUPA_URL+'/rest/v1/celulares?id=eq.'+id,{
+      method:'PATCH',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+      body:JSON.stringify({estado:'EN STOCK',fecha_venta:null,precio_venta:null,moneda_venta:null,precio_venta_usd:null,cotizacion_venta:null,cliente:null,metodo_pago_venta:null,canal_venta:null})
+    });
+  }
+  showToast('Venta eliminada, el equipo volvio a stock');
   await refrescarTodo();
 }
 
@@ -2872,6 +2894,25 @@ async function revertirRegistrosDeVenta(delMov,delId){
         }
       }
     }catch(e){console.log('revertir venta celular error',e);showToast('No se pudo revertir la venta de celular: revisala manualmente',true);}
+
+    // Si esta venta era el saldo de una reserva (ver celGuardarOp), sus items quedaron
+    // ENTREGADO apuntando a un celular que recien volvio a EN STOCK -- se devuelven a PENDIENTE
+    // para que la reserva vuelva a quedar disponible para asignar/entregar de nuevo. El
+    // movimiento del anticipo de la reserva es otro distinto y no se toca.
+    if(delMov.reservaId){
+      try{
+        var rI=await fetch(SUPA_URL+'/rest/v1/celulares_reservas_items?reserva_id=eq.'+delMov.reservaId+'&estado=eq.ENTREGADO&select=*',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+        var itsEntregados=await rI.json();
+        if(Array.isArray(itsEntregados)){
+          for(var ie=0;ie<itsEntregados.length;ie++){
+            await fetch(SUPA_URL+'/rest/v1/celulares_reservas_items?id=eq.'+itsEntregados[ie].id,{
+              method:'PATCH',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+              body:JSON.stringify({estado:'PENDIENTE',celular_id:null,fecha_asignado:null,fecha_entrega:null})
+            });
+          }
+        }
+      }catch(e){console.log('revertir items de reserva error',e);showToast('No se pudo revertir los items de la reserva: revisalos manualmente',true);}
+    }
   }
 
   if(delMov.unidad==='SERVICIO TECNICO'&&delMov.operacion==='SERVICIOS'){
@@ -5539,7 +5580,10 @@ function celRenderTabla(tipo){
         '<td>'+(c.canal_venta||'-')+'</td>'+
         '<td>'+(c.metodo_pago_venta||'-')+'</td>'+
         '<td>'+(c.garantia_venta?c.garantia_venta+'m':'-')+'</td>'+
-        '<td><button class="btn btn-sm" data-cid="'+c.id+'" onclick="event.stopPropagation();celAbrirDetalle(this.dataset.cid)">Ver</button></td>'+
+        '<td>'+
+          '<button class="btn btn-sm" data-cid="'+c.id+'" onclick="event.stopPropagation();celAbrirDetalle(this.dataset.cid)">Ver</button> '+
+          '<button class="btn btn-sm" style="color:var(--red);" data-cid="'+c.id+'" data-desc="'+(c.marca+' '+c.modelo).replace(/"/g,'')+'" onclick="event.stopPropagation();askDelete(this.dataset.cid,this.dataset.desc,\'venta-celular\')" title="Eliminar venta">🗑</button>'+
+        '</td>'+
         '</tr>';
     }else{
       return'<tr style="cursor:pointer" data-cid="'+c.id+'" onclick="celAbrirDetalle(this.dataset.cid)">'+
