@@ -1107,6 +1107,15 @@ tr:hover td{background:var(--bg3);}
           <div class="rd-fgroup rd-full"><label>Descripcion</label><textarea id="ag-descripcion" rows="2" placeholder="Detalle (opcional)"></textarea></div>
           <div class="rd-fgroup"><label>Fecha *</label><input type="date" id="ag-fecha"></div>
           <div class="rd-fgroup"><label>Hora</label><input type="time" id="ag-hora"></div>
+          <div class="rd-fgroup"><label>Repetir</label>
+            <select id="ag-repetir">
+              <option value="NO_REPETIR">No repetir</option>
+              <option value="DIARIO">Diario</option>
+              <option value="SEMANAL">Semanal</option>
+              <option value="MENSUAL">Mensual</option>
+              <option value="ANUAL">Anual</option>
+            </select>
+          </div>
           <div class="rd-fgroup" id="ag-importe-wrap" style="display:none;"><label>Importe</label><input type="number" id="ag-importe" placeholder="0" min="0" step="0.01"></div>
           <div class="rd-fgroup" id="ag-estado-wrap" style="display:none;"><label>Estado</label>
             <select id="ag-estado">
@@ -1212,8 +1221,8 @@ tr:hover td{background:var(--bg3);}
         <input type="text" class="rd-input" id="serv-entr-search" placeholder="Buscar cliente..." style="flex:1;" oninput="servRenderEntregados()">
       </div>
       <div class="rd-table">
-        <div class="rd-thead" style="grid-template-columns:1fr 0.8fr 0.8fr 1.2fr 1fr 0.9fr 0.9fr 0.7fr 0.8fr 0.8fr;">
-          <span>Cliente</span><span>Marca</span><span>Modelo</span><span>Trabajo</span><span>Repuesto</span><span>F. ingreso</span><span>F. entrega</span><span>Dias</span><span>Garantia</span><span>Pago</span>
+        <div class="rd-thead" style="grid-template-columns:1fr 0.8fr 0.8fr 1.2fr 1fr 0.9fr 0.9fr 0.7fr 0.8fr 0.8fr 36px;">
+          <span>Cliente</span><span>Marca</span><span>Modelo</span><span>Trabajo</span><span>Repuesto</span><span>F. ingreso</span><span>F. entrega</span><span>Dias</span><span>Garantia</span><span>Pago</span><span></span>
         </div>
         <div id="serv-entr-tbody"></div>
       </div>
@@ -1836,11 +1845,11 @@ tr:hover td{background:var(--bg3);}
   </div>
 </div>
 
-<!-- MODAL CONFIRMAR ELIMINACION -->
+<!-- MODAL CONFIRMAR ELIMINACION (reutilizado por movimientos, celulares, reservas, reparaciones y agenda) -->
 <div class="modal-bg" id="modal-del">
   <div class="modal">
-    <h3>Eliminar movimiento</h3>
-    <p id="modal-desc">Confirmas que queres eliminar este movimiento? Esta accion no se puede deshacer.</p>
+    <h3 id="modal-title">Eliminar registro</h3>
+    <p id="modal-desc">¿Estás seguro de que deseas eliminar este registro? Esta acción no se puede deshacer.</p>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal()">Cancelar</button>
       <button class="btn" style="background:var(--red);color:#fff;border-color:var(--red);" onclick="confirmDelete()">Eliminar</button>
@@ -1907,14 +1916,14 @@ tr:hover td{background:var(--bg3);}
   </div>
 </div>
 
-<!-- CELULARES: ASIGNAR IMEI a una reserva -->
+<!-- CELULARES: ASIGNAR CELULAR a una reserva (buscador por modelo/color/IMEI, no requiere el IMEI completo) -->
 <div class="cel-modal-bg" id="cel-asignar-modal">
   <div class="cel-modal" style="max-width:480px;">
-    <h3>Asignar equipo a la reserva</h3>
+    <h3>Asignar celular</h3>
     <div id="ca-reserva-info" style="font-size:12px;color:var(--text2);margin:10px 0;"></div>
-    <div style="display:flex;gap:8px;margin-bottom:12px;">
-      <input type="text" id="ca-imei-input" placeholder="Escribi el IMEI del equipo a entregar..." style="flex:1;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-      <button class="btn" onclick="celAsignarBuscarIMEI()">Buscar</button>
+    <div class="ac-wrap" style="margin-bottom:12px;display:block;">
+      <input type="text" id="ca-search" placeholder="Buscar por modelo, color o IMEI..." autocomplete="off" oninput="caAsignarBuscar(this)" onkeydown="caAsignarSearchKey(event)" style="width:100%;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+      <div class="ac-dropdown" id="ca-search-ac"></div>
     </div>
     <div id="ca-imei-info" style="display:none;background:var(--bg3);border-radius:var(--r);padding:12px;margin-bottom:12px;font-size:12px;"></div>
     <div class="cel-form-grid">
@@ -1930,11 +1939,12 @@ tr:hover td{background:var(--bg3);}
   </div>
 </div>
 
-<!-- CELULARES: EQUIPO RECIEN INGRESADO COINCIDE CON UNA RESERVA PENDIENTE -->
+<!-- CELULARES: ASIGNAR EQUIPO A UNA RESERVA (auto al ingresar stock que matchea, o manual desde la ficha) -->
 <div class="cel-modal-bg" id="cel-reserva-match-modal">
   <div class="cel-modal" style="max-width:560px;">
-    <h3>Este equipo coincide con una reserva pendiente</h3>
+    <h3 id="cm-titulo">Asignar equipo a una reserva</h3>
     <div id="cm-equipo-info" style="font-size:12px;color:var(--text2);margin:10px 0;"></div>
+    <input type="text" id="cm-search" placeholder="Buscar por cliente, modelo o fecha..." style="width:100%;margin-bottom:10px;" oninput="celMatchFiltrar(this.value)">
     <div id="cm-lista" style="margin-bottom:14px;"></div>
     <div class="cel-form-grid">
       <div class="cel-fgroup"><label>¿Tiene garantia? *</label>
@@ -1943,7 +1953,7 @@ tr:hover td{background:var(--bg3);}
         <input type="number" id="cm-dias-garantia" value="30" min="1"></div>
     </div>
     <div class="cel-modal-actions">
-      <button class="btn" onclick="celMatchContinuar()">Continuar sin asignar</button>
+      <button class="btn" id="cm-btn-cerrar" onclick="celMatchContinuar()">Continuar sin asignar</button>
     </div>
   </div>
 </div>
@@ -2678,7 +2688,7 @@ async function guardar(){
         var creado=await res.json();
         await crearDeudaSiCorresponde(unidad,desc,fecha,ingreso,metodo,creado&&creado[0]?creado[0].id:null);
       }
-      showToast('Movimiento guardado');clearForm();await cargarDatos();
+      showToast('Movimiento guardado');clearForm();await refrescarTodo();
     }
     else{var e=await res.text();showToast('Error: '+e.slice(0,60),true);ss('err','ERROR');}
   }catch(e){showToast('Error de conexion',true);ss('err','ERROR');}
@@ -2694,32 +2704,86 @@ function clearForm(){
   renderCompraLista();
 }
 
-// DELETE
-function askDelete(id,desc){
+// DELETE - modal generico, despacha por tipo (movimiento/celular/reserva/reparacion/agenda)
+var pendingDelType='movimiento';
+function askDelete(id,desc,type){
   pendingDelId=id;
-  document.getElementById('modal-desc').textContent='Vas a eliminar: "'+desc+'". Esta accion no se puede deshacer.';
+  pendingDelType=type||'movimiento';
+  document.getElementById('modal-desc').textContent=desc?('Vas a eliminar: "'+desc+'". Esta accion no se puede deshacer.'):'¿Estás seguro de que deseas eliminar este registro? Esta acción no se puede deshacer.';
   document.getElementById('modal-del').classList.add('show');
 }
-function closeModal(){document.getElementById('modal-del').classList.remove('show');}
+function closeModal(){document.getElementById('modal-del').classList.remove('show');pendingDelId=null;}
 async function confirmDelete(){
   if(!pendingDelId){closeModal();return;}
-  var delId=String(pendingDelId);
-  var delMov=movs.find(function(x){return x.id===delId;});
+  var id=pendingDelId,type=pendingDelType;
   closeModal();
   ss('loading','ELIMINANDO...');
   try{
-    var res=await fetch(SUPA_URL+'/rest/v1/movimientos?id=eq.'+delId,{
-      method:'DELETE',
-      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
-    });
-    if(res.ok){
-      await revertirRegistrosDeVenta(delMov,delId);
-      showToast('Movimiento eliminado');
-      await cargarDatos();
-      await Promise.all([celCargarDatos(),tieCargarDatos(),cargarClientes(),cargarReparaciones(),cargarDeudas()]);
-    }
-    else{var e=await res.text();showToast('Error: '+e.slice(0,60),true);ss('err','ERROR');}
+    if(type==='movimiento')await ejecutarBorrarMovimiento(id);
+    else if(type==='celular')await ejecutarBorrarCelular(id);
+    else if(type==='reserva')await ejecutarBorrarReserva(id);
+    else if(type==='reparacion')await ejecutarBorrarReparacion(id);
+    else if(type==='agenda')await ejecutarBorrarAgenda(id);
+    ss('ok','LISTO');
   }catch(e){showToast('Error de conexion',true);ss('err','ERROR');}
+}
+
+// Borra un movimiento y revierte todo lo que haya generado (deudas, ventas, reparaciones). Reutilizado
+// tanto por el borrado directo de Movimientos como por el borrado de un registro (celular/reserva/reparacion)
+// que tenga un movimiento_id asociado, para que nunca quede un cobro/pago sin el registro que lo origino.
+async function borrarMovimientoYCascada(movId){
+  var delId=String(movId);
+  var delMov=movs.find(function(x){return x.id===delId;})||null;
+  var res=await fetch(SUPA_URL+'/rest/v1/movimientos?id=eq.'+delId,{
+    method:'DELETE',
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+  });
+  if(!res.ok){var e=await res.text();throw new Error(e.slice(0,120));}
+  await revertirRegistrosDeVenta(delMov,delId);
+}
+
+async function ejecutarBorrarMovimiento(id){
+  await borrarMovimientoYCascada(id);
+  showToast('Movimiento eliminado');
+  await refrescarTodo();
+}
+
+async function ejecutarBorrarCelular(id){
+  var c=celulares.find(function(x){return String(x.id)===String(id);});
+  await fetch(SUPA_URL+'/rest/v1/celulares_arreglos?celular_id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+  await fetch(SUPA_URL+'/rest/v1/celulares?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+  if(c&&c.movimiento_id)await borrarMovimientoYCascada(c.movimiento_id);
+  showToast('Equipo eliminado');
+  await refrescarTodo();
+}
+
+async function ejecutarBorrarReserva(id){
+  var r=celReservas.find(function(x){return String(x.id)===String(id);});
+  await fetch(SUPA_URL+'/rest/v1/celulares_reservas?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+  if(r&&r.movimiento_id)await borrarMovimientoYCascada(r.movimiento_id);
+  showToast('Reserva eliminada');
+  await refrescarTodo();
+}
+
+async function ejecutarBorrarReparacion(id){
+  var r=reparaciones.find(function(x){return String(x.id)===String(id);});
+  await fetch(SUPA_URL+'/rest/v1/reparaciones_servicio_tecnico?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+  if(r&&r.movimiento_id)await borrarMovimientoYCascada(r.movimiento_id);
+  showToast('Reparacion eliminada');
+  await refrescarTodo();
+}
+
+async function ejecutarBorrarAgenda(id){
+  await fetch(SUPA_URL+'/rest/v1/agenda?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+  showToast('Actividad eliminada');
+  await cargarAgenda();
+}
+
+// Refresco global: se llama tras crear o eliminar cualquier registro para que Caja, Movimientos, Tiendas,
+// Celulares, Servicio Tecnico, Deudores, Agenda, Dashboard y Metricas queden siempre sincronizados. Cada
+// cargar*() ya se encarga de re-renderizar la pantalla activa si corresponde.
+async function refrescarTodo(){
+  await Promise.all([cargarDatos(),celCargarDatos(),cargarCelularesReservas(),tieCargarDatos(),cargarClientes(),cargarReparaciones(),cargarDeudas(),cargarAgenda()]);
 }
 
 // Al borrar un movimiento de VENTAS/SERVICIOS, la fila de venta/reparacion (ventas_tiendas, celulares,
@@ -2743,7 +2807,7 @@ async function revertirRegistrosDeVenta(delMov,delId){
         await fetch(SUPA_URL+'/rest/v1/deudas?id=eq.'+d.id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
       }
     }
-  }catch(e){console.log('revertir deuda error',e);}
+  }catch(e){console.log('revertir deuda error',e);showToast('No se pudo revertir la deuda vinculada: revisala manualmente en Deudores',true);}
 
   if(!delMov)return;
 
@@ -2765,7 +2829,7 @@ async function revertirRegistrosDeVenta(delMov,delId){
           await fetch(SUPA_URL+'/rest/v1/ventas_tiendas?id=eq.'+v.id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
         }
       }
-    }catch(e){console.log('revertir venta tienda error',e);}
+    }catch(e){console.log('revertir venta tienda error',e);showToast('No se pudo revertir la venta en Tiendas: revisala manualmente',true);}
   }
 
   if(delMov.unidad==='CELULARES'&&delMov.operacion==='VENTAS'){
@@ -2780,7 +2844,7 @@ async function revertirRegistrosDeVenta(delMov,delId){
           });
         }
       }
-    }catch(e){console.log('revertir venta celular error',e);}
+    }catch(e){console.log('revertir venta celular error',e);showToast('No se pudo revertir la venta de celular: revisala manualmente',true);}
   }
 
   if(delMov.unidad==='SERVICIO TECNICO'&&delMov.operacion==='SERVICIOS'){
@@ -2795,7 +2859,7 @@ async function revertirRegistrosDeVenta(delMov,delId){
           });
         }
       }
-    }catch(e){console.log('revertir reparacion error',e);}
+    }catch(e){console.log('revertir reparacion error',e);showToast('No se pudo revertir la reparacion: revisala manualmente',true);}
   }
 }
 
@@ -2873,15 +2937,31 @@ function renderChart(){
   }
 }
 
+// Monto real en USD de un movimiento cuando el metodo de pago es literalmente 'USD'. Los movimientos
+// sin seguimiento centralizado de moneda (moneda_operacion vacio) guardan ingreso/egreso crudos en
+// USD (convencion vieja). Los que SI tienen moneda_operacion (reservas, ventas Celulares/Tiendas en
+// USD) guardan ingreso/egreso siempre en ARS -- ahi hay que usar importeOriginal, nunca multiplicar
+// ingreso/egreso por la cotizacion de nuevo (eso duplicaba la conversion y mostraba montos irreales).
+function movUsdIngreso(m){
+  if(m.metodo!=='USD')return 0;
+  if(!m.monedaOperacion)return m.ingreso||0;
+  return m.monedaOperacion==='USD'&&!m.egreso?(m.importeOriginal||0):0;
+}
+function movUsdEgreso(m){
+  if(m.metodo!=='USD')return 0;
+  if(!m.monedaOperacion)return m.egreso||0;
+  return m.monedaOperacion==='USD'&&!m.ingreso?(m.importeOriginal||0):0;
+}
+
 function buildMovRow(m,showUnit,showDel){
   var ingHtml='',egrHtml='';
-  var isPureUSD=m.metodo==='USD'&&m.metodo.indexOf('|')===-1;
+  var isPureUSD=m.metodo==='USD'&&m.metodo.indexOf('|')===-1&&!m.monedaOperacion;
   if(m.ingreso){
-    ingHtml='<span class="ing">'+fmtMov(m.ingreso,m.metodo)+'</span>';
+    ingHtml='<span class="ing">'+(m.monedaOperacion?fmtARS(m.ingreso):fmtMov(m.ingreso,m.metodo))+'</span>';
     if(isPureUSD&&dolarBlue)ingHtml+='<span class="usd-cell">'+fmtARS(m.ingreso*dolarBlue)+'</span>';
   }
   if(m.egreso){
-    egrHtml='<span class="egr">'+fmtMov(m.egreso,m.metodo)+'</span>';
+    egrHtml='<span class="egr">'+(m.monedaOperacion?fmtARS(m.egreso):fmtMov(m.egreso,m.metodo))+'</span>';
     if(isPureUSD&&dolarBlue)egrHtml+='<span class="usd-cell">'+fmtARS(m.egreso*dolarBlue)+'</span>';
   }
   // La operacion se pacto en USD pero el metodo de pago no es literalmente "USD" (ej. Celulares
@@ -2912,7 +2992,7 @@ function buildMovRow(m,showUnit,showDel){
 // por Metricas y por el resumen del nuevo Dashboard para no duplicarla en dos lugares.
 function calcCajaDisponible(){
   var cajaTot=movs.filter(function(m){return m.metodo!=='DEUDA'&&m.metodo!=='USD';}).reduce(function(s,m){return s+m.ingresoCaja-m.egreso;},0);
-  var cajaUSD=movs.filter(function(m){return m.metodo==='USD';}).reduce(function(s,m){return s+m.ingresoCaja-m.egreso;},0);
+  var cajaUSD=movs.filter(function(m){return m.metodo==='USD';}).reduce(function(s,m){return s+movUsdIngreso(m)-movUsdEgreso(m);},0);
   return{cajaTot:cajaTot,cajaUSD:cajaUSD};
 }
 
@@ -3015,7 +3095,9 @@ function dashToggleTask(id){
       method:'PATCH',
       headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
       body:JSON.stringify({estado:nuevoEstado})
-    }).then(function(){cargarAgenda();});
+    }).then(function(){
+      if(nuevoEstado==='COMPLETADA')return agendaCrearSiguienteOcurrencia(a);
+    }).then(function(){refrescarTodo();});
     return;
   }
   var t=dashTasksHoy();
@@ -3130,7 +3212,10 @@ function renderCaja(){
   metodosCaja.forEach(function(m){saldos[m]={ing:0,egr:0};});
   movs.forEach(function(m){
     var met=m.metodo&&m.metodo.indexOf('|')>-1?null:m.metodo;
-    if(met&&saldos[met]!==undefined){saldos[met].ing+=m.ingreso;saldos[met].egr+=m.egreso;}
+    if(met&&saldos[met]!==undefined){
+      if(met==='USD'){saldos[met].ing+=movUsdIngreso(m);saldos[met].egr+=movUsdEgreso(m);}
+      else{saldos[met].ing+=m.ingreso;saldos[met].egr+=m.egreso;}
+    }
     // For mixed: split by method
     if(m.metodo&&m.metodo.indexOf('|')>-1){
       m.metodo.split('|').forEach(function(p){
@@ -3324,8 +3409,14 @@ function renderU(){
   }
   document.getElementById('u-body').innerHTML=um.length
     ?um.map(function(m){
-      var ingHtml=m.ingreso?'<span class="ing">'+fmtMov(m.ingreso,m.metodo)+'</span>'+(m.metodo==='USD'&&dolarBlue?'<span class="usd-cell">'+fmtARS(m.ingreso*dolarBlue)+'</span>':''):'';
-      var egrHtml=m.egreso?'<span class="egr">'+fmtMov(m.egreso,m.metodo)+'</span>'+(m.metodo==='USD'&&dolarBlue?'<span class="usd-cell">'+fmtARS(m.egreso*dolarBlue)+'</span>':''):'';
+      var isPureUSD=m.metodo==='USD'&&!m.monedaOperacion;
+      var ingHtml=m.ingreso?'<span class="ing">'+(m.monedaOperacion?fmtARS(m.ingreso):fmtMov(m.ingreso,m.metodo))+'</span>'+(isPureUSD&&dolarBlue?'<span class="usd-cell">'+fmtARS(m.ingreso*dolarBlue)+'</span>':''):'';
+      var egrHtml=m.egreso?'<span class="egr">'+(m.monedaOperacion?fmtARS(m.egreso):fmtMov(m.egreso,m.metodo))+'</span>'+(isPureUSD&&dolarBlue?'<span class="usd-cell">'+fmtARS(m.egreso*dolarBlue)+'</span>':''):'';
+      if(m.monedaOperacion==='USD'&&!isPureUSD){
+        var usdTagU='<span class="usd-cell">'+fmtUSD(m.importeOriginal)+'</span>';
+        if(m.ingreso)ingHtml+=usdTagU;
+        if(m.egreso)egrHtml+=usdTagU;
+      }
       return'<tr style="cursor:pointer" data-mid="'+m.id+'" onclick="abrirDetalleMov(this.dataset.mid)">'+
         '<td class="mono" style="font-size:11px;">'+fd(m.fecha)+'</td>'+
         '<td><span class="badge '+(BOP[m.operacion]||'')+'">'+m.operacion+'</span></td>'+
@@ -3729,7 +3820,7 @@ function agendaRowHtml(a){
     '<span class="rd-badge" style="background:'+priorColor+'22;color:'+priorColor+';">'+a.prioridad+'</span>'+
     '<span class="rd-badge" style="background:'+estadoMeta.color+'22;color:'+estadoMeta.color+';">'+estadoMeta.label+'</span>'+
     (done?'':'<span onclick="event.stopPropagation();agendaPosponer('+a.id+')" title="Posponer 1 dia" style="cursor:pointer;font-size:14px;color:var(--rd-text3);">⏰</span>')+
-    '<span onclick="event.stopPropagation();agendaEliminar('+a.id+')" title="Eliminar" style="cursor:pointer;font-size:14px;color:var(--rd-text3);">🗑</span>'+
+    '<span onclick="event.stopPropagation();agendaEliminar('+a.id+',\''+(a.titulo||'').replace(/'/g,'')+'\')" title="Eliminar" style="cursor:pointer;font-size:14px;color:var(--rd-text3);">🗑</span>'+
     '</div>';
 }
 
@@ -3876,6 +3967,7 @@ function agendaAbrirNuevo(tipoPre){
   document.getElementById('ag-descripcion').value='';
   document.getElementById('ag-fecha').value=new Date().toISOString().slice(0,10);
   document.getElementById('ag-hora').value='';
+  document.getElementById('ag-repetir').value='NO_REPETIR';
   document.getElementById('ag-importe').value='';
   document.getElementById('ag-observaciones').value='';
   document.getElementById('ag-estado').value='PENDIENTE';
@@ -3896,6 +3988,7 @@ function agendaAbrirEditar(id){
   document.getElementById('ag-descripcion').value=a.descripcion||'';
   document.getElementById('ag-fecha').value=a.fecha;
   document.getElementById('ag-hora').value=a.hora||'';
+  document.getElementById('ag-repetir').value=a.repetir||'NO_REPETIR';
   document.getElementById('ag-importe').value=a.importe||'';
   document.getElementById('ag-observaciones').value=a.observaciones||'';
   document.getElementById('ag-estado').value=a.estado;
@@ -3930,6 +4023,7 @@ async function agendaGuardar(){
     descripcion:document.getElementById('ag-descripcion').value.trim()||null,
     fecha:fecha,
     hora:document.getElementById('ag-hora').value||null,
+    repetir:document.getElementById('ag-repetir').value||'NO_REPETIR',
     prioridad:document.getElementById('ag-prioridad').value,
     estado:document.getElementById('ag-estado').value||'PENDIENTE',
     importe:(tipo==='PAGO'||tipo==='COBRO')?(parseFloat(document.getElementById('ag-importe').value)||null):null,
@@ -3961,14 +4055,53 @@ async function agendaGuardar(){
   finally{btn.disabled=false;btn.textContent='Guardar';}
 }
 
+// Calcula la fecha de la proxima ocurrencia segun el tipo de repeticion (mismo dia del mes para
+// MENSUAL, lo que ademas cubre el caso "el dia X de cada mes" sin un campo aparte).
+function agendaProximaFecha(fecha,repetir){
+  var d=new Date(fecha+'T12:00:00');
+  if(repetir==='DIARIO')d.setDate(d.getDate()+1);
+  else if(repetir==='SEMANAL')d.setDate(d.getDate()+7);
+  else if(repetir==='MENSUAL'){
+    var dia=d.getDate();
+    d.setDate(1);
+    d.setMonth(d.getMonth()+1);
+    var ultimoDia=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
+    d.setDate(Math.min(dia,ultimoDia));
+  }
+  else if(repetir==='ANUAL')d.setFullYear(d.getFullYear()+1);
+  else return null;
+  return d.toISOString().slice(0,10);
+}
+
+// Al completar una actividad recurrente, se genera automaticamente la proxima ocurrencia (una por
+// vez, no todas a futuro de una) para que el usuario no tenga que volver a cargarla a mano.
+async function agendaCrearSiguienteOcurrencia(evento){
+  if(!evento||!evento.repetir||evento.repetir==='NO_REPETIR')return;
+  var proximaFecha=agendaProximaFecha(evento.fecha,evento.repetir);
+  if(!proximaFecha)return;
+  await fetch(SUPA_URL+'/rest/v1/agenda',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+    body:JSON.stringify({
+      tipo:evento.tipo,titulo:evento.titulo,descripcion:evento.descripcion||null,
+      fecha:proximaFecha,hora:evento.hora||null,repetir:evento.repetir,
+      prioridad:evento.prioridad,estado:'PENDIENTE',importe:evento.importe||null,
+      observaciones:evento.observaciones||null,origen:'MANUAL',
+      serie_padre_id:evento.serie_padre_id||evento.id
+    })
+  });
+}
+
 async function agendaMarcarCompletada(id){
+  var evento=agenda.find(function(x){return x.id===id;});
   await fetch(SUPA_URL+'/rest/v1/agenda?id=eq.'+id,{
     method:'PATCH',
     headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
     body:JSON.stringify({estado:'COMPLETADA'})
   });
+  if(evento)await agendaCrearSiguienteOcurrencia(evento);
   showToast('Actividad completada');
-  await cargarAgenda();
+  await refrescarTodo();
 }
 
 // "Posponer" es un snooze simple de 1 dia; para elegir una fecha puntual se edita la actividad.
@@ -3983,14 +4116,11 @@ async function agendaPosponer(id){
     body:JSON.stringify({fecha:nueva.toISOString().slice(0,10)})
   });
   showToast('Actividad pospuesta 1 dia');
-  await cargarAgenda();
+  await refrescarTodo();
 }
 
-async function agendaEliminar(id){
-  if(!confirm('¿Eliminar esta actividad de la Agenda? Esta accion no se puede deshacer.'))return;
-  await fetch(SUPA_URL+'/rest/v1/agenda?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
-  showToast('Actividad eliminada');
-  await cargarAgenda();
+function agendaEliminar(id,titulo){
+  askDelete(id,titulo,'agenda');
 }
 
 // ============ CLIENTES (CRM) ============
@@ -4316,6 +4446,7 @@ function servRenderPendientes(){
       '<span class="rd-mono">'+servDiasEnTaller(r)+'</span>'+
       '<span style="display:flex;align-items:center;gap:10px;">'+
         '<span onclick="servAbrirNueva('+r.id+')" title="Editar" style="cursor:pointer;font-size:14px;color:var(--rd-text3);">✎</span>'+
+        '<span onclick="event.stopPropagation();askDelete('+r.id+',\''+(r.cliente||'').replace(/'/g,'')+'\',\'reparacion\')" title="Eliminar" style="cursor:pointer;font-size:14px;color:var(--rd-text3);">🗑</span>'+
         '<button class="rd-btn" onclick="servAbrirEntrega('+r.id+')">Entregar</button>'+
       '</span>'+
       '</div>';
@@ -4340,7 +4471,7 @@ function servRenderEntregados(){
   if(!filtrado.length){tbody.innerHTML='<div class="rd-empty">No hay reparaciones entregadas</div>';return;}
   tbody.innerHTML=filtrado.map(function(r){
     var pagoBadge=r.pagado?'<span class="rd-badge rd-badge-green">Pagado</span>':'<span class="rd-badge rd-badge-red">Pendiente</span>';
-    return'<div class="rd-trow" style="grid-template-columns:1fr 0.8fr 0.8fr 1.2fr 1fr 0.9fr 0.9fr 0.7fr 0.8fr 0.8fr;">'+
+    return'<div class="rd-trow" style="grid-template-columns:1fr 0.8fr 0.8fr 1.2fr 1fr 0.9fr 0.9fr 0.7fr 0.8fr 0.8fr 36px;">'+
       '<span style="font-weight:600;">'+r.cliente+'</span>'+
       '<span>'+(r.marca||'-')+'</span>'+
       '<span>'+(r.modelo||'-')+'</span>'+
@@ -4351,6 +4482,7 @@ function servRenderEntregados(){
       '<span class="rd-mono">'+(servTiempoTotalReparacion(r)!==null?servTiempoTotalReparacion(r)+'d':'-')+'</span>'+
       '<span>'+servGarantiaTexto(r)+'</span>'+
       '<span>'+pagoBadge+'</span>'+
+      '<span onclick="askDelete('+r.id+',\''+(r.cliente||'').replace(/'/g,'')+'\',\'reparacion\')" title="Eliminar" style="cursor:pointer;font-size:14px;color:var(--rd-text3);">🗑</span>'+
       '</div>';
   }).join('');
 }
@@ -4850,7 +4982,8 @@ function celRenderReservas(){
     var estadoBadge=r.estado==='PENDIENTE_ASIGNACION'?'<span class="badge" style="background:var(--amber-lt);color:var(--amber);">Pendiente de asignacion</span>'
       :r.estado==='ENTREGADA'?'<span class="badge b-vendido">Entregada</span>'
       :'<span class="badge" style="background:var(--red-lt);color:var(--red);">Cancelada</span>';
-    var accion=r.estado==='PENDIENTE_ASIGNACION'?'<button class="btn btn-sm" onclick="celAsignarAbrir('+r.id+')">Asignar IMEI</button>':'-';
+    var accion=r.estado==='PENDIENTE_ASIGNACION'?'<button class="btn btn-sm" onclick="celAsignarAbrir('+r.id+')">Asignar celular</button>':'-';
+    var borrarBtn='<button class="btn btn-sm" style="color:var(--red);" onclick="askDelete('+r.id+',\''+(r.cliente||'').replace(/'/g,'')+'\',\'reserva\')" title="Eliminar">🗑</button>';
     return'<tr>'+
       '<td>'+r.cliente+'</td>'+
       '<td>'+(r.modelo||'-')+'</td>'+
@@ -4858,7 +4991,7 @@ function celRenderReservas(){
       '<td class="mono" style="font-size:11px;">'+fd(r.fecha)+'</td>'+
       '<td class="mono" style="font-size:11px;">'+(r.fecha_entrega?fd(r.fecha_entrega):'-')+'</td>'+
       '<td>'+estadoBadge+'</td>'+
-      '<td>'+accion+'</td>'+
+      '<td>'+accion+' '+borrarBtn+'</td>'+
       '</tr>';
   }).join('');
 }
@@ -4924,27 +5057,92 @@ function celAsignarAbrir(id){
   celAsignarReservaId=id;
   celAsignarCelular=null;
   document.getElementById('ca-reserva-info').innerHTML='<strong>'+r.cliente+'</strong> — '+(r.modelo||'-')+' — '+fmtSmart(r.importe);
-  document.getElementById('ca-imei-input').value='';
   document.getElementById('ca-imei-info').style.display='none';
   garantiaResetForm('ca');
   document.getElementById('cel-asignar-modal').classList.add('show');
+  // El modelo de la reserva puede ser una descripcion de varios equipos a la vez (reservas
+  // multi-item, ej. "2 17 promax 1 negro 1 naranja"), asi que no sirve como termino de busqueda
+  // exacto -- se deja el campo vacio para que el usuario escriba y filtre libremente.
+  var search=document.getElementById('ca-search');
+  search.value='';
+  document.getElementById('ca-search-ac').classList.remove('show');
+  search.focus();
 }
 function celAsignarCerrarModal(){
   document.getElementById('cel-asignar-modal').classList.remove('show');
   celAsignarReservaId=null;celAsignarCelular=null;
+  var dd=document.getElementById('ca-search-ac');
+  if(dd){dd.classList.remove('show');dd.innerHTML='';}
 }
-function celAsignarBuscarIMEI(){
-  var imei=document.getElementById('ca-imei-input').value.trim();
-  var cel=celulares.find(function(c){return c.imei===imei&&c.estado==='EN STOCK';});
-  var infoEl=document.getElementById('ca-imei-info');
-  if(!cel){showToast('IMEI no encontrado en stock',true);infoEl.style.display='none';celAsignarCelular=null;return;}
+// Buscador inteligente igual al de "Venta de celulares" (ventaBuscarCelular): filtra equipos
+// EN STOCK por marca/modelo/color/capacidad/IMEI a la vez, asi el usuario nunca necesita
+// escribir el IMEI completo. Los que coinciden con el modelo reservado se listan primero.
+var caAcActiveIdx=-1;
+function caAsignarBuscar(input){
+  var q=input.value.trim().toLowerCase();
+  var dd=document.getElementById('ca-search-ac');
+  caAcActiveIdx=-1;
+  if(!q){dd.classList.remove('show');dd.innerHTML='';return;}
+  var terms=q.split(/\s+/).filter(Boolean);
+  var r=celReservas.find(function(x){return x.id===celAsignarReservaId;});
+  var matches=celulares.filter(function(c){
+    if(c.estado!=='EN STOCK')return false;
+    var texto=((c.marca||'')+' '+(c.modelo||'')+' '+(c.color||'')+' '+(c.capacidad||'')+' '+c.imei).toLowerCase();
+    return terms.every(function(t){return texto.indexOf(t)>-1;});
+  }).sort(function(a,b){
+    var ac=r&&celEsReservaCompatible(r,a)?0:1,bc=r&&celEsReservaCompatible(r,b)?0:1;
+    return ac-bc;
+  }).slice(0,10);
+  if(!matches.length){
+    dd.innerHTML='<div class="ac-empty">Sin equipos disponibles que coincidan</div>';
+    dd.classList.add('show');
+    return;
+  }
+  dd.innerHTML=matches.map(function(c,i){
+    var compatible=r&&celEsReservaCompatible(r,c);
+    return'<div class="ac-item" data-idx="'+i+'" data-id="'+c.id+'" onclick="caAsignarSeleccionar(this.dataset.id)">'+
+      '<span class="ac-item-code">'+c.marca+' '+c.modelo+(compatible?' <span class="badge b-stock" style="font-size:9px;">Compatible</span>':'')+'</span>'+
+      '<span class="ac-item-desc">'+(c.color||'-')+' · '+(c.capacidad||'-')+' · IMEI ...'+c.imei.slice(-6)+'</span>'+
+      '</div>';
+  }).join('');
+  dd.classList.add('show');
+}
+function caAsignarSeleccionar(id){
+  var cel=celulares.find(function(c){return String(c.id)===String(id);});
+  if(!cel)return;
   celAsignarCelular=cel;
-  infoEl.innerHTML='<strong>'+cel.marca+' '+cel.modelo+'</strong> — '+(cel.color||'-')+' / '+(cel.capacidad||'-');
+  var infoEl=document.getElementById('ca-imei-info');
+  infoEl.innerHTML='<strong>'+cel.marca+' '+cel.modelo+'</strong> — '+(cel.color||'-')+' / '+(cel.capacidad||'-')+' — IMEI '+cel.imei;
   infoEl.style.display='block';
+  document.getElementById('ca-search').value=cel.marca+' '+cel.modelo;
+  var dd=document.getElementById('ca-search-ac');
+  dd.classList.remove('show');dd.innerHTML='';
+}
+function caAsignarSearchKey(evt){
+  var dd=document.getElementById('ca-search-ac');
+  var items=dd.querySelectorAll('.ac-item');
+  if(!items.length)return;
+  if(evt.key==='ArrowDown'){
+    evt.preventDefault();
+    caAcActiveIdx=Math.min(caAcActiveIdx+1,items.length-1);
+    items.forEach(function(it,i){it.classList.toggle('ac-active',i===caAcActiveIdx);});
+    items[caAcActiveIdx].scrollIntoView({block:'nearest'});
+  }else if(evt.key==='ArrowUp'){
+    evt.preventDefault();
+    caAcActiveIdx=Math.max(caAcActiveIdx-1,0);
+    items.forEach(function(it,i){it.classList.toggle('ac-active',i===caAcActiveIdx);});
+    items[caAcActiveIdx].scrollIntoView({block:'nearest'});
+  }else if(evt.key==='Enter'){
+    evt.preventDefault();
+    var idx=caAcActiveIdx>=0?caAcActiveIdx:0;
+    if(items[idx])caAsignarSeleccionar(items[idx].dataset.id);
+  }else if(evt.key==='Escape'){
+    dd.classList.remove('show');
+  }
 }
 // Asigna un celular fisico a una reserva pendiente: completa la venta, activa la garantia
 // (recien ahora, en el momento de la entrega — no cuando se registro el pago) y descuenta
-// stock. La usan tanto "Reservas > Asignar IMEI" (manual) como el aviso automatico al
+// stock. La usan tanto "Reservas > Asignar celular" (manual) como el aviso automatico al
 // cargar stock nuevo que coincide con una reserva pendiente.
 async function celCompletarAsignacion(celular,reserva,garantia){
   var hoy=new Date().toISOString().slice(0,10);
@@ -4981,7 +5179,7 @@ async function celAsignarConfirmar(){
   if(!celAsignarReservaId)return;
   var r=celReservas.find(function(x){return x.id===celAsignarReservaId;});
   if(!r)return;
-  if(!celAsignarCelular){showToast('Busca y confirma un IMEI en stock',true);return;}
+  if(!celAsignarCelular){showToast('Busca y selecciona un equipo en stock',true);return;}
   var hoy=new Date().toISOString().slice(0,10);
   var garantia=garantiaLeer('ca',hoy);
   if(!garantia.valido){showToast('Ingresa una cantidad valida de dias de garantia',true);return;}
@@ -5006,6 +5204,17 @@ function celBuscarReservasCompatibles(modelo){
   return celReservas.filter(function(r){return r.estado==='PENDIENTE_ASIGNACION'&&(r.modelo||'').trim().toLowerCase()===m;});
 }
 
+// Accion manual "Asignar a reserva" desde la fila de Stock: a diferencia del aviso automatico de
+// alta de stock, aca se muestran TODAS las reservas pendientes (con busqueda), no solo las que
+// coinciden por modelo -- las compatibles se listan primero con la etiqueta "Reserva compatible".
+function celAsignarReservaDesdeStock(celularId){
+  var cel=celulares.find(function(c){return String(c.id)===String(celularId);});
+  if(!cel)return;
+  var pendientes=celReservas.filter(function(r){return r.estado==='PENDIENTE_ASIGNACION';});
+  if(!pendientes.length){showToast('No hay reservas pendientes',true);return;}
+  celMostrarMatchReservas(cel,pendientes,'Cancelar');
+}
+
 // El texto del equipo reservado (ej. "iPhone 17 Negro 128GB") casi nunca coincide letra por
 // letra con el modelo que se tipea al cargar la compra, asi que ademas del aviso automatico
 // se puede elegir la reserva a mano desde el desplegable "Asignar a reserva" del alta de compra.
@@ -5018,24 +5227,51 @@ function celPopularSelectReserva(){
   }).join('');
 }
 
-var celMatchResolve=null,celMatchCelularActual=null;
+var celMatchResolve=null,celMatchCelularActual=null,celMatchReservasActuales=[];
 
-function celMostrarMatchReservas(celular,reservas){
+// Compara modelo del equipo contra el de la reserva (mismo criterio que celBuscarReservasCompatibles).
+function celEsReservaCompatible(reserva,celular){
+  if(!celular)return false;
+  return(reserva.modelo||'').trim().toLowerCase()===(celular.modelo||'').trim().toLowerCase();
+}
+
+function celMatchRenderLista(reservas){
+  var celular=celMatchCelularActual;
+  document.getElementById('cm-lista').innerHTML=reservas.length?reservas.map(function(r){
+    var compatible=celEsReservaCompatible(r,celular);
+    return'<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
+      '<div style="flex:1;">'+
+        '<strong>'+r.cliente+'</strong> — '+(r.modelo||'-')+
+        (compatible?' <span class="badge b-stock" style="font-size:10px;">Reserva compatible</span>':'')+
+        '<div style="font-size:10px;color:var(--text3);margin-top:2px;">Reservado el '+fd(r.fecha)+' · Abonado '+fmtSmart(r.importe)+'</div>'+
+      '</div>'+
+      '<button class="btn btn-sm" data-rid="'+r.id+'" onclick="celMatchAsignar(this.dataset.rid)">Asignar este equipo</button>'+
+      '</div>';
+  }).join(''):'<div style="font-size:12px;color:var(--text3);padding:10px 0;">No hay reservas que coincidan</div>';
+}
+
+function celMatchFiltrar(query){
+  var q=(query||'').trim().toLowerCase();
+  var filtradas=!q?celMatchReservasActuales:celMatchReservasActuales.filter(function(r){
+    return(r.cliente+' '+(r.modelo||'')+' '+fd(r.fecha)).toLowerCase().indexOf(q)>-1;
+  });
+  celMatchRenderLista(filtradas);
+}
+
+function celMostrarMatchReservas(celular,reservas,textoBoton){
   return new Promise(function(resolve){
     celMatchResolve=resolve;
     celMatchCelularActual=celular;
+    celMatchReservasActuales=reservas.slice().sort(function(a,b){
+      var ac=celEsReservaCompatible(a,celular)?0:1,bc=celEsReservaCompatible(b,celular)?0:1;
+      return ac-bc;
+    });
     document.getElementById('cm-equipo-info').innerHTML='<strong>'+celular.marca+' '+celular.modelo+'</strong> — IMEI '+celular.imei;
+    document.getElementById('cm-search').value='';
+    document.getElementById('cm-btn-cerrar').textContent=textoBoton||'Continuar sin asignar';
     document.getElementById('cm-tiene-garantia').value='NO';
     garantiaResetForm('cm');
-    document.getElementById('cm-lista').innerHTML=reservas.map(function(r){
-      return'<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
-        '<div style="flex:1;">'+
-          '<strong>'+r.cliente+'</strong> — '+(r.modelo||'-')+
-          '<div style="font-size:10px;color:var(--text3);margin-top:2px;">Reservado el '+fd(r.fecha)+' · Abonado '+fmtSmart(r.importe)+'</div>'+
-        '</div>'+
-        '<button class="btn btn-sm" data-rid="'+r.id+'" onclick="celMatchAsignar(this.dataset.rid)">Asignar este equipo</button>'+
-        '</div>';
-    }).join('');
+    celMatchRenderLista(celMatchReservasActuales);
     document.getElementById('cel-reserva-match-modal').classList.add('show');
   });
 }
@@ -5166,7 +5402,11 @@ function celRenderTabla(tipo){
         '<td class="mono"><strong>'+fmtSmart(ct)+'</strong></td>'+
         '<td class="mono" style="color:var(--green)">'+fmtSmart(c.precio_lista)+'</td>'+
         '<td style="font-size:11px;">'+gtia+'</td>'+
-        '<td><button class="btn btn-sm" data-cid="'+c.id+'" onclick="event.stopPropagation();celAbrirDetalle(this.dataset.cid)">Ver</button></td>'+
+        '<td>'+
+          '<button class="btn btn-sm" data-cid="'+c.id+'" onclick="event.stopPropagation();celAbrirDetalle(this.dataset.cid)">Ver</button> '+
+          '<button class="btn btn-sm" data-cid="'+c.id+'" onclick="event.stopPropagation();celAsignarReservaDesdeStock(this.dataset.cid)" title="Asignar a reserva">🔗</button> '+
+          '<button class="btn btn-sm" style="color:var(--red);" data-cid="'+c.id+'" data-desc="'+(c.marca+' '+c.modelo).replace(/"/g,'')+'" onclick="event.stopPropagation();askDelete(this.dataset.cid,this.dataset.desc,\'celular\')" title="Eliminar">🗑</button>'+
+        '</td>'+
         '</tr>';
     }else if(tipo==='vendidos'){
       return'<tr style="cursor:pointer" data-cid="'+c.id+'" onclick="celAbrirDetalle(this.dataset.cid)">'+
