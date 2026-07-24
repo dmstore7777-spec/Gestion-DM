@@ -417,6 +417,20 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
   .cel-modal-bg,.modal-bg,.rd-modal-bg{padding:10px;}
   .cel-modal,.modal,.rd-modal{max-width:100% !important;width:100%;padding:18px;max-height:calc(100vh - 20px);overflow-y:auto;}
 
+  /* ── .mobile-action: los 4 modales que abre el FAB (Reserva/Servicio/Agenda/Tiendas) pasan
+  a pantalla completa tipo app nativa en vez de quedar como cajita flotante -- header y footer
+  fijos, el resto del contenido scrollea entre medio. Reusa el mismo esqueleto que ya tenian
+  (h3/rd-modal-actions/cel-modal-actions), sin tocar ids ni logica. ── */
+  .mobile-action{padding:0;align-items:stretch;}
+  .mobile-action .cel-modal,.mobile-action .rd-modal{max-width:100% !important;width:100%;min-height:100%;border-radius:0;margin:0;padding:18px;display:flex;flex-direction:column;max-height:none;}
+  .mobile-action .rd-modal>div:first-child,.mobile-action .cel-modal>h3:first-child{position:sticky;top:0;z-index:5;background:var(--rd-card,#1c1d21);margin:-18px -18px 14px;padding:16px 18px;border-bottom:1px solid var(--rd-border,var(--border));}
+  .mobile-action .rd-modal-actions,.mobile-action .cel-modal-actions{position:sticky;bottom:0;z-index:5;background:var(--rd-card,#1c1d21);margin:14px -18px -18px;padding:14px 18px calc(14px + env(safe-area-inset-bottom));border-top:1px solid var(--rd-border,var(--border));display:flex;flex-direction:column;gap:8px;}
+  .mobile-action .rd-modal-actions .rd-btn,.mobile-action .cel-modal-actions .btn{width:100%;padding:12px;}
+  /* Tarjetas por seccion: reusa los titulos de seccion que ya existen (rd-section-title en
+  Servicio, cel-modal-section en Tiendas), sin envolver nada nuevo en HTML. */
+  .mobile-action .rd-section-title,.mobile-action .cel-modal-section{background:none;border:none;padding:0;margin:18px 0 8px;font-size:11px;font-weight:600;letter-spacing:0.08em;color:var(--rd-text3);text-transform:uppercase;}
+  .mobile-action .rd-section-title+.rd-fgrid,.mobile-action .cel-modal-section+div{background:var(--rd-card,var(--bg3));border:1px solid var(--rd-border,var(--border));border-radius:14px;padding:14px;}
+
   /* ── Tablas HTML clasicas: scroll horizontal en vez de recorte ── */
   .tw{overflow-x:auto;}
 
@@ -427,6 +441,16 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
   .rd-fgroup input,.rd-fgroup select,.rd-fgroup textarea{font-size:16px;padding:11px 12px;}
   .fa{flex-direction:column;gap:8px;}
   .fa .btn{width:100%;}
+  /* ── Cargar Movimiento: Guardar/Limpiar siempre a mano (sticky abajo) y los grupos de
+  campos con look de tarjeta, igual que el resto del shell mobile. Cubre de una sola vez
+  Celulares venta/compra, Reparacion, Gastos, Tiendas venta/compra y Financiero porque todos
+  comparten .cel-form-grid/.fg -- #screen-cargar como prefijo para no tocar esas clases en
+  otras pantallas. ── */
+  #screen-cargar .fa{position:sticky;bottom:0;background:var(--bg,#0A0A0A);padding:12px 0 calc(12px + env(safe-area-inset-bottom));margin-top:12px;border-top:1px solid var(--border);}
+  #screen-cargar .cel-form-grid,#screen-cargar .fg,
+  #screen-cargar #fin-dos-cuentas,#screen-cargar #fin-una-cuenta,#screen-cargar #fin-ajuste{
+    background:var(--rd-card,var(--bg3));border:1px solid var(--rd-border,var(--border));border-radius:14px;padding:14px;margin-bottom:14px;
+  }
 
   /* ── Dashboard ── */
   .rd-grid-4{grid-template-columns:repeat(2,1fr);}
@@ -1234,7 +1258,7 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
     </div>
 
     <!-- NUEVA/EDITAR ACTIVIDAD (Agenda) -->
-    <div class="rd-modal-bg rd" id="agenda-modal">
+    <div class="rd-modal-bg rd mobile-action" id="agenda-modal">
       <div class="rd-modal" style="max-width:560px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
           <h3 id="ag-modal-title" style="font-size:17px;font-weight:700;color:var(--rd-text);">Nueva actividad</h3>
@@ -1387,7 +1411,7 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
     </div>
 
     <!-- NUEVA REPARACION (Servicio Tecnico) -->
-    <div class="rd-modal-bg rd" id="serv-nueva-modal">
+    <div class="rd-modal-bg rd mobile-action" id="serv-nueva-modal">
       <div class="rd-modal" style="max-width:640px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
           <h3 id="serv-n-modal-title" style="font-size:17px;font-weight:700;color:var(--rd-text);">Nueva reparacion</h3>
@@ -1719,7 +1743,7 @@ volver a "Inicio" aunque una accion del FAB lo haya llevado a una pantalla de es
 </div>
 
 <!-- MODAL TIENDAS OPERACIONES -->
-<div class="cel-modal-bg" id="tie-modal-bg">
+<div class="cel-modal-bg mobile-action" id="tie-modal-bg">
   <div class="cel-modal" style="max-width:700px;">
     <h3 id="tie-modal-title">Operacion</h3>
 
@@ -2048,6 +2072,11 @@ volver a "Inicio" aunque una accion del FAB lo haya llevado a una pantalla de es
   <div class="modal">
     <h3 id="modal-title">Eliminar registro</h3>
     <p id="modal-desc">¿Estás seguro de que deseas eliminar este registro? Esta acción no se puede deshacer.</p>
+    <div id="modal-del-reserva-choice" style="display:none;margin-top:12px;padding:12px;background:var(--bg3);border-radius:var(--r);font-size:12px;">
+      <div style="margin-bottom:8px;color:var(--text2);">Este equipo pertenecía a una reserva. ¿Qué hacer con ella?</div>
+      <label style="display:flex;align-items:center;gap:8px;margin-bottom:6px;cursor:pointer;"><input type="radio" name="modal-del-reserva-opt" value="restaurar" checked> Restaurar la reserva a Pendiente y liberar el equipo</label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="radio" name="modal-del-reserva-opt" value="mantener"> Mantener la reserva como Entregada</label>
+    </div>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal()">Cancelar</button>
       <button class="btn" style="background:var(--red);color:#fff;border-color:var(--red);" onclick="confirmDelete()">Eliminar</button>
@@ -2097,7 +2126,7 @@ volver a "Inicio" aunque una accion del FAB lo haya llevado a una pantalla de es
 </div>
 
 <!-- CELULARES: NUEVA RESERVA (venta con entrega pendiente, puede incluir varios equipos) -->
-<div class="cel-modal-bg" id="cel-reserva-modal">
+<div class="cel-modal-bg mobile-action" id="cel-reserva-modal">
   <div class="cel-modal" style="max-width:560px;">
     <h3>Venta con entrega pendiente</h3>
     <div class="cel-form-grid" style="margin-top:14px;">
@@ -3226,19 +3255,36 @@ var pendingDelType='movimiento';
 function askDelete(id,desc,type){
   pendingDelId=id;
   pendingDelType=type||'movimiento';
-  document.getElementById('modal-desc').textContent=desc?('Vas a eliminar: "'+desc+'". Esta accion no se puede deshacer.'):'¿Estás seguro de que deseas eliminar este registro? Esta acción no se puede deshacer.';
+  var choiceEl=document.getElementById('modal-del-reserva-choice');
+  var mostrarEleccionReserva=false;
+  if(type==='venta-celular'){
+    // Aviso especifico: esto no borra el equipo, lo devuelve a stock -- distinto del resto de
+    // los borrados ("no se puede deshacer"), aca lo que se deshace es la venta en si.
+    document.getElementById('modal-desc').textContent='Esta acción restaurará '+(desc?'"'+desc+'" ':'el celular ')+'al stock y revertirá todos los cambios asociados a esta venta. ¿Deseás continuar?';
+    var c=celulares.find(function(x){return String(x.id)===String(id);});
+    var mov=c&&c.movimiento_id?movs.find(function(m){return m.id===String(c.movimiento_id);}):null;
+    mostrarEleccionReserva=!!(mov&&mov.reservaId);
+  }else{
+    document.getElementById('modal-desc').textContent=desc?('Vas a eliminar: "'+desc+'". Esta accion no se puede deshacer.'):'¿Estás seguro de que deseas eliminar este registro? Esta acción no se puede deshacer.';
+  }
+  if(choiceEl){
+    choiceEl.style.display=mostrarEleccionReserva?'block':'none';
+    if(mostrarEleccionReserva)document.querySelector('input[name="modal-del-reserva-opt"][value="restaurar"]').checked=true;
+  }
   document.getElementById('modal-del').classList.add('show');
 }
 function closeModal(){document.getElementById('modal-del').classList.remove('show');pendingDelId=null;}
 async function confirmDelete(){
   if(!pendingDelId){closeModal();return;}
   var id=pendingDelId,type=pendingDelType;
+  var sel=document.querySelector('input[name="modal-del-reserva-opt"]:checked');
+  var mantenerReserva=type==='venta-celular'&&!!(sel&&sel.value==='mantener');
   closeModal();
   ss('loading','ELIMINANDO...');
   try{
     if(type==='movimiento')await ejecutarBorrarMovimiento(id);
     else if(type==='celular')await ejecutarBorrarCelular(id);
-    else if(type==='venta-celular')await ejecutarBorrarVentaCelular(id);
+    else if(type==='venta-celular')await ejecutarBorrarVentaCelular(id,mantenerReserva);
     else if(type==='reserva')await ejecutarBorrarReserva(id);
     else if(type==='reparacion')await ejecutarBorrarReparacion(id);
     else if(type==='agenda')await ejecutarBorrarAgenda(id);
@@ -3249,7 +3295,8 @@ async function confirmDelete(){
 // Borra un movimiento y revierte todo lo que haya generado (deudas, ventas, reparaciones). Reutilizado
 // tanto por el borrado directo de Movimientos como por el borrado de un registro (celular/reserva/reparacion)
 // que tenga un movimiento_id asociado, para que nunca quede un cobro/pago sin el registro que lo origino.
-async function borrarMovimientoYCascada(movId){
+// opts.mantenerReserva=true evita que se reabra la reserva vinculada (ver revertirRegistrosDeVenta).
+async function borrarMovimientoYCascada(movId,opts){
   var delId=String(movId);
   var delMov=movs.find(function(x){return x.id===delId;})||null;
   var res=await fetch(SUPA_URL+'/rest/v1/movimientos?id=eq.'+delId,{
@@ -3257,7 +3304,7 @@ async function borrarMovimientoYCascada(movId){
     headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
   });
   if(!res.ok){var e=await res.text();throw new Error(e.slice(0,120));}
-  await revertirRegistrosDeVenta(delMov,delId);
+  await revertirRegistrosDeVenta(delMov,delId,opts);
 }
 
 async function ejecutarBorrarMovimiento(id){
@@ -3281,11 +3328,11 @@ async function ejecutarBorrarCelular(id){
 // garantia) y el equipo vuelve a EN STOCK, listo para venderse de nuevo. Si la venta se hizo
 // antes de que existiera el seguimiento por movimiento_id, no hay nada que borrar en Movimientos
 // y el equipo se revierte directo.
-async function ejecutarBorrarVentaCelular(id){
+async function ejecutarBorrarVentaCelular(id,mantenerReserva){
   var c=celulares.find(function(x){return String(x.id)===String(id);});
   if(!c)return;
   if(c.movimiento_id){
-    await borrarMovimientoYCascada(c.movimiento_id);
+    await borrarMovimientoYCascada(c.movimiento_id,{mantenerReserva:mantenerReserva});
   }else{
     await fetch(SUPA_URL+'/rest/v1/celulares?id=eq.'+id,{
       method:'PATCH',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
@@ -3340,7 +3387,8 @@ async function refrescarTodo(){
 // reparaciones_servicio_tecnico) y la deuda que pudo haberse generado quedaban huerfanas -- el cliente
 // seguia viendo la compra y el stock no se recuperaba. Esta funcion revierte todo lo que ese movimiento
 // genero, usando el movimiento_id que ahora se guarda en cada tabla al crear la venta/entrega.
-async function revertirRegistrosDeVenta(delMov,delId){
+async function revertirRegistrosDeVenta(delMov,delId,opts){
+  opts=opts||{};
   try{
     var rD=await fetch(SUPA_URL+'/rest/v1/deudas?movimiento_id=eq.'+delId+'&select=*',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
     var deudasVinc=await rD.json();
@@ -3359,7 +3407,26 @@ async function revertirRegistrosDeVenta(delMov,delId){
     }
   }catch(e){console.log('revertir deuda error',e);showToast('No se pudo revertir la deuda vinculada: revisala manualmente en Deudores',true);}
 
-  if(!delMov)return;
+  // A partir de aca todo lo que sigue necesita saber que tipo de venta era el movimiento
+  // borrado -- pero si el movimiento ya no existia en el cache local (por ejemplo, alguien lo
+  // borro por otra via y dejo un celular "colgado" con un movimiento_id que ya no existe), el
+  // stock de Celulares igual se intenta revertir por movimiento_id sin depender de delMov: es
+  // una consulta acotada, si no hay ningun celular con ese movimiento_id no hace nada.
+  if(!delMov){
+    try{
+      var rCsinMov=await fetch(SUPA_URL+'/rest/v1/celulares?movimiento_id=eq.'+delId+'&select=*',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
+      var celsSinMov=await rCsinMov.json();
+      if(Array.isArray(celsSinMov)){
+        for(var kk=0;kk<celsSinMov.length;kk++){
+          await fetch(SUPA_URL+'/rest/v1/celulares?id=eq.'+celsSinMov[kk].id,{
+            method:'PATCH',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+            body:JSON.stringify({estado:'EN STOCK',fecha_venta:null,precio_venta:null,moneda_venta:null,precio_venta_usd:null,cotizacion_venta:null,cliente:null,metodo_pago_venta:null,canal_venta:null,movimiento_id:null})
+          });
+        }
+      }
+    }catch(e){console.log('revertir venta celular (sin movimiento en cache) error',e);showToast('No se pudo revertir la venta de celular: revisala manualmente',true);}
+    return;
+  }
 
   if(delMov.unidad==='TIENDAS'&&delMov.operacion==='VENTAS'){
     try{
@@ -3399,8 +3466,10 @@ async function revertirRegistrosDeVenta(delMov,delId){
     // Si esta venta era el saldo de una reserva (ver celGuardarOp), sus items quedaron
     // ENTREGADO apuntando a un celular que recien volvio a EN STOCK -- se devuelven a PENDIENTE
     // para que la reserva vuelva a quedar disponible para asignar/entregar de nuevo. El
-    // movimiento del anticipo de la reserva es otro distinto y no se toca.
-    if(delMov.reservaId){
+    // movimiento del anticipo de la reserva es otro distinto y no se toca. Si el usuario eligio
+    // explicitamente "Mantener la reserva como Entregada" en el modal de confirmacion, se salta
+    // este paso (queda tal cual quedo, aunque el celular ya haya vuelto a stock).
+    if(delMov.reservaId&&!opts.mantenerReserva){
       try{
         var rI=await fetch(SUPA_URL+'/rest/v1/celulares_reservas_items?reserva_id=eq.'+delMov.reservaId+'&estado=eq.ENTREGADO&select=*',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
         var itsEntregados=await rI.json();
