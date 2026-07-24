@@ -137,6 +137,10 @@ tr:hover td{background:var(--bg3);}
 .cm-ars-line{font-size:11px;color:var(--blue);font-family:monospace;text-align:center;margin-top:3px;}
 .caja-chart-wrap{display:flex;justify-content:center;margin-bottom:18px;}
 .caja-chart-inner{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px;width:50%;}
+.caja-charts-grid{display:grid;grid-template-columns:1fr 1fr;}
+.metodo-split-grid{display:grid;grid-template-columns:1fr 1fr;}
+.cart-row-price{width:110px;}
+.cart-row-currency{width:64px;}
 /* FORM */
 .fw{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:22px;max-width:660px;}
 .fs{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px;padding-bottom:9px;border-bottom:1px solid var(--border);font-family:monospace;}
@@ -247,10 +251,12 @@ tr:hover td{background:var(--bg3);}
 .rd-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .rd-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
 .rd-grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
+.dash-bottom-grid{display:grid;grid-template-columns:1fr 300px;}
 .rd-btn{background:transparent;border:1px solid var(--rd-border-hi);color:var(--rd-text2);border-radius:8px;padding:6px 13px;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s ease;}
 .rd-btn:hover{color:var(--rd-text);border-color:var(--rd-green);}
 .rd-btn.rd-btn-active{background:var(--rd-text);color:var(--rd-bg);border-color:var(--rd-text);}
 .rd-task{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:10px;background:var(--rd-card);border:1px solid var(--rd-border);cursor:pointer;transition:transform .15s ease,border-color .15s ease;}
+.rd-task-main{flex:1;min-width:0;}
 .rd-task:hover{transform:translateY(-1px);border-color:var(--rd-border-hi);}
 .rd-task.rd-task-done{opacity:0.5;}
 .rd-check{width:17px;height:17px;border-radius:5px;border:1.6px solid rgba(255,255,255,0.22);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
@@ -302,11 +308,71 @@ tr:hover td{background:var(--bg3);}
 .rd-check-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:6px 10px;border:1px solid var(--rd-border-hi);border-radius:8px;cursor:pointer;color:var(--rd-text2);user-select:none;}
 .rd-check-pill:hover{border-color:var(--rd-green);}
 .rd-check-pill input{accent-color:var(--rd-green);cursor:pointer;}
+
+/* MOBILE: boton hamburguesa y backdrop del drawer, ocultos por defecto (solo existen bajo el breakpoint) */
+.mobile-menu-btn{display:none;background:transparent;border:1px solid var(--border-md);color:var(--text);border-radius:var(--r);width:38px;height:38px;font-size:16px;cursor:pointer;flex-shrink:0;margin-right:12px;}
+.mobile-nav-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:150;}
+.mobile-nav-backdrop.show{display:block;}
+
+@media (max-width:768px){
+  /* ── Shell: sidebar pasa a cajon deslizable ── */
+  .mobile-menu-btn{display:flex;align-items:center;justify-content:center;}
+  .sidebar{position:fixed;top:0;bottom:0;left:0;z-index:200;transform:translateX(-100%);transition:transform .2s ease;}
+  .sidebar.open{transform:translateX(0);}
+  .topbar{padding:0 14px;}
+  .page-title{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40vw;}
+  .topbar-right{gap:6px;}
+  .dolar-pill{padding:0 10px;font-size:11px;}
+  .curr-toggle{width:84px;}
+  .tu-actualizar{padding:0 10px;font-size:11px;}
+
+  /* ── Grids compartidos por Dashboard/Cargar movimiento/modales de Agenda: a 1 columna ── */
+  .cel-form-grid,.fg,.rd-fgrid,.rd-grid-2,.rd-grid-3{grid-template-columns:1fr;}
+  .u-metrics,.cel-metrics,.dash-units{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));}
+
+  /* ── Los 3 sistemas de modal, a ancho completo con scroll interno ── */
+  .cel-modal-bg,.modal-bg,.rd-modal-bg{padding:10px;}
+  .cel-modal,.modal,.rd-modal{max-width:100% !important;width:100%;padding:18px;max-height:calc(100vh - 20px);overflow-y:auto;}
+
+  /* ── Tablas HTML clasicas: scroll horizontal en vez de recorte ── */
+  .tw{overflow-x:auto;}
+
+  /* ── Tamaño de toque: botones mas altos, inputs a 16px (evita el auto-zoom de iOS Safari) ── */
+  .btn{padding:10px 16px;font-size:13px;}
+  .cel-fgroup input,.cel-fgroup select,.cel-fgroup textarea,
+  .fgroup input,.fgroup select,.fgroup textarea,
+  .rd-fgroup input,.rd-fgroup select,.rd-fgroup textarea{font-size:16px;padding:11px 12px;}
+  .fa{flex-direction:column;gap:8px;}
+  .fa .btn{width:100%;}
+
+  /* ── Dashboard ── */
+  .rd-grid-4{grid-template-columns:repeat(2,1fr);}
+  .dash-bottom-grid{grid-template-columns:1fr;}
+
+  /* ── Agenda ── */
+  .rd-toolbar{flex-wrap:wrap;}
+  .rd-task{flex-wrap:wrap;}
+  .rd-task>.rd-task-main{flex:1 1 100%;}
+  .rd-cal-day{min-height:50px;padding:4px;}
+  .rd-cal-item{font-size:8.5px;}
+
+  /* ── Caja ── */
+  .caja-top-row{flex-wrap:wrap;gap:12px;}
+  .caja-top-row>div{text-align:left !important;}
+  .caja-charts-grid{grid-template-columns:1fr;}
+
+  /* ── Cargar movimiento ── */
+  .metodo-split-grid{grid-template-columns:1fr;}
+  .cart-row{flex-wrap:wrap;}
+  .cart-row-price{width:100px;}
+  .cart-row-currency{width:64px;}
+}
 </style>
 </head>
 <body>
 <div class="layout">
-<aside class="sidebar">
+<div class="mobile-nav-backdrop" id="mobile-nav-backdrop" onclick="closeMobileSidebar()"></div>
+<aside class="sidebar" id="sidebar">
   <div class="sb-brand">
     <img id="sb-logo" class="sb-logo" alt="logo">
     <div><h1>DM Store</h1><span>GESTIÓN V9</span></div>
@@ -413,6 +479,7 @@ tr:hover td{background:var(--bg3);}
 
 <div class="main">
   <div class="topbar rd">
+    <button class="mobile-menu-btn" id="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Abrir menu">☰</button>
     <div class="page-title" id="page-title">Dashboard</div>
     <div class="topbar-right">
       <div class="topbar-unified">
@@ -460,7 +527,7 @@ tr:hover td{background:var(--bg3);}
           </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start;">
+        <div class="dash-bottom-grid" style="gap:20px;align-items:start;">
           <div>
             <div class="rd-label" style="margin-bottom:12px;">Operaciones de hoy</div>
             <div style="display:flex;flex-direction:column;gap:8px;" id="dash-tasks"></div>
@@ -575,7 +642,7 @@ tr:hover td{background:var(--bg3);}
     <!-- CAJA -->
     <div class="screen" id="screen-caja">
       <!-- Saldo total unificado -->
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px 22px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
+      <div class="caja-top-row" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px 22px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
         <div>
           <div class="sec-label" style="margin-bottom:6px;">Saldo total unificado</div>
           <div style="font-size:28px;font-weight:700;font-family:monospace;" id="caja-total-unif">-</div>
@@ -591,7 +658,7 @@ tr:hover td{background:var(--bg3);}
       <div class="sec-label">Saldo por metodo</div>
       <div class="caja-methods" id="caja-methods"></div>
       <!-- Charts row -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+      <div class="caja-charts-grid" style="gap:14px;margin-bottom:18px;">
         <div class="chart-box" style="margin-bottom:0;">
           <div class="chart-title" style="margin-bottom:13px;">Distribucion actual</div>
           <canvas id="chartCaja" height="200"></canvas>
@@ -789,7 +856,7 @@ tr:hover td{background:var(--bg3);}
               <div class="cel-fgroup"><label>Cliente</label><div class="ac-wrap"><input type="text" id="venta-cliente" placeholder="Nombre..." autocomplete="off" oninput="cliAutocomplete(this,'venta-cliente-ac')"><div class="ac-dropdown" id="venta-cliente-ac"></div></div></div>
               <div class="cel-fgroup cel-form-full">
                 <label>Metodo de pago (podes dividir en hasta 3 metodos)</label>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">
+                <div class="metodo-split-grid" style="gap:6px;margin-top:4px;">
                   <select id="venta-metodo1" onchange="ventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
                   <input type="number" id="venta-monto1" placeholder="Monto 1" min="0" step="0.01" oninput="ventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
                   <select id="venta-metodo2" onchange="ventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
@@ -927,7 +994,7 @@ tr:hover td{background:var(--bg3);}
             <div class="cel-fgroup"><label>Cliente</label><div class="ac-wrap"><input type="text" id="ftventa-cliente" placeholder="Nombre (opcional)" autocomplete="off" oninput="cliAutocomplete(this,'ftventa-cliente-ac')"><div class="ac-dropdown" id="ftventa-cliente-ac"></div></div></div>
             <div class="cel-fgroup cel-form-full">
               <label>Metodo de pago (podes dividir en hasta 3 metodos)</label>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">
+              <div class="metodo-split-grid" style="gap:6px;margin-top:4px;">
                 <select id="ftventa-metodo1" onchange="ftventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
                 <input type="number" id="ftventa-monto1" placeholder="Monto 1" min="0" step="0.01" oninput="ftventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
                 <select id="ftventa-metodo2" onchange="ftventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
@@ -1631,7 +1698,7 @@ tr:hover td{background:var(--bg3);}
         <div class="cel-fgroup"><label>Cliente</label><div class="ac-wrap"><input type="text" id="tventa-cliente" placeholder="Nombre (opcional)" autocomplete="off" oninput="cliAutocomplete(this,'tventa-cliente-ac')"><div class="ac-dropdown" id="tventa-cliente-ac"></div></div></div>
         <div class="cel-fgroup cel-form-full">
           <label>Metodo de pago (podes dividir en hasta 3 metodos)</label>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">
+          <div class="metodo-split-grid" style="gap:6px;margin-top:4px;">
             <select id="tventa-metodo1" onchange="tventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
             <input type="number" id="tventa-monto1" placeholder="Monto 1" min="0" step="0.01" oninput="tventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
             <select id="tventa-metodo2" onchange="tventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
@@ -2326,6 +2393,17 @@ function fmtSmartUSD(usdAmount){
   return fmtUSD(usdAmount);
 }
 
+// Cajon de navegacion mobile: el sidebar es el mismo de siempre, solo se le agrega la clase
+// "open" (fuera del breakpoint mobile la clase no tiene efecto, css la ignora).
+function toggleMobileSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('mobile-nav-backdrop').classList.toggle('show');
+}
+function closeMobileSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('mobile-nav-backdrop').classList.remove('show');
+}
+
 function go(name,el){
   document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
   document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
@@ -2341,7 +2419,8 @@ function go(name,el){
   if(name==='proveedores')renderProveedores();
   if(name==='deudores')renderDeudores();
   if(name==='clientes')renderClientes();
-  if(name==='agenda'){if(agendaVista==='calendario')renderAgendaCalendario();else renderAgenda();}
+  if(name==='agenda'){if(window.innerWidth<768)agendaVista='lista';if(agendaVista==='calendario')renderAgendaCalendario();else renderAgenda();}
+  closeMobileSidebar();
 }
 
 function populateSelects(){
@@ -3884,7 +3963,7 @@ function agendaRowHtml(a){
       (done?'<svg width="10" height="10" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 5.5" stroke="#3ecf8e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+
     '</div>'+
     '<span style="font-size:16px;">'+meta.icon+'</span>'+
-    '<div style="flex:1;min-width:0;">'+
+    '<div class="rd-task-main">'+
       '<div style="font-size:13.5px;font-weight:600;color:'+(done?'var(--rd-text2)':'var(--rd-text)')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+horaTxt+a.titulo+'</div>'+
       '<div style="font-size:11px;color:var(--rd-text3);margin-top:2px;">'+meta.label+(a.importe?' · '+fmtARS(a.importe):'')+'</div>'+
     '</div>'+
@@ -3985,13 +4064,14 @@ function renderAgendaCalendario(){
   document.getElementById('ag-cal-body').innerHTML=cells.map(function(c){
     var itemsDia=c.dateStr?agenda.filter(function(a){return a.fecha===c.dateStr;}):[];
     var isToday=c.dateStr===hoyStr;
-    var itemsHtml=itemsDia.slice(0,3).map(function(a){
+    var maxItems=window.innerWidth<768?2:3;
+    var itemsHtml=itemsDia.slice(0,maxItems).map(function(a){
       var meta=AGTIPO_META[a.tipo]||{icon:'📌'};
       var done=a.estado==='COMPLETADA'||a.estado==='CANCELADA';
       var priorColor=AGPRIOR_COLORS[a.prioridad]||'#94969c';
       return'<div class="rd-cal-item" style="background:'+priorColor+'22;color:'+priorColor+';'+(done?'opacity:0.5;text-decoration:line-through;':'')+'" onclick="event.stopPropagation();agendaAbrirEditar('+a.id+')" title="'+String(a.titulo||'').replace(/"/g,'')+'">'+meta.icon+' '+a.titulo+'</div>';
     }).join('');
-    var masTxt=itemsDia.length>3?'<div style="font-size:9px;color:var(--rd-text3);">+'+(itemsDia.length-3)+' mas</div>':'';
+    var masTxt=itemsDia.length>maxItems?'<div style="font-size:9px;color:var(--rd-text3);">+'+(itemsDia.length-maxItems)+' mas</div>':'';
     return'<div class="rd-cal-day'+(c.other?' is-other-month':'')+(isToday?' is-today':'')+'"'+(c.dateStr?' onclick="agendaAbrirNuevoEnFecha(\''+c.dateStr+'\')"':'')+'>'+
       '<div class="rd-cal-daynum">'+c.dnum+'</div>'+itemsHtml+masTxt+
       '</div>';
@@ -5009,6 +5089,7 @@ function goCel(name,el){
   if(name==='cel-resumen')celRenderResumen();
   else if(name==='cel-reservas')celRenderReservas();
   else celRenderTabla(name.replace('cel-',''));
+  closeMobileSidebar();
 }
 
 async function celCargarDatos(){
@@ -5842,7 +5923,7 @@ function renderVentaCarrito(){
   }
   el.innerHTML='<div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:6px;">'+ventaCarritoTemp.length+' celular(es) en la venta:</div>'+
     ventaCarritoTemp.map(function(c,i){
-      return'<div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
+      return'<div class="cart-row" style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
         '<div style="flex:1;min-width:0;">'+
           '<div><span class="mono" style="color:var(--text3);font-size:10px;margin-right:8px;">'+c.imei+'</span>'+
           '<strong>'+c.marca+' '+c.modelo+'</strong>'+
@@ -5850,8 +5931,8 @@ function renderVentaCarrito(){
           '</div>'+
           '<div style="font-size:10px;color:var(--text3);margin-top:2px;">Costo: '+fmtARS(c.costoTotal)+'</div>'+
         '</div>'+
-        '<input type="number" value="'+c.precioVentaValor+'" min="0" step="0.01" placeholder="Precio venta" style="width:110px;padding:6px 8px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg2);color:var(--text);font-size:12px;" data-idx="'+i+'" onchange="ventaCarritoSetPrecio(this.dataset.idx,this.value)">'+
-        '<select data-idx="'+i+'" style="width:64px;padding:6px 4px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg2);color:var(--text);font-size:12px;" onchange="ventaCarritoSetMoneda(this.dataset.idx,this.value)">'+
+        '<input type="number" value="'+c.precioVentaValor+'" min="0" step="0.01" placeholder="Precio venta" class="cart-row-price" style="padding:6px 8px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg2);color:var(--text);font-size:12px;" data-idx="'+i+'" onchange="ventaCarritoSetPrecio(this.dataset.idx,this.value)">'+
+        '<select data-idx="'+i+'" class="cart-row-currency" style="padding:6px 4px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg2);color:var(--text);font-size:12px;" onchange="ventaCarritoSetMoneda(this.dataset.idx,this.value)">'+
           '<option value="ARS"'+(c.precioVentaMoneda==='ARS'?' selected':'')+'>ARS</option>'+
           '<option value="USD"'+(c.precioVentaMoneda==='USD'?' selected':'')+'>USD</option>'+
         '</select>'+
@@ -6059,9 +6140,9 @@ function renderPPLista(){
   var el=document.getElementById('pp-lista');
   el.innerHTML=!ppListaTemp.length?'':ppListaTemp.map(function(p,i){
     var label=p.tipo==='nuevo'?(p.marca+' '+p.modelo):(p.cel.marca+' '+p.cel.modelo);
-    return'<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
+    return'<div class="cart-row" style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
       '<span style="flex:1">'+label+'</span>'+
-      '<input type="number" placeholder="Precio de costo (valor recibido) $" style="width:130px;padding:5px 8px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg);color:var(--text);font-size:12px;" value="'+(p.valor||'')+'" data-idx="'+i+'" onchange="ppUpdateValor(this.dataset.idx,this.value)">'+
+      '<input type="number" placeholder="Precio de costo (valor recibido) $" class="cart-row-price" style="padding:5px 8px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg);color:var(--text);font-size:12px;" value="'+(p.valor||'')+'" data-idx="'+i+'" onchange="ppUpdateValor(this.dataset.idx,this.value)">'+
       '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;" data-idx="'+i+'" onclick="ppQuitarCelular(this.dataset.idx)">x</button>'+
       '</div>';
   }).join('');
@@ -6586,6 +6667,7 @@ function goTie(name,el){
   document.getElementById('page-title').textContent=titles[name]||name;
   if(name==='tie-resumen')tieRenderResumen();
   else tieRenderTabla(name.replace('tie-',''));
+  closeMobileSidebar();
 }
 
 var servSubMenuOpen=false;
@@ -6601,6 +6683,7 @@ function goServ(name,el){
     document.getElementById('screen-unidad').classList.add('active');
     if(el)el.classList.add('active');
     setU('SERVICIO TECNICO');
+    closeMobileSidebar();
     return;
   }
   document.getElementById('screen-'+name).classList.add('active');
@@ -6608,6 +6691,7 @@ function goServ(name,el){
   var titles={'serv-pendientes':'Servicio Técnico — Pendientes','serv-entregados':'Servicio Técnico — Entregados'};
   document.getElementById('page-title').textContent=titles[name]||name;
   servRenderTabla(name.replace('serv-',''));
+  closeMobileSidebar();
 }
 
 async function tieCargarDatos(){
