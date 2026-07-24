@@ -139,6 +139,10 @@ tr:hover td{background:var(--bg3);}
 .caja-chart-inner{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px;width:50%;}
 .caja-charts-grid{display:grid;grid-template-columns:1fr 1fr;}
 .metodo-split-grid{display:grid;grid-template-columns:1fr 1fr;}
+.metodo-split-extra{display:contents;}
+.metodo-split-extra.hidden{display:none;}
+.metodo-split-add-btn{grid-column:1/-1;padding:8px;font-size:12px;border:1px dashed var(--border-hi);border-radius:var(--r);background:transparent;color:var(--text2);cursor:pointer;margin-top:2px;}
+.metodo-split-add-btn:hover{color:var(--text);border-color:var(--text2);}
 .cart-row-price{width:110px;}
 .cart-row-currency{width:64px;}
 /* FORM */
@@ -335,7 +339,7 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
   .mtab.active .mtab-label{font-weight:700;color:var(--rd-text);}
 
   /* ── FAB + hoja de acciones rapidas ── */
-  .mobile-fab{display:flex;position:fixed;left:50%;bottom:38px;width:62px;height:62px;border-radius:50%;background:var(--rd-green);align-items:center;justify-content:center;cursor:pointer;z-index:50;box-shadow:0 10px 28px rgba(62,207,142,0.4),0 0 0 6px var(--rd-bg);transform:translateX(-50%);transition:transform .25s cubic-bezier(.34,1.56,.64,1);}
+  .mobile-fab{display:flex;position:fixed;left:50%;bottom:80px;width:64px;height:64px;border-radius:50%;background:#fff;align-items:center;justify-content:center;cursor:pointer;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,0.5),0 0 0 6px var(--rd-bg);transform:translateX(-50%);transition:transform .25s cubic-bezier(.34,1.56,.64,1);}
   .mobile-fab.open{transform:translateX(-50%) rotate(45deg);}
   .mobile-sheet-backdrop{display:block;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:35;opacity:0;pointer-events:none;transition:opacity .25s ease;}
   .mobile-sheet-backdrop.show{opacity:1;pointer-events:auto;}
@@ -348,29 +352,29 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
   .msheet-action-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
   .msheet-action-label{font-size:14.5px;font-weight:600;color:var(--rd-text);}
 
-  /* ── Vistas mobile (Inicio/Stock/Servicio/Agenda/Mas) ── */
+  /* ── Vistas mobile (Inicio/Stock/Servicio/Agenda/Mas) -- todo centrado, espaciado vertical
+  unificado a 24px entre secciones, mismos margenes laterales (20px, del padding de #screen-mobile-home). ── */
   #screen-mobile-home{padding:4px 20px 0;}
-  .meyebrow{font-size:11px;font-weight:600;letter-spacing:0.08em;color:var(--rd-text3);text-transform:uppercase;margin-bottom:10px;}
-  .mhome-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-top:8px;}
+  .meyebrow{font-size:11px;font-weight:600;letter-spacing:0.08em;color:var(--rd-text3);text-transform:uppercase;margin-bottom:10px;text-align:center;}
+  .mhome-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-top:8px;}
   .mhome-greeting{font-size:21px;font-weight:700;letter-spacing:-0.02em;color:var(--rd-text);}
   .mhome-sub{font-size:13px;color:var(--rd-text2);margin-top:3px;}
   .mhome-bell{width:38px;height:38px;border-radius:12px;background:var(--rd-card);border:1px solid var(--rd-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-  .mcaja-card{background:linear-gradient(135deg,#1c1d21,#17181b);border:1px solid var(--rd-border);border-radius:20px;padding:20px;margin-bottom:16px;}
+  .mcaja-card{background:linear-gradient(135deg,#1c1d21,#17181b);border:1px solid var(--rd-border);border-radius:20px;padding:22px 20px;margin-bottom:24px;text-align:center;}
   .mcaja-split{display:flex;gap:14px;}
-  .mcaja-box{flex:1;padding:14px;border-radius:14px;}
+  .mcaja-box{flex:1;padding:16px 10px;border-radius:14px;text-align:center;}
   .mcaja-box.ars{background:rgba(62,207,142,0.08);border:1px solid rgba(62,207,142,0.18);}
   .mcaja-box.usd{background:rgba(255,255,255,0.04);border:1px solid var(--rd-border);}
-  .mcaja-box-label{font-size:11px;font-weight:600;}
-  .mcaja-box-val{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:700;margin-top:6px;letter-spacing:-0.02em;color:var(--rd-text);}
-  .mgrid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;}
+  .mcaja-box-label{font-size:11px;font-weight:600;text-align:center;}
+  .mcaja-box-val{font-family:'JetBrains Mono',monospace;font-weight:800;margin-top:8px;letter-spacing:-0.02em;color:var(--rd-text);text-align:center;}
+  .mcaja-box.ars .mcaja-box-val{font-size:23px;}
+  .mcaja-box.usd .mcaja-box-val{font-size:18px;color:var(--rd-text2);}
+  .mgrid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
   .mcard{background:var(--rd-card);border:1px solid var(--rd-border);border-radius:16px;padding:16px;cursor:pointer;}
-  .mcard-pending{display:flex;flex-direction:column;gap:8px;}
-  .mcard-emoji{font-size:20px;}
-  .mcard-count{font-size:24px;font-weight:700;letter-spacing:-0.02em;color:var(--rd-text);}
-  .mcard-label{font-size:12.5px;color:var(--rd-text2);font-weight:500;}
-  .mcard-stock-title{font-size:12px;color:var(--rd-text2);font-weight:500;}
-  .mcard-stock-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;margin-top:8px;color:var(--rd-text);}
-  .mcard-stock-sub{font-size:11.5px;color:var(--rd-text3);margin-top:2px;}
+  .mcard-pending{display:flex;flex-direction:column;align-items:center;text-align:center;gap:7px;padding:20px 12px;}
+  .mcard-emoji{font-size:22px;}
+  .mcard-title{font-size:12px;color:var(--rd-text2);font-weight:600;}
+  .mcard-count{font-size:28px;font-weight:800;letter-spacing:-0.02em;color:var(--rd-text);}
   .mlist-card{background:var(--rd-card);border:1px solid var(--rd-border);border-radius:16px;padding:6px 16px;margin-bottom:24px;}
   .mevent-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);}
   .mevent-row:last-child{border-bottom:none;}
@@ -378,6 +382,12 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
   .mevent-title{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--rd-text);}
   .mevent-tag{font-size:11.5px;color:var(--rd-text3);margin-top:1px;}
   .mevent-time{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--rd-text2);flex-shrink:0;}
+  .mmov-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;}
+  .mmov-row:last-child{border-bottom:none;}
+  .mmov-op{font-size:13.5px;font-weight:600;color:var(--rd-text);}
+  .mmov-unidad{font-size:10px;font-weight:700;letter-spacing:0.05em;color:var(--rd-text3);text-transform:uppercase;margin-top:2px;}
+  .mmov-date{font-size:11px;color:var(--rd-text3);margin-top:2px;}
+  .mmov-amount{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;flex-shrink:0;text-align:right;}
   .mscreen-title{font-size:21px;font-weight:700;margin-bottom:16px;color:var(--rd-text);padding-top:8px;}
   .mpill-group{display:flex;gap:8px;background:var(--rd-card);border:1px solid var(--rd-border);border-radius:12px;padding:4px;margin-bottom:18px;}
   .mpill{flex:1;text-align:center;padding:8px 0;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;color:var(--rd-text2);white-space:nowrap;}
@@ -960,14 +970,19 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
             <div class="cel-form-grid">
               <div class="cel-fgroup"><label>Cliente</label><div class="ac-wrap"><input type="text" id="venta-cliente" placeholder="Nombre..." autocomplete="off" oninput="cliAutocomplete(this,'venta-cliente-ac')"><div class="ac-dropdown" id="venta-cliente-ac"></div></div></div>
               <div class="cel-fgroup cel-form-full">
-                <label>Metodo de pago (podes dividir en hasta 3 metodos)</label>
+                <label>Metodo de pago</label>
                 <div class="metodo-split-grid" style="gap:6px;margin-top:4px;">
                   <select id="venta-metodo1" onchange="ventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
                   <input type="number" id="venta-monto1" placeholder="Monto 1" min="0" step="0.01" oninput="ventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-                  <select id="venta-metodo2" onchange="ventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
-                  <input type="number" id="venta-monto2" placeholder="Monto 2 (opcional)" min="0" step="0.01" oninput="ventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-                  <select id="venta-metodo3" onchange="ventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
-                  <input type="number" id="venta-monto3" placeholder="Monto 3 (opcional)" min="0" step="0.01" oninput="ventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+                  <span class="metodo-split-extra hidden" id="venta-split2">
+                    <select id="venta-metodo2" onchange="ventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
+                    <input type="number" id="venta-monto2" placeholder="Monto 2" min="0" step="0.01" oninput="ventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+                  </span>
+                  <span class="metodo-split-extra hidden" id="venta-split3">
+                    <select id="venta-metodo3" onchange="ventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
+                    <input type="number" id="venta-monto3" placeholder="Monto 3" min="0" step="0.01" oninput="ventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+                  </span>
+                  <button type="button" class="metodo-split-add-btn" id="venta-split-add-btn" onclick="metodoSplitAgregar('venta')">+ Agregar método de pago</button>
                 </div>
                 <div id="venta-mixto-info" style="font-size:11px;color:var(--text3);margin-top:5px;font-family:monospace;"></div>
               </div>
@@ -1098,14 +1113,19 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
           <div class="cel-form-grid">
             <div class="cel-fgroup"><label>Cliente</label><div class="ac-wrap"><input type="text" id="ftventa-cliente" placeholder="Nombre (opcional)" autocomplete="off" oninput="cliAutocomplete(this,'ftventa-cliente-ac')"><div class="ac-dropdown" id="ftventa-cliente-ac"></div></div></div>
             <div class="cel-fgroup cel-form-full">
-              <label>Metodo de pago (podes dividir en hasta 3 metodos)</label>
+              <label>Metodo de pago</label>
               <div class="metodo-split-grid" style="gap:6px;margin-top:4px;">
                 <select id="ftventa-metodo1" onchange="ftventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
                 <input type="number" id="ftventa-monto1" placeholder="Monto 1" min="0" step="0.01" oninput="ftventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-                <select id="ftventa-metodo2" onchange="ftventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
-                <input type="number" id="ftventa-monto2" placeholder="Monto 2 (opcional)" min="0" step="0.01" oninput="ftventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-                <select id="ftventa-metodo3" onchange="ftventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
-                <input type="number" id="ftventa-monto3" placeholder="Monto 3 (opcional)" min="0" step="0.01" oninput="ftventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+                <span class="metodo-split-extra hidden" id="ftventa-split2">
+                  <select id="ftventa-metodo2" onchange="ftventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
+                  <input type="number" id="ftventa-monto2" placeholder="Monto 2" min="0" step="0.01" oninput="ftventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+                </span>
+                <span class="metodo-split-extra hidden" id="ftventa-split3">
+                  <select id="ftventa-metodo3" onchange="ftventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
+                  <input type="number" id="ftventa-monto3" placeholder="Monto 3" min="0" step="0.01" oninput="ftventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+                </span>
+                <button type="button" class="metodo-split-add-btn" id="ftventa-split-add-btn" onclick="metodoSplitAgregar('ftventa')">+ Agregar método de pago</button>
               </div>
               <div id="ftventa-mixto-info" style="font-size:11px;color:var(--text3);margin-top:5px;font-family:monospace;"></div>
             </div>
@@ -1732,7 +1752,7 @@ volver a "Inicio" aunque una accion del FAB lo haya llevado a una pantalla de es
 </div>
 
 <div class="mobile-fab" id="mobile-fab" onclick="mobileToggleFab()">
-  <svg width="26" height="26" viewBox="0 0 20 20" fill="none"><path d="M10 4.5V15.5M4.5 10H15.5" stroke="#0e1512" stroke-width="2.4" stroke-linecap="round"/></svg>
+  <svg width="28" height="28" viewBox="0 0 20 20" fill="none"><path d="M10 4.5V15.5M4.5 10H15.5" stroke="#000000" stroke-width="2.6" stroke-linecap="round"/></svg>
 </div>
 
 <div class="mobile-sheet-backdrop" id="mobile-sheet-backdrop" onclick="mobileCloseFab()"></div>
@@ -1842,14 +1862,19 @@ volver a "Inicio" aunque una accion del FAB lo haya llevado a una pantalla de es
         <div class="cel-fgroup"><label>Fecha</label><input type="date" id="tventa-fecha"></div>
         <div class="cel-fgroup"><label>Cliente</label><div class="ac-wrap"><input type="text" id="tventa-cliente" placeholder="Nombre (opcional)" autocomplete="off" oninput="cliAutocomplete(this,'tventa-cliente-ac')"><div class="ac-dropdown" id="tventa-cliente-ac"></div></div></div>
         <div class="cel-fgroup cel-form-full">
-          <label>Metodo de pago (podes dividir en hasta 3 metodos)</label>
+          <label>Metodo de pago</label>
           <div class="metodo-split-grid" style="gap:6px;margin-top:4px;">
             <select id="tventa-metodo1" onchange="tventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
             <input type="number" id="tventa-monto1" placeholder="Monto 1" min="0" step="0.01" oninput="tventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-            <select id="tventa-metodo2" onchange="tventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
-            <input type="number" id="tventa-monto2" placeholder="Monto 2 (opcional)" min="0" step="0.01" oninput="tventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-            <select id="tventa-metodo3" onchange="tventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
-            <input type="number" id="tventa-monto3" placeholder="Monto 3 (opcional)" min="0" step="0.01" oninput="tventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+            <span class="metodo-split-extra hidden" id="tventa-split2">
+              <select id="tventa-metodo2" onchange="tventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
+              <input type="number" id="tventa-monto2" placeholder="Monto 2" min="0" step="0.01" oninput="tventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+            </span>
+            <span class="metodo-split-extra hidden" id="tventa-split3">
+              <select id="tventa-metodo3" onchange="tventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
+              <input type="number" id="tventa-monto3" placeholder="Monto 3" min="0" step="0.01" oninput="tventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+            </span>
+            <button type="button" class="metodo-split-add-btn" id="tventa-split-add-btn" onclick="metodoSplitAgregar('tventa')">+ Agregar método de pago</button>
           </div>
           <div id="tventa-mixto-info" style="font-size:11px;color:var(--text3);margin-top:5px;font-family:monospace;"></div>
         </div>
@@ -2666,18 +2691,17 @@ function mobileRenderHome(){
   var eventosHoy=agenda.filter(function(a){return a.fecha===hoyStr&&a.estado!=='CANCELADA';}).length;
   var tareasPendientes=agenda.filter(function(a){return a.estado!=='COMPLETADA'&&a.estado!=='CANCELADA';}).length;
 
-  var stockCelulares=celulares.filter(function(c){return c.estado==='EN STOCK';}).length;
-  var stockTiendas=productosTiendas.length;
-
   var proximos=agenda.filter(function(a){return a.fecha>=hoyStr&&a.estado!=='CANCELADA'&&a.estado!=='COMPLETADA';})
     .sort(function(a,b){return(a.fecha+(a.hora||'')).localeCompare(b.fecha+(b.hora||''));})
     .slice(0,4);
 
+  var ultimosMovs=movs.slice(0,5);
+
   var pendingCards=[
-    {emoji:'🔧',count:reparacionesPendientes,label:'Reparaciones pendientes',onClick:"mobileGoTab('servicio')"},
-    {emoji:'📦',count:reservasPendientes,label:'Reservas pendientes',onClick:"goCel('cel-reservas')"},
-    {emoji:'📅',count:eventosHoy,label:'Eventos de hoy',onClick:"mobileGoTab('agenda')"},
-    {emoji:'✅',count:tareasPendientes,label:'Tareas pendientes',onClick:"mobileGoTab('agenda')"}
+    {emoji:'🔧',count:reparacionesPendientes,title:'Reparaciones',onClick:"mobileGoTab('servicio')"},
+    {emoji:'📦',count:reservasPendientes,title:'Reservas',onClick:"goCel('cel-reservas')"},
+    {emoji:'📅',count:eventosHoy,title:'Eventos',onClick:"mobileGoTab('agenda')"},
+    {emoji:'✅',count:tareasPendientes,title:'Tareas',onClick:"mobileGoTab('agenda')"}
   ];
 
   return(
@@ -2695,13 +2719,26 @@ function mobileRenderHome(){
     '<div class="meyebrow">Actividad pendiente</div>'+
     '<div class="mgrid2">'+
       pendingCards.map(function(pc){
-        return'<div class="mcard mcard-pending" onclick="'+pc.onClick+'"><span class="mcard-emoji">'+pc.emoji+'</span><div class="mcard-count">'+pc.count+'</div><div class="mcard-label">'+pc.label+'</div></div>';
+        return'<div class="mcard mcard-pending" onclick="'+pc.onClick+'"><span class="mcard-emoji">'+pc.emoji+'</span><div class="mcard-title">'+pc.title+'</div><div class="mcard-count">'+pc.count+'</div></div>';
       }).join('')+
     '</div>'+
-    '<div class="meyebrow">Stock</div>'+
-    '<div class="mgrid2">'+
-      '<div class="mcard" onclick="mobileGoTab(\'stock\')"><div class="mcard-stock-title">📱 Celulares</div><div class="mcard-stock-val">'+stockCelulares+'</div><div class="mcard-stock-sub">disponibles</div></div>'+
-      '<div class="mcard" onclick="mobileGoTab(\'stock\')"><div class="mcard-stock-title">🏬 Tiendas</div><div class="mcard-stock-val">'+stockTiendas+'</div><div class="mcard-stock-sub">productos</div></div>'+
+    '<div class="meyebrow">Últimos movimientos</div>'+
+    '<div class="mlist-card">'+
+      (ultimosMovs.length?ultimosMovs.map(function(m){
+        var esUsd=m.monedaOperacion==='USD'||(!m.monedaOperacion&&m.metodo==='USD');
+        var esIngreso=!!m.ingreso;
+        var monto=esUsd?(m.importeOriginal||m.ingreso||m.egreso||0):(m.ingreso||m.egreso||0);
+        var montoTxt=(esIngreso?'+':'-')+(esUsd?fmtUSD(monto):fmtARS(monto));
+        var horaTxt=m.hora?' · '+m.hora.slice(0,5):'';
+        return'<div class="mmov-row" onclick="abrirDetalleMov(\''+m.id+'\')">'+
+          '<div style="flex:1;min-width:0;">'+
+            '<div class="mmov-op">'+(m.operacion||'-')+'</div>'+
+            '<div class="mmov-unidad">'+(m.unidad||'-')+'</div>'+
+            '<div class="mmov-date">'+fd(m.fecha)+horaTxt+'</div>'+
+          '</div>'+
+          '<div class="mmov-amount" style="color:'+(esIngreso?'var(--rd-green)':'var(--rd-red)')+';">'+montoTxt+'</div>'+
+        '</div>';
+      }).join(''):'<div class="mempty">Sin movimientos.</div>')+
     '</div>'+
     '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'+
       '<span class="meyebrow" style="margin-bottom:0;">Próximos</span>'+
@@ -2950,9 +2987,33 @@ function hideAllFormSections(){
   ftventaResetForm();
 }
 
+// Metodos de pago progresivos: arranca mostrando solo el metodo 1 (con su boton "+ Agregar
+// metodo de pago" debajo) en vez de 3 filas vacias de una. Reutilizado por venta/ftventa/tventa
+// -- las 3 comparten exactamente el mismo esqueleto (split2/split3/split-add-btn por prefijo).
+function metodoSplitAgregar(prefix){
+  var s2=document.getElementById(prefix+'-split2');
+  var s3=document.getElementById(prefix+'-split3');
+  var btn=document.getElementById(prefix+'-split-add-btn');
+  if(s2&&s2.classList.contains('hidden')){
+    s2.classList.remove('hidden');
+  }else if(s3&&s3.classList.contains('hidden')){
+    s3.classList.remove('hidden');
+    if(btn)btn.style.display='none';
+  }
+}
+function metodoSplitReset(prefix){
+  var s2=document.getElementById(prefix+'-split2');
+  var s3=document.getElementById(prefix+'-split3');
+  var btn=document.getElementById(prefix+'-split-add-btn');
+  if(s2)s2.classList.add('hidden');
+  if(s3)s3.classList.add('hidden');
+  if(btn)btn.style.display='';
+}
+
 // Limpia por completo el formulario de venta de Celulares (Cargar movimiento):
 // importes, cliente, metodos de pago, cuotas y parte de pago quedan como estaban antes de cargar cualquier venta.
 function ventaResetForm(){
+  metodoSplitReset('venta');
   ventaCarritoTemp=[];
   if(document.getElementById('venta-carrito'))renderVentaCarrito();
   ['venta-cel-search','venta-cliente','venta-monto1','venta-monto2','venta-monto3',
@@ -2975,6 +3036,7 @@ function ventaResetForm(){
 
 // Limpia por completo el formulario de venta de Tiendas dentro de Cargar movimiento (ftventa-*).
 function ftventaResetForm(){
+  metodoSplitReset('ftventa');
   ftventaCarritoTemp=[];
   ['ftventa-codigo-input','ftventa-cliente','ftventa-monto1','ftventa-monto2','ftventa-monto3'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.value='';
@@ -7398,6 +7460,7 @@ function tieAbrirOp(op,codigoPre){
 
 // Limpia por completo el formulario de venta de Tiendas del modal (Tiendas > Ventas > + Nueva venta).
 function tventaResetForm(){
+  metodoSplitReset('tventa');
   tventaCarritoTemp=[];
   document.getElementById('tventa-carrito').innerHTML='';
   document.getElementById('tventa-canal').value='';
