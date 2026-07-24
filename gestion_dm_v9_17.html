@@ -309,22 +309,105 @@ tr:hover td{background:var(--bg3);}
 .rd-check-pill:hover{border-color:var(--rd-green);}
 .rd-check-pill input{accent-color:var(--rd-green);cursor:pointer;}
 
-/* MOBILE: boton hamburguesa y backdrop del drawer, ocultos por defecto (solo existen bajo el breakpoint) */
-.mobile-menu-btn{display:none;background:transparent;border:1px solid var(--border-md);color:var(--text);border-radius:var(--r);width:38px;height:38px;font-size:16px;cursor:pointer;flex-shrink:0;margin-right:12px;}
-.mobile-nav-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:150;}
-.mobile-nav-backdrop.show{display:block;}
+/* MOBILE SHELL: siempre en el DOM (fuera de .layout), ocultos por defecto -- solo se muestran
+bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
+.mobile-tabbar,.mobile-fab,.mobile-sheet-backdrop{display:none;}
+.mobile-sheet{display:none;}
 
 @media (max-width:768px){
-  /* ── Shell: sidebar pasa a cajon deslizable ── */
-  .mobile-menu-btn{display:flex;align-items:center;justify-content:center;}
-  .sidebar{position:fixed;top:0;bottom:0;left:0;z-index:200;transform:translateX(-100%);transition:transform .2s ease;}
-  .sidebar.open{transform:translateX(0);}
+  /* ── Shell: la barra de tabs + FAB (mas abajo en este mismo bloque) reemplazan la
+  navegacion del sidebar por completo en mobile -- se oculta, no hace falta drawer. ── */
+  .sidebar{display:none;}
   .topbar{padding:0 14px;}
+  .topbar.mobile-hide{display:none;}
   .page-title{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40vw;}
   .topbar-right{gap:6px;}
   .dolar-pill{padding:0 10px;font-size:11px;}
   .curr-toggle{width:84px;}
   .tu-actualizar{padding:0 10px;font-size:11px;}
+  .content{padding-bottom:100px;}
+
+  /* ── Barra de tabs (5 items) ── */
+  .mobile-tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;padding:8px 6px 26px;background:rgba(19,19,22,0.86);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-top:1px solid var(--rd-border);z-index:30;}
+  .mtab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;}
+  .mtab-icon{height:22px;display:flex;align-items:center;justify-content:center;}
+  .mtab-label{font-size:10.5px;font-weight:500;color:var(--rd-text3);}
+  .mtab.active .mtab-label{font-weight:700;color:var(--rd-text);}
+
+  /* ── FAB + hoja de acciones rapidas ── */
+  .mobile-fab{display:flex;position:fixed;left:50%;bottom:38px;width:62px;height:62px;border-radius:50%;background:var(--rd-green);align-items:center;justify-content:center;cursor:pointer;z-index:50;box-shadow:0 10px 28px rgba(62,207,142,0.4),0 0 0 6px var(--rd-bg);transform:translateX(-50%);transition:transform .25s cubic-bezier(.34,1.56,.64,1);}
+  .mobile-fab.open{transform:translateX(-50%) rotate(45deg);}
+  .mobile-sheet-backdrop{display:block;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:35;opacity:0;pointer-events:none;transition:opacity .25s ease;}
+  .mobile-sheet-backdrop.show{opacity:1;pointer-events:auto;}
+  .mobile-sheet{display:block;position:fixed;left:0;right:0;bottom:0;background:#1c1d21;border:1px solid var(--rd-border);border-radius:24px 24px 0 0;z-index:45;box-shadow:0 -20px 50px rgba(0,0,0,0.5);transform:translateY(100%);transition:transform .32s cubic-bezier(.32,.72,0,1);padding-bottom:24px;}
+  .mobile-sheet.show{transform:translateY(0%);}
+  .mobile-sheet-handle{width:36px;height:5px;border-radius:3px;background:rgba(255,255,255,0.18);margin:10px auto 6px;}
+  .mobile-sheet-title{padding:6px 18px 4px;font-size:15px;font-weight:700;color:var(--rd-text);}
+  .msheet-action{display:flex;align-items:center;gap:14px;padding:12px 20px;cursor:pointer;}
+  .msheet-action:active{background:rgba(255,255,255,0.05);}
+  .msheet-action-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+  .msheet-action-label{font-size:14.5px;font-weight:600;color:var(--rd-text);}
+
+  /* ── Vistas mobile (Inicio/Stock/Servicio/Agenda/Mas) ── */
+  #screen-mobile-home{padding:4px 20px 0;}
+  .meyebrow{font-size:11px;font-weight:600;letter-spacing:0.08em;color:var(--rd-text3);text-transform:uppercase;margin-bottom:10px;}
+  .mhome-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-top:8px;}
+  .mhome-greeting{font-size:21px;font-weight:700;letter-spacing:-0.02em;color:var(--rd-text);}
+  .mhome-sub{font-size:13px;color:var(--rd-text2);margin-top:3px;}
+  .mhome-bell{width:38px;height:38px;border-radius:12px;background:var(--rd-card);border:1px solid var(--rd-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .mcaja-card{background:linear-gradient(135deg,#1c1d21,#17181b);border:1px solid var(--rd-border);border-radius:20px;padding:20px;margin-bottom:16px;}
+  .mcaja-split{display:flex;gap:14px;}
+  .mcaja-box{flex:1;padding:14px;border-radius:14px;}
+  .mcaja-box.ars{background:rgba(62,207,142,0.08);border:1px solid rgba(62,207,142,0.18);}
+  .mcaja-box.usd{background:rgba(255,255,255,0.04);border:1px solid var(--rd-border);}
+  .mcaja-box-label{font-size:11px;font-weight:600;}
+  .mcaja-box-val{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:700;margin-top:6px;letter-spacing:-0.02em;color:var(--rd-text);}
+  .mgrid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;}
+  .mcard{background:var(--rd-card);border:1px solid var(--rd-border);border-radius:16px;padding:16px;cursor:pointer;}
+  .mcard-pending{display:flex;flex-direction:column;gap:8px;}
+  .mcard-emoji{font-size:20px;}
+  .mcard-count{font-size:24px;font-weight:700;letter-spacing:-0.02em;color:var(--rd-text);}
+  .mcard-label{font-size:12.5px;color:var(--rd-text2);font-weight:500;}
+  .mcard-stock-title{font-size:12px;color:var(--rd-text2);font-weight:500;}
+  .mcard-stock-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;margin-top:8px;color:var(--rd-text);}
+  .mcard-stock-sub{font-size:11.5px;color:var(--rd-text3);margin-top:2px;}
+  .mlist-card{background:var(--rd-card);border:1px solid var(--rd-border);border-radius:16px;padding:6px 16px;margin-bottom:24px;}
+  .mevent-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);}
+  .mevent-row:last-child{border-bottom:none;}
+  .mevent-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+  .mevent-title{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--rd-text);}
+  .mevent-tag{font-size:11.5px;color:var(--rd-text3);margin-top:1px;}
+  .mevent-time{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--rd-text2);flex-shrink:0;}
+  .mscreen-title{font-size:21px;font-weight:700;margin-bottom:16px;color:var(--rd-text);padding-top:8px;}
+  .mpill-group{display:flex;gap:8px;background:var(--rd-card);border:1px solid var(--rd-border);border-radius:12px;padding:4px;margin-bottom:18px;}
+  .mpill{flex:1;text-align:center;padding:8px 0;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;color:var(--rd-text2);white-space:nowrap;}
+  .mpill.active{background:var(--rd-green);color:#0e1512;}
+  .msearch{display:flex;align-items:center;gap:8px;background:var(--rd-card);border:1px solid var(--rd-border);border-radius:12px;padding:10px 14px;margin-bottom:16px;}
+  .msearch input{flex:1;background:none;border:none;outline:none;color:var(--rd-text);font-size:13.5px;font-family:'Inter',sans-serif;}
+  .msearch input::placeholder{color:var(--rd-text3);}
+  .mstock-row{display:flex;align-items:center;gap:12px;background:var(--rd-card);border:1px solid var(--rd-border);border-radius:14px;padding:12px 14px;margin-bottom:10px;}
+  .mstock-icon{width:42px;height:42px;border-radius:11px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .mstock-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--rd-text);}
+  .mstock-price{font-size:12px;color:var(--rd-text3);margin-top:1px;}
+  .mstock-chip{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:100px;flex-shrink:0;}
+  .mfilter-row{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;}
+  .mfilter-chip{padding:8px 14px;border-radius:100px;font-size:12.5px;font-weight:600;white-space:nowrap;cursor:pointer;background:var(--rd-card);border:1px solid var(--rd-border-hi);color:var(--rd-text2);}
+  .mfilter-chip.active{background:var(--rd-green);color:#0e1512;border-color:var(--rd-green);}
+  .mrepair-card{background:var(--rd-card);border:1px solid var(--rd-border);border-radius:14px;padding:14px;margin-bottom:10px;}
+  .mrepair-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+  .mrepair-device{font-size:14px;font-weight:600;color:var(--rd-text);}
+  .mstatus-chip{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:100px;}
+  .mrepair-sub{font-size:12.5px;color:var(--rd-text2);}
+  .mrepair-date{font-size:11.5px;color:var(--rd-text3);margin-top:6px;}
+  .magenda-row{display:flex;align-items:center;gap:12px;background:var(--rd-card);border:1px solid var(--rd-border);border-radius:14px;padding:13px 14px;margin-bottom:10px;}
+  .magenda-bar{width:4px;height:34px;border-radius:3px;flex-shrink:0;}
+  .mmore-group{margin-bottom:20px;}
+  .mmore-list{background:var(--rd-card);border:1px solid var(--rd-border);border-radius:14px;overflow:hidden;}
+  .mmore-row{display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;}
+  .mmore-row:last-child{border-bottom:none;}
+  .mmore-emoji{font-size:15px;}
+  .mmore-label{flex:1;font-size:14.5px;font-weight:500;color:var(--rd-text);}
+  .mempty{font-size:12.5px;color:var(--rd-text3);padding:16px 0;text-align:center;}
 
   /* ── Grids compartidos por Dashboard/Cargar movimiento/modales de Agenda: a 1 columna ── */
   .cel-form-grid,.fg,.rd-fgrid,.rd-grid-2,.rd-grid-3{grid-template-columns:1fr;}
@@ -371,7 +454,6 @@ tr:hover td{background:var(--bg3);}
 </head>
 <body>
 <div class="layout">
-<div class="mobile-nav-backdrop" id="mobile-nav-backdrop" onclick="closeMobileSidebar()"></div>
 <aside class="sidebar" id="sidebar">
   <div class="sb-brand">
     <img id="sb-logo" class="sb-logo" alt="logo">
@@ -479,7 +561,6 @@ tr:hover td{background:var(--bg3);}
 
 <div class="main">
   <div class="topbar rd">
-    <button class="mobile-menu-btn" id="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Abrir menu">☰</button>
     <div class="page-title" id="page-title">Dashboard</div>
     <div class="topbar-right">
       <div class="topbar-unified">
@@ -1593,8 +1674,48 @@ tr:hover td{background:var(--bg3);}
       </div>
     </div>
 
+    <!-- MOBILE SHELL: Inicio/Stock/Servicio/Agenda/Mas, ver _design_handoff/DM Store Mobile.dc.html.
+    No es un reflow del desktop: es la app mobile-first del mockup, con su propia barra de tabs
+    (mas abajo, fuera de .layout) y su propio estado (mobileTab). Todo el contenido se arma por JS
+    en renderMobile*() -- este div solo es el contenedor que participa del hide/show de go(). -->
+    <div class="screen" id="screen-mobile-home">
+      <div id="mobile-content"></div>
+    </div>
+
   </div>
 </div>
+</div>
+
+<!-- BARRA DE TABS MOBILE + FAB: fuera de .layout para no heredar overflow:hidden/auto de .main/.content,
+fixed y siempre presentes en mobile sin importar que .screen este activo (asi el usuario siempre puede
+volver a "Inicio" aunque una accion del FAB lo haya llevado a una pantalla de escritorio). -->
+<div class="mobile-tabbar" id="mobile-tabbar">
+  <div class="mtab" data-tab="home" onclick="mobileGoTab('home')">
+    <span class="mtab-icon" id="mtab-icon-home"></span><span class="mtab-label" id="mtab-label-home">Inicio</span>
+  </div>
+  <div class="mtab" data-tab="stock" onclick="mobileGoTab('stock')">
+    <span class="mtab-icon" id="mtab-icon-stock"></span><span class="mtab-label" id="mtab-label-stock">Stock</span>
+  </div>
+  <div class="mtab" data-tab="servicio" onclick="mobileGoTab('servicio')">
+    <span class="mtab-icon" id="mtab-icon-servicio"></span><span class="mtab-label" id="mtab-label-servicio">Servicio</span>
+  </div>
+  <div class="mtab" data-tab="agenda" onclick="mobileGoTab('agenda')">
+    <span class="mtab-icon" id="mtab-icon-agenda"></span><span class="mtab-label" id="mtab-label-agenda">Agenda</span>
+  </div>
+  <div class="mtab" data-tab="mas" onclick="mobileGoTab('mas')">
+    <span class="mtab-icon" id="mtab-icon-mas"></span><span class="mtab-label" id="mtab-label-mas">Más</span>
+  </div>
+</div>
+
+<div class="mobile-fab" id="mobile-fab" onclick="mobileToggleFab()">
+  <svg width="26" height="26" viewBox="0 0 20 20" fill="none"><path d="M10 4.5V15.5M4.5 10H15.5" stroke="#0e1512" stroke-width="2.4" stroke-linecap="round"/></svg>
+</div>
+
+<div class="mobile-sheet-backdrop" id="mobile-sheet-backdrop" onclick="mobileCloseFab()"></div>
+<div class="mobile-sheet" id="mobile-sheet">
+  <div class="mobile-sheet-handle"></div>
+  <div class="mobile-sheet-title">Acción rápida</div>
+  <div id="mobile-sheet-actions"></div>
 </div>
 
 <!-- MODAL TIENDAS OPERACIONES -->
@@ -2056,6 +2177,25 @@ tr:hover td{background:var(--bg3);}
   </div>
 </div>
 
+<!-- NUEVA COMPRA (selector de unidad, mismo patron que "Nueva venta" -- usado por el FAB mobile) -->
+<div class="cel-modal-bg rd" id="dash-compra-modal">
+  <div style="background:var(--rd-card);border:1px solid var(--rd-border);border-radius:14px;padding:26px 28px;max-width:380px;width:100%;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <span style="font-size:16px;font-weight:700;color:var(--rd-text);">Nueva compra</span>
+      <span onclick="dashCerrarNuevaCompra()" style="cursor:pointer;color:var(--rd-text3);font-size:13px;">✕</span>
+    </div>
+    <span class="rd-label">Unidad de negocio</span>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px;">
+      <div class="rd-quick" style="flex-direction:row;align-items:center;padding:14px 16px;" onclick="dashElegirUnidadCompra('CELULARES')">
+        <span style="font-size:18px;">📱</span><span style="font-size:13.5px;font-weight:600;color:var(--rd-text);">Celulares</span>
+      </div>
+      <div class="rd-quick" style="flex-direction:row;align-items:center;padding:14px 16px;" onclick="dashElegirUnidadCompra('TIENDAS')">
+        <span style="font-size:18px;">🏬</span><span style="font-size:13.5px;font-weight:600;color:var(--rd-text);">Tienda</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- DETALLE DE DEUDA -->
 <div class="cel-modal-bg" id="deu-det-modal">
   <div class="cel-modal" style="max-width:640px;">
@@ -2393,15 +2533,297 @@ function fmtSmartUSD(usdAmount){
   return fmtUSD(usdAmount);
 }
 
-// Cajon de navegacion mobile: el sidebar es el mismo de siempre, solo se le agrega la clase
-// "open" (fuera del breakpoint mobile la clase no tiene efecto, css la ignora).
-function toggleMobileSidebar(){
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('mobile-nav-backdrop').classList.toggle('show');
+// Al navegar a cualquier pantalla "de escritorio" (via go/goCel/goTie/goServ) se muestra de
+// nuevo el topbar clasico, que el shell mobile (barra de tabs) oculta mientras esta activo.
+function mostrarTopbarMobile(){
+  var tb=document.querySelector('.topbar');
+  if(tb)tb.classList.remove('mobile-hide');
 }
-function closeMobileSidebar(){
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('mobile-nav-backdrop').classList.remove('show');
+
+// ============ MOBILE SHELL (Inicio/Stock/Servicio/Agenda/Mas + FAB) ============
+// App mobile-first del mockup _design_handoff/DM Store Mobile.dc.html -- no es un reflow del
+// desktop, es su propia navegacion (barra de tabs) con estado propio (mobileTab), separada del
+// sistema go()/screen de escritorio pero viviendo dentro de un .screen mas (screen-mobile-home)
+// para que una accion del FAB que navegue a una pantalla de escritorio la oculte igual que a
+// cualquier otra pantalla.
+var mobileTab='home',mobileFabOpen=false;
+var mobileStockSub='celulares',mobileStockQuery='';
+var mobileAgendaSub='hoy';
+var mobileRepairFilter='Todas';
+
+var MOBILE_TABS=[
+  {key:'home',label:'Inicio',icon:'home'},
+  {key:'stock',label:'Stock',icon:'stock'},
+  {key:'servicio',label:'Servicio',icon:'wrench'},
+  {key:'agenda',label:'Agenda',icon:'calendar'},
+  {key:'mas',label:'Más',icon:'more'}
+];
+var MOBILE_ICONS={
+  home:function(c){return '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 11.5L12 4l8 7.5" stroke="'+c+'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9h12v-9" stroke="'+c+'" stroke-width="1.8" stroke-linejoin="round"/></svg>';},
+  stock:function(c){return '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="4" y="7" width="16" height="13" rx="2" stroke="'+c+'" stroke-width="1.8"/><path d="M8 7V5.5A2.5 2.5 0 0 1 10.5 3h3A2.5 2.5 0 0 1 16 5.5V7" stroke="'+c+'" stroke-width="1.8"/></svg>';},
+  wrench:function(c){return '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M14.5 6.5a4 4 0 0 0-5.4 4.8L4 16.4V20h3.6l5.1-5.1a4 4 0 0 0 4.8-5.4l-2.6 2.6-2-2 2.6-2.6z" stroke="'+c+'" stroke-width="1.7" stroke-linejoin="round"/></svg>';},
+  calendar:function(c){return '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="4" y="5.5" width="16" height="14" rx="2" stroke="'+c+'" stroke-width="1.8"/><path d="M4 9.5h16M8 3.5v3M16 3.5v3" stroke="'+c+'" stroke-width="1.8" stroke-linecap="round"/></svg>';},
+  more:function(c){return '<svg width="22" height="22" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.9" fill="'+c+'"/><circle cx="12" cy="12" r="1.9" fill="'+c+'"/><circle cx="19" cy="12" r="1.9" fill="'+c+'"/></svg>';}
+};
+
+var MOBILE_FAB_ACTIONS=[
+  {emoji:'💳',label:'Nueva Venta',bg:'rgba(62,207,142,0.14)',run:function(){dashAbrirNuevaVenta();}},
+  {emoji:'🛒',label:'Nueva Compra',bg:'rgba(255,255,255,0.06)',run:function(){dashAbrirNuevaCompra();}},
+  {emoji:'🔧',label:'Nueva Reparación',bg:'rgba(255,107,107,0.14)',run:function(){servAbrirNueva();}},
+  {emoji:'📦',label:'Nueva Reserva',bg:'rgba(245,166,35,0.14)',run:function(){celReservaAbrirNueva();}},
+  {emoji:'📱',label:'Agregar Celular al Stock',bg:'rgba(255,255,255,0.06)',run:function(){celAbrirOp('compra');}},
+  {emoji:'💰',label:'Movimiento Financiero',bg:'rgba(62,207,142,0.14)',run:function(){go('cargar',document.getElementById('nav-cargar'));}},
+  {emoji:'📅',label:'Nuevo Evento / Tarea',bg:'rgba(255,255,255,0.06)',run:function(){agendaAbrirNuevo();}}
+];
+
+function mobileGoTab(tab){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.nav-item,.nav-subitem').forEach(function(n){n.classList.remove('active');});
+  document.getElementById('screen-mobile-home').classList.add('active');
+  var tb=document.querySelector('.topbar');if(tb)tb.classList.add('mobile-hide');
+  mobileTab=tab;
+  mobileCloseFab();
+  renderMobileShell();
+}
+
+function renderMobileShell(){
+  document.querySelectorAll('.mtab').forEach(function(el){
+    var key=el.dataset.tab,active=key===mobileTab;
+    el.classList.toggle('active',active);
+    var iconEl=document.getElementById('mtab-icon-'+key);
+    var cfg=MOBILE_TABS.find(function(t){return t.key===key;});
+    if(iconEl&&cfg)iconEl.innerHTML=MOBILE_ICONS[cfg.icon](active?'#f4f4f2':'#5c5e66');
+  });
+  var el=document.getElementById('mobile-content');
+  if(!el)return;
+  if(mobileTab==='home')el.innerHTML=mobileRenderHome();
+  else if(mobileTab==='stock')el.innerHTML=mobileRenderStock();
+  else if(mobileTab==='servicio')el.innerHTML=mobileRenderServicio();
+  else if(mobileTab==='agenda')el.innerHTML=mobileRenderAgenda();
+  else if(mobileTab==='mas')el.innerHTML=mobileRenderMas();
+}
+
+function mobileToggleFab(){mobileFabOpen=!mobileFabOpen;mobileRenderFab();}
+function mobileCloseFab(){if(!mobileFabOpen)return;mobileFabOpen=false;mobileRenderFab();}
+function mobileRenderFab(){
+  document.getElementById('mobile-fab').classList.toggle('open',mobileFabOpen);
+  document.getElementById('mobile-sheet-backdrop').classList.toggle('show',mobileFabOpen);
+  document.getElementById('mobile-sheet').classList.toggle('show',mobileFabOpen);
+}
+function mobileRenderSheetActions(){
+  document.getElementById('mobile-sheet-actions').innerHTML=MOBILE_FAB_ACTIONS.map(function(a,i){
+    return'<div class="msheet-action" onclick="mobileFabAction('+i+')">'+
+      '<div class="msheet-action-icon" style="background:'+a.bg+';">'+a.emoji+'</div>'+
+      '<span class="msheet-action-label">'+a.label+'</span></div>';
+  }).join('');
+}
+function mobileFabAction(i){
+  mobileCloseFab();
+  MOBILE_FAB_ACTIONS[i].run();
+}
+
+// ── Inicio: mismos criterios que ya usa renderDashboardHome() para las señales
+// (reservas/reparaciones pendientes, stock bajo) y calcCajaDisponible() para la caja. ──
+function mobileRenderHome(){
+  var hoy=new Date();
+  var horaSaludo=hoy.getHours()<12?'Buenos días':hoy.getHours()<19?'Buenas tardes':'Buenas noches';
+  var dias=['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
+  var meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  var hoyStr=hoy.toISOString().slice(0,10);
+  var caja=calcCajaDisponible();
+
+  var reparacionesPendientes=reparaciones.filter(function(r){return SERV_ESTADOS_NO_ENTREGADO.indexOf(r.estado)>-1;}).length;
+  var reservasPendientes=celReservaItems.filter(function(i){return i.estado==='PENDIENTE';}).length;
+  var eventosHoy=agenda.filter(function(a){return a.fecha===hoyStr&&a.estado!=='CANCELADA';}).length;
+  var tareasPendientes=agenda.filter(function(a){return a.estado!=='COMPLETADA'&&a.estado!=='CANCELADA';}).length;
+
+  var stockCelulares=celulares.filter(function(c){return c.estado==='EN STOCK';}).length;
+  var stockTiendas=productosTiendas.length;
+
+  var proximos=agenda.filter(function(a){return a.fecha>=hoyStr&&a.estado!=='CANCELADA'&&a.estado!=='COMPLETADA';})
+    .sort(function(a,b){return(a.fecha+(a.hora||'')).localeCompare(b.fecha+(b.hora||''));})
+    .slice(0,4);
+
+  var pendingCards=[
+    {emoji:'🔧',count:reparacionesPendientes,label:'Reparaciones pendientes',onClick:"mobileGoTab('servicio')"},
+    {emoji:'📦',count:reservasPendientes,label:'Reservas pendientes',onClick:"goCel('cel-reservas')"},
+    {emoji:'📅',count:eventosHoy,label:'Eventos de hoy',onClick:"mobileGoTab('agenda')"},
+    {emoji:'✅',count:tareasPendientes,label:'Tareas pendientes',onClick:"mobileGoTab('agenda')"}
+  ];
+
+  return(
+    '<div class="mhome-header">'+
+      '<div><div class="mhome-greeting">'+horaSaludo+', Agustin 👋</div><div class="mhome-sub">Hoy es '+dias[hoy.getDay()]+' '+hoy.getDate()+' de '+meses[hoy.getMonth()]+'</div></div>'+
+      '<div class="mhome-bell" onclick="mobileGoTab(\'mas\')"><svg width="17" height="17" viewBox="0 0 20 20" fill="none"><path d="M10 2C7 2 5 4.2 5 7.5v2.8L3.5 13h13L15 10.3V7.5C15 4.2 13 2 10 2Z" stroke="#8b8d97" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 15.5a2 2 0 0 0 4 0" stroke="#8b8d97" stroke-width="1.5" stroke-linecap="round"/></svg></div>'+
+    '</div>'+
+    '<div class="mcaja-card">'+
+      '<div class="meyebrow" style="margin-bottom:14px;">Caja disponible</div>'+
+      '<div class="mcaja-split">'+
+        '<div class="mcaja-box ars"><div class="mcaja-box-label" style="color:var(--rd-green);">ARS</div><div class="mcaja-box-val">'+fmtARS(caja.cajaTot)+'</div></div>'+
+        '<div class="mcaja-box usd"><div class="mcaja-box-label" style="color:var(--rd-text2);">USD</div><div class="mcaja-box-val">'+fmtUSD(caja.cajaUSD)+'</div></div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="meyebrow">Actividad pendiente</div>'+
+    '<div class="mgrid2">'+
+      pendingCards.map(function(pc){
+        return'<div class="mcard mcard-pending" onclick="'+pc.onClick+'"><span class="mcard-emoji">'+pc.emoji+'</span><div class="mcard-count">'+pc.count+'</div><div class="mcard-label">'+pc.label+'</div></div>';
+      }).join('')+
+    '</div>'+
+    '<div class="meyebrow">Stock</div>'+
+    '<div class="mgrid2">'+
+      '<div class="mcard" onclick="mobileGoTab(\'stock\')"><div class="mcard-stock-title">📱 Celulares</div><div class="mcard-stock-val">'+stockCelulares+'</div><div class="mcard-stock-sub">disponibles</div></div>'+
+      '<div class="mcard" onclick="mobileGoTab(\'stock\')"><div class="mcard-stock-title">🏬 Tiendas</div><div class="mcard-stock-val">'+stockTiendas+'</div><div class="mcard-stock-sub">productos</div></div>'+
+    '</div>'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'+
+      '<span class="meyebrow" style="margin-bottom:0;">Próximos</span>'+
+      '<span style="font-size:12.5px;color:var(--rd-green);font-weight:600;cursor:pointer;" onclick="mobileGoTab(\'agenda\')">Ver agenda</span>'+
+    '</div>'+
+    '<div class="mlist-card">'+
+      (proximos.length?proximos.map(function(ev){
+        var meta=AGTIPO_META[ev.tipo]||{label:ev.tipo};
+        var dotColor=AGPRIOR_COLORS[ev.prioridad]||'#8b8d97';
+        var horaTxt=ev.hora?ev.hora.slice(0,5):fd(ev.fecha);
+        return'<div class="mevent-row" onclick="agendaAbrirEditar('+ev.id+')">'+
+          '<div class="mevent-dot" style="background:'+dotColor+';"></div>'+
+          '<div style="flex:1;min-width:0;"><div class="mevent-title">'+ev.titulo+'</div><div class="mevent-tag">'+meta.label+'</div></div>'+
+          '<div class="mevent-time">'+horaTxt+'</div>'+
+        '</div>';
+      }).join(''):'<div class="mempty">Sin próximos eventos.</div>')+
+    '</div>'
+  );
+}
+
+// ── Stock: Celulares se agrupa por marca+modelo+color (a diferencia del desktop, que lista
+// IMEI por IMEI) porque en una lista mobile una fila por unidad fisica no aporta nada util --
+// el chip de stock muestra la cantidad agrupada. Tiendas usa el array/campos tal cual, mismos
+// umbrales de color que ya usa tieRenderTabla(). ──
+function mobileSetStockSub(sub){mobileStockSub=sub;mobileStockQuery='';renderMobileShell();}
+function mobileStockSearch(val){mobileStockQuery=val;renderMobileShell();}
+function mobileRenderStock(){
+  var q=(mobileStockQuery||'').trim().toLowerCase();
+  var html='<div class="mscreen-title">Stock</div>'+
+    '<div class="mpill-group">'+
+      '<div class="mpill'+(mobileStockSub==='celulares'?' active':'')+'" onclick="mobileSetStockSub(\'celulares\')">Celulares · '+celulares.filter(function(c){return c.estado==='EN STOCK';}).length+'</div>'+
+      '<div class="mpill'+(mobileStockSub==='tiendas'?' active':'')+'" onclick="mobileSetStockSub(\'tiendas\')">Tiendas · '+productosTiendas.length+'</div>'+
+    '</div>'+
+    '<div class="msearch"><svg width="15" height="15" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6.5" stroke="#5c5e66" stroke-width="1.6"/><path d="M14 14L18 18" stroke="#5c5e66" stroke-width="1.6" stroke-linecap="round"/></svg>'+
+    '<input type="text" placeholder="Buscar producto..." value="'+(mobileStockQuery||'').replace(/"/g,'&quot;')+'" oninput="mobileStockSearch(this.value)"></div>';
+
+  if(mobileStockSub==='celulares'){
+    var grupos={},orden=[];
+    celulares.filter(function(c){return c.estado==='EN STOCK';}).forEach(function(c){
+      var key=((c.marca||'')+' '+(c.modelo||'')+(c.color?' '+c.color:'')).trim();
+      if(!grupos[key]){grupos[key]={name:key,price:c.precio_lista,count:0};orden.push(key);}
+      grupos[key].count++;
+    });
+    var rows=orden.map(function(k){return grupos[k];});
+    if(q)rows=rows.filter(function(r){return r.name.toLowerCase().indexOf(q)>-1;});
+    html+=rows.length?rows.map(function(r){
+      return'<div class="mstock-row"><div class="mstock-icon">📱</div><div style="flex:1;min-width:0;"><div class="mstock-name">'+r.name+'</div><div class="mstock-price">'+fmtARS(r.price)+'</div></div>'+
+        '<div class="mstock-chip" style="background:rgba(62,207,142,0.14);color:var(--rd-green);">'+r.count+'</div></div>';
+    }).join(''):'<div class="mempty">Sin equipos en stock.</div>';
+  }else{
+    var list=productosTiendas.slice();
+    if(q)list=list.filter(function(p){return(p.descripcion||'').toLowerCase().indexOf(q)>-1;});
+    html+=list.length?list.map(function(p){
+      var st=parseInt(p.stock)||0;
+      var chipStyle=st<=0?'background:rgba(255,107,107,0.14);color:#ff6b6b;':st<5?'background:rgba(245,166,35,0.14);color:#f5a623;':'background:rgba(62,207,142,0.14);color:var(--rd-green);';
+      return'<div class="mstock-row" onclick="tdetAbrir('+p.id+')"><div class="mstock-icon">🛍️</div><div style="flex:1;min-width:0;"><div class="mstock-name">'+(p.descripcion||'-')+'</div><div class="mstock-price">'+fmtARS(p.precio_venta_ars)+'</div></div>'+
+        '<div class="mstock-chip" style="'+chipStyle+'">'+st+'</div></div>';
+    }).join(''):'<div class="mempty">Sin productos.</div>';
+  }
+  return html;
+}
+
+// ── Servicio: mismo set de reparaciones "no entregadas" que ya usa servRenderPendientes() en
+// desktop. "Listas" = REPARADO, "En proceso" = todo lo demas no entregado. ──
+function mobileSetRepairFilter(f){mobileRepairFilter=f;renderMobileShell();}
+function mobileRenderServicio(){
+  var pendientes=reparaciones.filter(function(r){return SERV_ESTADOS_NO_ENTREGADO.indexOf(r.estado)>-1;});
+  var lista=pendientes.filter(function(r){
+    if(mobileRepairFilter==='Todas')return true;
+    if(mobileRepairFilter==='Listas')return r.estado==='REPARADO';
+    return r.estado!=='REPARADO';
+  }).sort(function(a,b){return(b.fecha_ingreso||'').localeCompare(a.fecha_ingreso||'');});
+
+  var html='<div class="mscreen-title">Servicio Técnico</div>'+
+    '<div class="mfilter-row">'+
+      ['Todas','En proceso','Listas'].map(function(f){
+        return'<div class="mfilter-chip'+(mobileRepairFilter===f?' active':'')+'" onclick="mobileSetRepairFilter(\''+f+'\')">'+f+'</div>';
+      }).join('')+
+    '</div>';
+
+  html+=lista.length?lista.map(function(r){
+    var meta=SERV_ESTADO_META[r.estado]||{label:r.estado,color:'#8b8d97'};
+    var dias=servDiasEnTaller(r);
+    return'<div class="mrepair-card" onclick="servAbrirNueva('+r.id+')">'+
+      '<div class="mrepair-top"><span class="mrepair-device">'+(r.marca||'')+' '+(r.modelo||'')+'</span>'+
+      '<span class="mstatus-chip" style="background:'+meta.color+'22;color:'+meta.color+';">'+meta.label+'</span></div>'+
+      '<div class="mrepair-sub">'+(r.cliente||'-')+' · '+(r.trabajo_a_realizar||'-')+'</div>'+
+      '<div class="mrepair-date">Ingresó hace '+(dias!==null?dias+' dia'+(dias===1?'':'s'):'-')+'</div>'+
+      '</div>';
+  }).join(''):'<div class="mempty">Sin reparaciones en este filtro.</div>';
+  return html;
+}
+
+function mobileSetAgendaSub(sub){mobileAgendaSub=sub;renderMobileShell();}
+function mobileRenderAgenda(){
+  var hoyStr=new Date().toISOString().slice(0,10);
+  var limite=new Date();limite.setDate(limite.getDate()+7);
+  var limiteStr=limite.toISOString().slice(0,10);
+
+  var lista=agenda.filter(function(a){
+    if(a.estado==='CANCELADA')return false;
+    if(mobileAgendaSub==='hoy')return a.fecha===hoyStr;
+    return a.fecha>=hoyStr&&a.fecha<=limiteStr;
+  }).sort(function(a,b){return(a.fecha+(a.hora||'')).localeCompare(b.fecha+(b.hora||''));});
+
+  var html='<div class="mscreen-title">Agenda</div>'+
+    '<div class="mpill-group">'+
+      '<div class="mpill'+(mobileAgendaSub==='hoy'?' active':'')+'" onclick="mobileSetAgendaSub(\'hoy\')">Hoy</div>'+
+      '<div class="mpill'+(mobileAgendaSub==='semana'?' active':'')+'" onclick="mobileSetAgendaSub(\'semana\')">Semana</div>'+
+    '</div>';
+
+  html+=lista.length?lista.map(function(ev){
+    var meta=AGTIPO_META[ev.tipo]||{label:ev.tipo};
+    var barColor=AGPRIOR_COLORS[ev.prioridad]||'#8b8d97';
+    var horaTxt=ev.hora?ev.hora.slice(0,5):fd(ev.fecha);
+    return'<div class="magenda-row" onclick="agendaAbrirEditar('+ev.id+')">'+
+      '<div class="magenda-bar" style="background:'+barColor+';"></div>'+
+      '<div style="flex:1;min-width:0;"><div class="mevent-title">'+ev.titulo+'</div><div class="mevent-tag">'+meta.label+'</div></div>'+
+      '<div class="mevent-time">'+horaTxt+'</div>'+
+      '</div>';
+  }).join(''):'<div class="mempty">Sin actividades en este rango.</div>';
+  return html;
+}
+
+// "Cerrar sesion" del mockup se omite: la app no tiene login/sesion que cerrar.
+var MOBILE_MORE_GROUPS=[
+  {title:'Finanzas',items:[
+    {emoji:'💰',label:'Caja',onClick:"go('caja',null)"},
+    {emoji:'🔁',label:'Movimientos',onClick:"go('movimientos',null)"},
+    {emoji:'📊',label:'Métricas',onClick:"go('metricas',null)"}
+  ]},
+  {title:'Contactos',items:[
+    {emoji:'👤',label:'Clientes',onClick:"go('clientes',null)"},
+    {emoji:'🏭',label:'Proveedores',onClick:"go('proveedores',null)"},
+    {emoji:'📄',label:'Deudores',onClick:"go('deudores',null)"}
+  ]},
+  {title:'Sistema',items:[
+    {emoji:'⚙️',label:'Configuración',onClick:"go('config',null)"}
+  ]}
+];
+function mobileRenderMas(){
+  var html='<div class="mscreen-title">Más</div>';
+  html+=MOBILE_MORE_GROUPS.map(function(g){
+    return'<div class="mmore-group"><div class="meyebrow">'+g.title+'</div><div class="mmore-list">'+
+      g.items.map(function(it){
+        return'<div class="mmore-row" onclick="'+it.onClick+'"><span class="mmore-emoji">'+it.emoji+'</span><span class="mmore-label">'+it.label+'</span>'+
+          '<svg width="7" height="12" viewBox="0 0 8 14"><path d="M1 1l6 6-6 6" stroke="#4a4c54" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
+      }).join('')+
+      '</div></div>';
+  }).join('');
+  return html;
 }
 
 function go(name,el){
@@ -2420,7 +2842,7 @@ function go(name,el){
   if(name==='deudores')renderDeudores();
   if(name==='clientes')renderClientes();
   if(name==='agenda'){if(window.innerWidth<768)agendaVista='lista';if(agendaVista==='calendario')renderAgendaCalendario();else renderAgenda();}
-  closeMobileSidebar();
+  mostrarTopbarMobile();
 }
 
 function populateSelects(){
@@ -3261,6 +3683,13 @@ function dashElegirUnidadVenta(unidad){
   dashCerrarNuevaVenta();
   if(unidad==='CELULARES')celAbrirOp('venta');
   else tieAbrirOp('venta');
+}
+function dashAbrirNuevaCompra(){document.getElementById('dash-compra-modal').classList.add('show');}
+function dashCerrarNuevaCompra(){document.getElementById('dash-compra-modal').classList.remove('show');}
+function dashElegirUnidadCompra(unidad){
+  dashCerrarNuevaCompra();
+  if(unidad==='CELULARES')celAbrirOp('compra');
+  else tieAbrirOp('compra');
 }
 
 function renderDashboardHome(){
@@ -5089,7 +5518,7 @@ function goCel(name,el){
   if(name==='cel-resumen')celRenderResumen();
   else if(name==='cel-reservas')celRenderReservas();
   else celRenderTabla(name.replace('cel-',''));
-  closeMobileSidebar();
+  mostrarTopbarMobile();
 }
 
 async function celCargarDatos(){
@@ -6667,7 +7096,7 @@ function goTie(name,el){
   document.getElementById('page-title').textContent=titles[name]||name;
   if(name==='tie-resumen')tieRenderResumen();
   else tieRenderTabla(name.replace('tie-',''));
-  closeMobileSidebar();
+  mostrarTopbarMobile();
 }
 
 var servSubMenuOpen=false;
@@ -6683,7 +7112,7 @@ function goServ(name,el){
     document.getElementById('screen-unidad').classList.add('active');
     if(el)el.classList.add('active');
     setU('SERVICIO TECNICO');
-    closeMobileSidebar();
+    mostrarTopbarMobile();
     return;
   }
   document.getElementById('screen-'+name).classList.add('active');
@@ -6691,7 +7120,7 @@ function goServ(name,el){
   var titles={'serv-pendientes':'Servicio Técnico — Pendientes','serv-entregados':'Servicio Técnico — Entregados'};
   document.getElementById('page-title').textContent=titles[name]||name;
   servRenderTabla(name.replace('serv-',''));
-  closeMobileSidebar();
+  mostrarTopbarMobile();
 }
 
 async function tieCargarDatos(){
@@ -8104,15 +8533,20 @@ window.addEventListener('DOMContentLoaded',function(){
   document.getElementById('f-fecha').value=new Date().toISOString().slice(0,10);
   populateSelects();
   fetchDolar(false);
-  cargarDatos();
-  celCargarDatos();
-  tieCargarDatos();
-  cargarProveedores();
-  cargarDeudas();
-  cargarClientes();
-  cargarReparaciones();
-  cargarAgenda();
-  cargarCelularesReservas();
+  mobileRenderSheetActions();
+  // En mobile arranca directo en el shell (Inicio) en vez del Dashboard de escritorio -- se
+  // renderiza ya mismo (con lo que haya, probablemente vacio) para que la pantalla no quede en
+  // blanco, y de nuevo cuando terminen de cargar los datos reales. No hay listener de resize:
+  // forzar la navegacion si alguien angosta la ventana ya en otra pantalla seria mas confuso
+  // que util -- la barra de tabs/FAB ya aparecen solos via CSS en cualquier ancho <768px.
+  var esMobile=window.innerWidth<768;
+  if(esMobile)mobileGoTab('home');
+  Promise.all([
+    cargarDatos(),celCargarDatos(),tieCargarDatos(),cargarProveedores(),
+    cargarDeudas(),cargarClientes(),cargarReparaciones(),cargarAgenda(),cargarCelularesReservas()
+  ]).then(function(){
+    if(esMobile)renderMobileShell();
+  });
 });
 </script>
 
