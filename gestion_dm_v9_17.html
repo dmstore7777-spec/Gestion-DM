@@ -4204,12 +4204,27 @@ function movDetCorrelacionar(m){
     res.cliente=celR?celR.marca+' '+celR.modelo+' (IMEI:'+celR.imei+')':imeiMatch[1];
     res.items=[{producto:m.desc.replace(' IMEI:'+imeiMatch[1],''),cantidad:1,precioUnit:m.egreso,subtotal:m.egreso}];
   }else if(m.unidad==='TIENDAS'&&m.operacion==='VENTAS'){
-    var candV=ventasTiendas.filter(function(v){return v.fecha===m.fecha&&(v.cliente||'')===(m.nota||'')&&(v.metodo_pago||'').toUpperCase()===m.metodo;});
-    var matchedV=movDetPickByTime(candV,m.ingreso,m.createdAt,function(v){return parseFloat(v.total)||0;},function(v){return v.created_at;});
-    if(!matchedV.length)matchedV=candV;
+    // Cada fila de ventas_tiendas ya guarda el movimiento_id que la genero (ver tieGuardarOp /
+    // tieGuardarDesdeForm) -- es el link directo y confiable, a diferencia del heuristico por
+    // fecha+cliente+metodo de abajo, que solo queda como respaldo para registros viejos que por
+    // algun motivo no tengan movimiento_id cargado.
+    var matchedV=ventasTiendas.filter(function(v){return String(v.movimiento_id)===String(m.id);});
+    if(!matchedV.length){
+      var candV=ventasTiendas.filter(function(v){return v.fecha===m.fecha&&(v.cliente||'')===(m.nota||'')&&(v.metodo_pago||'').toUpperCase()===m.metodo;});
+      matchedV=movDetPickByTime(candV,m.ingreso,m.createdAt,function(v){return parseFloat(v.total)||0;},function(v){return v.created_at;});
+      if(!matchedV.length)matchedV=candV;
+    }
     res.clienteLabel='Cliente';
     res.cliente=m.nota||'-';
-    res.items=matchedV.map(function(v){return{producto:v.codigo+(v.descripcion?' - '+v.descripcion:''),cantidad:v.cantidad||1,precioUnit:parseFloat(v.precio_unitario)||0,subtotal:parseFloat(v.total)||0};});
+    res.items=matchedV.map(function(v){
+      var precioLista=parseFloat(v.precio_lista)||0,precioUnit=parseFloat(v.precio_unitario)||0;
+      return{
+        codigo:v.codigo||'-',producto:v.codigo+(v.descripcion?' - '+v.descripcion:''),
+        cantidad:v.cantidad||1,precioUnit:precioUnit,
+        descuento:precioLista>precioUnit?(precioLista-precioUnit)*(v.cantidad||1):0,
+        subtotal:parseFloat(v.total)||0
+      };
+    });
   }else if(m.unidad==='TIENDAS'&&m.operacion==='COMPRA'){
     var candC=comprasTiendas.filter(function(c){return c.fecha===m.fecha&&(c.metodo_pago||'').toUpperCase()===m.metodo;});
     var matchedC=movDetPickByTime(candC,m.egreso,m.createdAt,function(c){return parseFloat(c.total_ars)||0;},function(c){return c.created_at;});
@@ -4245,20 +4260,28 @@ function abrirDetalleMov(id){
   if(!m){showToast('No se encontro el movimiento',true);return;}
   var d=movDetCorrelacionar(m);
   var total=m.ingreso||m.egreso||0;
+  var hayDescuentos=d.items.some(function(it){return it.descuento;});
   var itemsHtml=d.items.length
     ?'<table style="width:100%;font-size:12px;margin-top:6px;"><thead><tr>'+
       '<th style="text-align:left;padding:6px 4px;color:var(--text3);font-size:10px;text-transform:uppercase;font-family:monospace;">Producto</th>'+
       '<th style="text-align:right;padding:6px 4px;color:var(--text3);font-size:10px;text-transform:uppercase;font-family:monospace;">Cant.</th>'+
       '<th style="text-align:right;padding:6px 4px;color:var(--text3);font-size:10px;text-transform:uppercase;font-family:monospace;">P. unitario</th>'+
+      (hayDescuentos?'<th style="text-align:right;padding:6px 4px;color:var(--text3);font-size:10px;text-transform:uppercase;font-family:monospace;">Descuento</th>':'')+
       '<th style="text-align:right;padding:6px 4px;color:var(--text3);font-size:10px;text-transform:uppercase;font-family:monospace;">Subtotal</th>'+
       '</tr></thead><tbody>'+
       d.items.map(function(it){return'<tr>'+
         '<td style="padding:6px 4px;border-top:1px solid var(--border);">'+it.producto+'</td>'+
         '<td style="padding:6px 4px;border-top:1px solid var(--border);text-align:right;font-family:monospace;">'+it.cantidad+'</td>'+
         '<td style="padding:6px 4px;border-top:1px solid var(--border);text-align:right;font-family:monospace;">'+fmtARS(it.precioUnit)+'</td>'+
+        (hayDescuentos?'<td style="padding:6px 4px;border-top:1px solid var(--border);text-align:right;font-family:monospace;color:var(--red);">'+(it.descuento?'-'+fmtARS(it.descuento):'-')+'</td>':'')+
         '<td style="padding:6px 4px;border-top:1px solid var(--border);text-align:right;font-family:monospace;">'+fmtARS(it.subtotal)+'</td>'+
         '</tr>';}).join('')+
-      '</tbody></table>'
+      '</tbody></table>'+
+      '<div style="display:flex;justify-content:flex-end;gap:18px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;color:var(--text2);">'+
+        '<span>Productos: <strong style="color:var(--text);font-family:monospace;">'+d.items.length+'</strong></span>'+
+        '<span>Unidades: <strong style="color:var(--text);font-family:monospace;">'+d.items.reduce(function(s,it){return s+(parseFloat(it.cantidad)||0);},0)+'</strong></span>'+
+        '<span>Importe final: <strong style="color:var(--text);font-family:monospace;">'+fmtARS(d.items.reduce(function(s,it){return s+(parseFloat(it.subtotal)||0);},0))+'</strong></span>'+
+      '</div>'
     :'<div style="font-size:12px;color:var(--text3);margin-top:6px;">Sin detalle de productos disponible para este movimiento.</div>';
   var equipoRow=d.equipo?'<div><div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:3px;">EQUIPO</div><div style="font-size:13px;">'+d.equipo+'</div></div>':'';
   var esFinanciero=m.operacion==='FINANCIERO';
