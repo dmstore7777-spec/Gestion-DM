@@ -563,6 +563,9 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
       <div class="nav-subitem" onclick="goTie('tie-resumen',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Resumen
       </div>
+      <div class="nav-subitem" onclick="goTie('tie-combos',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M3 11h18"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Combos
+      </div>
     </div>
     <div class="nav-item" id="nav-servicio-toggle" onclick="toggleServSubMenu()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
@@ -928,6 +931,7 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
               <div class="cel-fgroup"><label>Estado equipo</label>
                 <select id="nc-estado-eq"><option>NUEVO</option><option>SEMI NUEVO</option><option>USADO</option></select></div>
               <div class="cel-fgroup"><label>Precio costo</label><div style="display:flex;gap:4px;"><input type="number" id="nc-costo" placeholder="0" min="0" style="flex:1;min-width:0;"><select id="nc-costo-moneda" style="width:72px;flex-shrink:0;"><option value="ARS">ARS</option><option value="USD">USD</option></select></div></div>
+              <div class="cel-fgroup"><label>Envio (opcional, misma moneda)</label><input type="number" id="nc-envio" placeholder="0" min="0"></div>
               <div class="cel-fgroup"><label>Precio lista (ARS)</label><input type="number" id="nc-lista" placeholder="0" min="0"></div>
               <div class="cel-fgroup"><label>Gtia proveedor (m)</label><input type="number" id="nc-gtia" placeholder="0" min="0"></div>
               <div class="cel-fgroup cel-form-full"><label>Proveedor</label>
@@ -967,6 +971,22 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
           </div>
           <div id="venta-carrito" style="margin-bottom:14px;"></div>
           <div id="venta-form-ext">
+            <div class="ganancia-box" style="margin-bottom:10px;">
+              <div><div class="ganancia-label">Precio sugerido</div></div>
+              <div class="ganancia-val" id="venta-precio-sugerido">$0</div>
+            </div>
+            <div class="cel-fgroup cel-form-full" style="margin-bottom:10px;">
+              <label>¿Como se reparte el descuento?</label>
+              <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:4px;font-size:12px;color:var(--text2);">
+                <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="venta-modo-precio" value="proporcional" checked onchange="ventaCambiarModoPrecio(this.value)"> Repartir proporcionalmente</label>
+                <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="venta-modo-precio" value="ultimo" onchange="ventaCambiarModoPrecio(this.value)"> Solo al ultimo producto</label>
+                <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="venta-modo-precio" value="manual" onchange="ventaCambiarModoPrecio(this.value)"> Manual</label>
+              </div>
+            </div>
+            <div class="cel-fgroup cel-form-full" style="margin-bottom:14px;">
+              <label>Precio final de la venta (ARS)</label>
+              <input type="number" id="venta-precio-final" min="0" step="0.01" placeholder="0" oninput="ventaAplicarPrecioFinal()" style="width:100%;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--green);font-family:monospace;font-size:14px;font-weight:600;outline:none;">
+            </div>
             <div class="cel-form-grid">
               <div class="cel-fgroup"><label>Cliente</label><div class="ac-wrap"><input type="text" id="venta-cliente" placeholder="Nombre..." autocomplete="off" oninput="cliAutocomplete(this,'venta-cliente-ac')"><div class="ac-dropdown" id="venta-cliente-ac"></div></div></div>
               <div class="cel-fgroup cel-form-full">
@@ -1008,6 +1028,17 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
               <div class="ganancia-val" id="venta-ganancia">$0</div>
             </div>
             <div id="venta-saldo-box" style="display:none;background:var(--bg3);border-radius:var(--r);padding:14px;margin-top:12px;font-size:12px;"></div>
+            <div style="font-size:10px;color:var(--text3);font-family:monospace;margin:14px 0 8px;text-transform:uppercase;letter-spacing:0.08em;">Accesorios (opcional)</div>
+            <div style="display:flex;gap:8px;margin-bottom:12px;">
+              <div class="ac-wrap" style="flex:1;">
+                <input type="text" id="venta-accesorio-codigo-input" placeholder="Codigo o descripcion del accesorio..." autocomplete="off" oninput="tieAutocomplete(this,'venta-accesorio-ac')" onkeydown="tieAutocompleteKey(event,'venta-accesorio-ac',function(c){tieAutocompleteSelect('venta-accesorio-codigo-input','venta-accesorio-ac',c);})" style="width:100%;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;text-transform:uppercase;">
+                <div class="ac-dropdown" id="venta-accesorio-ac"></div>
+              </div>
+              <input type="number" id="venta-accesorio-cantidad-input" placeholder="Cant." min="1" value="1" style="width:80px;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+              <button class="btn" onclick="ventaAccesorioAgregar()">+ Agregar</button>
+            </div>
+            <div id="venta-accesorios-carrito" style="margin-bottom:8px;"></div>
+            <div style="font-size:11px;color:var(--text3);font-family:monospace;margin-bottom:14px;" id="venta-accesorios-total"></div>
             <div style="font-size:10px;color:var(--text3);font-family:monospace;margin:14px 0 8px;text-transform:uppercase;letter-spacing:0.08em;">Parte de pago (opcional)</div>
             <div style="display:flex;gap:8px;margin-bottom:8px;">
               <input type="text" id="pp-imei-input" placeholder="IMEI del celular como parte de pago..." style="flex:1;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
@@ -1045,10 +1076,10 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
 
         <!-- CELULARES: REPARACION / REPUESTO -->
         <div id="f-cel-reparacion" style="display:none;">
-          <div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Buscar celular por IMEI</div>
-          <div style="display:flex;gap:8px;margin-bottom:12px;">
-            <input type="text" id="rep-imei-input" placeholder="IMEI del celular..." style="flex:1;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-            <button class="btn" onclick="repBuscarIMEI()">Buscar</button>
+          <div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Buscar celular (marca, modelo, color, capacidad o IMEI)</div>
+          <div class="ac-wrap" style="margin-bottom:12px;display:block;">
+            <input type="text" id="rep-imei-input" placeholder="Ej: iPhone 15, negro, 128GB..." autocomplete="off" oninput="repBuscarCelular(this)" onkeydown="repCelSearchKey(event)" style="width:100%;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+            <div class="ac-dropdown" id="rep-cel-search-ac"></div>
           </div>
           <div id="rep-cel-info" style="display:none;background:var(--bg3);border-radius:var(--r);padding:14px;margin-bottom:14px;">
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
@@ -1105,10 +1136,26 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
             <input type="number" id="ftventa-cantidad-input" placeholder="Cant." min="1" value="1" style="width:80px;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
             <button class="btn" onclick="ftventaAgregarProducto()">+ Agregar</button>
           </div>
+          <div class="ac-wrap" style="margin-bottom:14px;display:block;">
+            <input type="text" id="ftventa-combo-input" placeholder="Agregar combo por nombre..." autocomplete="off" oninput="ftventaBuscarCombo(this)" style="width:100%;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+            <div class="ac-dropdown" id="ftventa-combo-ac"></div>
+          </div>
           <div id="ftventa-carrito" style="margin-bottom:14px;"></div>
-          <div class="ganancia-box" style="margin-bottom:14px;">
-            <div><div class="ganancia-label">Total de la venta</div></div>
-            <div class="ganancia-val" id="ftventa-total" style="color:var(--green);">$0</div>
+          <div class="ganancia-box" style="margin-bottom:10px;">
+            <div><div class="ganancia-label">Precio sugerido</div></div>
+            <div class="ganancia-val" id="ftventa-sugerido">$0</div>
+          </div>
+          <div class="cel-fgroup cel-form-full" style="margin-bottom:10px;">
+            <label>¿Como se reparte el descuento?</label>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:4px;font-size:12px;color:var(--text2);">
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="ftventa-modo-precio" value="proporcional" checked onchange="ftventaCambiarModoPrecio(this.value)"> Repartir proporcionalmente</label>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="ftventa-modo-precio" value="ultimo" onchange="ftventaCambiarModoPrecio(this.value)"> Solo al ultimo producto</label>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="ftventa-modo-precio" value="manual" onchange="ftventaCambiarModoPrecio(this.value)"> Manual</label>
+            </div>
+          </div>
+          <div class="cel-fgroup cel-form-full" style="margin-bottom:14px;">
+            <label>Precio final de la venta</label>
+            <input type="number" id="ftventa-precio-final" min="0" step="0.01" placeholder="0" oninput="ftventaAplicarPrecioFinal()" style="width:100%;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--green);font-family:monospace;font-size:14px;font-weight:600;outline:none;">
           </div>
           <div class="cel-form-grid">
             <div class="cel-fgroup"><label>Cliente</label><div class="ac-wrap"><input type="text" id="ftventa-cliente" placeholder="Nombre (opcional)" autocomplete="off" oninput="cliAutocomplete(this,'ftventa-cliente-ac')"><div class="ac-dropdown" id="ftventa-cliente-ac"></div></div></div>
@@ -1162,6 +1209,7 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
             <div class="cel-form-grid">
               <div class="cel-fgroup"><label>Cantidad total a agregar *</label><input type="number" id="ftcompra-cantidad" placeholder="0" min="1" oninput="ftcompraCalcSubtotal();ftcompraUpdateModeloProgreso();"></div>
               <div class="cel-fgroup"><label>Precio USD unitario *</label><input type="number" id="ftcompra-precio-usd" placeholder="0" min="0" step="0.01" oninput="ftcompraCalcSubtotal()"></div>
+              <div class="cel-fgroup"><label>Envio total USD (opcional)</label><input type="number" id="ftcompra-envio-usd" placeholder="0" min="0" step="0.01" oninput="ftcompraCalcSubtotal()"></div>
             </div>
             <div id="ftcompra-modelo-wrap" style="display:none;margin-top:12px;">
               <div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;">Repartir cantidad por modelo</div>
@@ -1183,6 +1231,7 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
               <div class="cel-fgroup"><label>Categoria</label><input type="text" id="ftnp-categoria" placeholder="FUNDA, CARGADORES..." onchange="ftnpToggleModelo()"></div>
               <div class="cel-fgroup cel-form-full"><label>Descripcion *</label><input type="text" id="ftnp-descripcion" placeholder="Descripcion del producto"></div>
               <div class="cel-fgroup"><label>Precio costo USD *</label><input type="number" id="ftnp-costo-usd" placeholder="0" min="0" step="0.01"></div>
+              <div class="cel-fgroup"><label>Envio total USD (opcional)</label><input type="number" id="ftnp-envio-usd" placeholder="0" min="0" step="0.01"></div>
               <div class="cel-fgroup"><label>Precio venta (ARS) *</label><input type="number" id="ftnp-venta-ars" placeholder="0" min="0"></div>
               <div class="cel-fgroup"><label>Cantidad total inicial *</label><input type="number" id="ftnp-cantidad" placeholder="0" min="1" oninput="ftnpUpdateModeloProgreso()"></div>
             </div>
@@ -1718,6 +1767,19 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
       </div>
     </div>
 
+    <!-- TIE COMBOS -->
+    <div class="screen" id="screen-tie-combos">
+      <div class="cel-filters">
+        <input type="text" id="combo-search" placeholder="Buscar combo..." oninput="tieRenderTabla('combos')">
+        <button class="btn btn-p btn-sm" onclick="comboAbrirNuevo()">+ Nuevo combo</button>
+      </div>
+      <div class="tw"><div class="tw-head"><div class="tw-title">Combos</div></div>
+        <table><thead><tr>
+          <th>Nombre</th><th>Productos</th><th>Precio sugerido</th><th>Precio promocional</th><th>Estado</th><th></th>
+        </tr></thead><tbody id="tie-tbody-combos"></tbody></table>
+      </div>
+    </div>
+
     <!-- MOBILE SHELL: Inicio/Stock/Servicio/Agenda/Mas, ver _design_handoff/DM Store Mobile.dc.html.
     No es un reflow del desktop: es la app mobile-first del mockup, con su propia barra de tabs
     (mas abajo, fuera de .layout) y su propio estado (mobileTab). Todo el contenido se arma por JS
@@ -1787,6 +1849,7 @@ volver a "Inicio" aunque una accion del FAB lo haya llevado a una pantalla de es
         <div class="cel-form-grid">
           <div class="cel-fgroup"><label>Cantidad total a agregar *</label><input type="number" id="tcompra-cantidad" placeholder="0" min="1" oninput="tcompraCalcSubtotal();tcompraUpdateModeloProgreso();"></div>
           <div class="cel-fgroup"><label>Precio USD unitario *</label><input type="number" id="tcompra-precio-usd" placeholder="0" min="0" step="0.01" oninput="tcompraCalcSubtotal()"></div>
+          <div class="cel-fgroup"><label>Envio total USD (opcional)</label><input type="number" id="tcompra-envio-usd" placeholder="0" min="0" step="0.01" oninput="tcompraCalcSubtotal()"></div>
         </div>
         <div id="tcompra-modelo-wrap" style="display:none;margin-top:12px;">
           <div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;">Repartir cantidad por modelo</div>
@@ -1808,6 +1871,7 @@ volver a "Inicio" aunque una accion del FAB lo haya llevado a una pantalla de es
           <div class="cel-fgroup"><label>Categoria</label><input type="text" id="tnp-categoria" placeholder="FUNDA, CARGADORES..." onchange="tnpToggleModelo()"></div>
           <div class="cel-fgroup cel-form-full"><label>Descripcion *</label><input type="text" id="tnp-descripcion" placeholder="Descripcion del producto"></div>
           <div class="cel-fgroup"><label>Precio costo USD *</label><input type="number" id="tnp-costo-usd" placeholder="0" min="0" step="0.01"></div>
+          <div class="cel-fgroup"><label>Envio total USD (opcional)</label><input type="number" id="tnp-envio-usd" placeholder="0" min="0" step="0.01"></div>
           <div class="cel-fgroup"><label>Precio venta (ARS) *</label><input type="number" id="tnp-venta-ars" placeholder="0" min="0"></div>
           <div class="cel-fgroup"><label>Cantidad total inicial *</label><input type="number" id="tnp-cantidad" placeholder="0" min="1" oninput="tnpUpdateModeloProgreso()"></div>
         </div>
@@ -1853,10 +1917,26 @@ volver a "Inicio" aunque una accion del FAB lo haya llevado a una pantalla de es
         <input type="number" id="tventa-cantidad-input" placeholder="Cant." min="1" value="1" style="width:80px;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
         <button class="btn" onclick="tventaAgregarProducto()">+ Agregar</button>
       </div>
+      <div class="ac-wrap" style="margin-bottom:14px;display:block;">
+        <input type="text" id="tventa-combo-input" placeholder="Agregar combo por nombre..." autocomplete="off" oninput="tventaBuscarCombo(this)" style="width:100%;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
+        <div class="ac-dropdown" id="tventa-combo-ac"></div>
+      </div>
       <div id="tventa-carrito" style="margin-bottom:14px;"></div>
-      <div class="ganancia-box" style="margin-bottom:14px;">
-        <div><div class="ganancia-label">Total de la venta</div></div>
-        <div class="ganancia-val" id="tventa-total" style="color:var(--green);">$0</div>
+      <div class="ganancia-box" style="margin-bottom:10px;">
+        <div><div class="ganancia-label">Precio sugerido</div></div>
+        <div class="ganancia-val" id="tventa-sugerido">$0</div>
+      </div>
+      <div class="cel-fgroup cel-form-full" style="margin-bottom:10px;">
+        <label>¿Como se reparte el descuento?</label>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:4px;font-size:12px;color:var(--text2);">
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="tventa-modo-precio" value="proporcional" checked onchange="tventaCambiarModoPrecio(this.value)"> Repartir proporcionalmente</label>
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="tventa-modo-precio" value="ultimo" onchange="tventaCambiarModoPrecio(this.value)"> Solo al ultimo producto</label>
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="tventa-modo-precio" value="manual" onchange="tventaCambiarModoPrecio(this.value)"> Manual</label>
+        </div>
+      </div>
+      <div class="cel-fgroup cel-form-full" style="margin-bottom:14px;">
+        <label>Precio final de la venta</label>
+        <input type="number" id="tventa-precio-final" min="0" step="0.01" placeholder="0" oninput="tventaAplicarPrecioFinal()" style="width:100%;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--green);font-family:monospace;font-size:14px;font-weight:600;outline:none;">
       </div>
       <div class="cel-form-grid">
         <div class="cel-fgroup"><label>Fecha</label><input type="date" id="tventa-fecha"></div>
@@ -2177,6 +2257,41 @@ volver a "Inicio" aunque una accion del FAB lo haya llevado a una pantalla de es
     <div class="cel-modal-actions">
       <button class="btn" onclick="celReservaCerrarModal()">Cancelar</button>
       <button class="btn btn-p" id="cr-btn-guardar" onclick="celReservaGuardar()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TIENDAS: ALTA/EDICION DE COMBO (paquete de productos vendido como una unidad a precio promocional) -->
+<div class="cel-modal-bg" id="combo-modal">
+  <div class="cel-modal" style="max-width:560px;">
+    <h3 id="combo-modal-title">Nuevo combo</h3>
+    <div class="cel-form-grid" style="margin-top:14px;">
+      <div class="cel-fgroup cel-form-full"><label>Nombre *</label><input type="text" id="combo-nombre" placeholder="Ej: Combo Proteccion"></div>
+      <div class="cel-fgroup cel-form-full"><label>Descripcion</label><input type="text" id="combo-descripcion" placeholder="Opcional"></div>
+      <div class="cel-fgroup"><label>Estado</label><select id="combo-estado"><option value="ACTIVO">Activo</option><option value="INACTIVO">Inactivo</option></select></div>
+    </div>
+    <div style="background:var(--bg3);border-radius:var(--r);padding:14px;margin:14px 0;">
+      <div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.08em;">Productos incluidos</div>
+      <div style="display:flex;gap:8px;margin-bottom:10px;">
+        <div class="ac-wrap" style="flex:1;">
+          <input type="text" id="combo-prod-codigo-input" placeholder="Codigo o descripcion del producto..." autocomplete="off" oninput="tieAutocomplete(this,'combo-prod-ac')" onkeydown="tieAutocompleteKey(event,'combo-prod-ac',function(c){tieAutocompleteSelect('combo-prod-codigo-input','combo-prod-ac',c);})" style="width:100%;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg);color:var(--text);font-size:13px;outline:none;text-transform:uppercase;">
+          <div class="ac-dropdown" id="combo-prod-ac"></div>
+        </div>
+        <input type="number" id="combo-prod-cantidad-input" placeholder="Cant." min="1" value="1" style="width:80px;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg);color:var(--text);font-size:13px;outline:none;">
+        <button class="btn btn-sm" onclick="comboAgregarProducto()">+ Agregar</button>
+      </div>
+      <div id="combo-prod-lista"></div>
+      <div class="ganancia-box" style="margin-top:10px;">
+        <div><div class="ganancia-label">Precio sugerido</div></div>
+        <div class="ganancia-val" id="combo-precio-sugerido">$0</div>
+      </div>
+    </div>
+    <div class="cel-form-grid">
+      <div class="cel-fgroup cel-form-full"><label>Precio promocional *</label><input type="number" id="combo-precio-promocional" placeholder="0" min="0"></div>
+    </div>
+    <div class="cel-modal-actions">
+      <button class="btn" onclick="comboCerrarModal()">Cancelar</button>
+      <button class="btn btn-p" id="combo-btn-guardar" onclick="comboGuardar()">Guardar</button>
     </div>
   </div>
 </div>
@@ -2978,6 +3093,8 @@ function hideAllFormSections(){
   var panels=['rep-cel-info','rep-form-ext','pp-form-new','venta-cuotas-form'];
   panels.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});
   ventaCarritoTemp=[];repImeiActual=null;
+  var repInput=document.getElementById('rep-imei-input');if(repInput)repInput.value='';
+  var repAc=document.getElementById('rep-cel-search-ac');if(repAc){repAc.classList.remove('show');repAc.innerHTML='';}
   compraListaTemp=[];ppListaTemp=[];
   ventaResetForm();
   // Reset tie info panels
@@ -3015,12 +3132,21 @@ function metodoSplitReset(prefix){
 function ventaResetForm(){
   metodoSplitReset('venta');
   ventaCarritoTemp=[];
+  ventaModoPrecio='proporcional';
+  document.querySelectorAll('input[name="venta-modo-precio"]').forEach(function(r){r.checked=(r.value==='proporcional');});
+  var inputFinal=document.getElementById('venta-precio-final');if(inputFinal){inputFinal.value='';inputFinal.readOnly=false;}
+  var sugerido=document.getElementById('venta-precio-sugerido');if(sugerido)sugerido.textContent='$0';
   if(document.getElementById('venta-carrito'))renderVentaCarrito();
   ['venta-cel-search','venta-cliente','venta-monto1','venta-monto2','venta-monto3',
-    'vc-cantidad','vc-monto','vc-inicio','vc-limite','pp-imei-input'].forEach(function(id){
+    'vc-cantidad','vc-monto','vc-inicio','vc-limite','pp-imei-input',
+    'venta-accesorio-codigo-input'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.value='';
   });
   var celAc=document.getElementById('venta-cel-search-ac');if(celAc){celAc.classList.remove('show');celAc.innerHTML='';}
+  accesorioCarritoTemp=[];
+  var accAc=document.getElementById('venta-accesorio-ac');if(accAc){accAc.classList.remove('show');accAc.innerHTML='';}
+  var accCant=document.getElementById('venta-accesorio-cantidad-input');if(accCant)accCant.value='1';
+  renderVentaAccesorios();
   ['venta-metodo1','venta-metodo2','venta-metodo3'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   var freq=document.getElementById('vc-frecuencia');if(freq)freq.value='mensual';
   var cuotasCheck=document.getElementById('venta-cuotas-check');if(cuotasCheck)cuotasCheck.checked=false;
@@ -3038,13 +3164,18 @@ function ventaResetForm(){
 function ftventaResetForm(){
   metodoSplitReset('ftventa');
   ftventaCarritoTemp=[];
-  ['ftventa-codigo-input','ftventa-cliente','ftventa-monto1','ftventa-monto2','ftventa-monto3'].forEach(function(id){
+  ftventaModoPrecio='proporcional';
+  document.querySelectorAll('input[name="ftventa-modo-precio"]').forEach(function(r){r.checked=(r.value==='proporcional');});
+  var inputFinal=document.getElementById('ftventa-precio-final');if(inputFinal){inputFinal.value='';inputFinal.readOnly=false;}
+  ['ftventa-codigo-input','ftventa-cliente','ftventa-monto1','ftventa-monto2','ftventa-monto3','ftventa-combo-input'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.value='';
   });
+  var ftComboAc=document.getElementById('ftventa-combo-ac');if(ftComboAc){ftComboAc.classList.remove('show');ftComboAc.innerHTML='';}
   ['ftventa-metodo1','ftventa-metodo2','ftventa-metodo3'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   var cant=document.getElementById('ftventa-cantidad-input');if(cant)cant.value='1';
   var mixtoInfo=document.getElementById('ftventa-mixto-info');if(mixtoInfo)mixtoInfo.textContent='';
   var carrito=document.getElementById('ftventa-carrito');if(carrito)carrito.innerHTML='';
+  var sugerido=document.getElementById('ftventa-sugerido');if(sugerido)sugerido.textContent='$0';
   garantiaResetForm('ftventa');
 }
 
@@ -6361,6 +6492,7 @@ function compraAgregarCelular(){
   if(dup){showToast('IMEI ya en la lista',true);return;}
   var batVal=document.getElementById('nc-bat').value;
   var costoVal=document.getElementById('nc-costo').value;
+  var envioVal=document.getElementById('nc-envio').value;
   var costoMoneda=document.getElementById('nc-costo-moneda').value;
   var listaVal=document.getElementById('nc-lista').value;
   var gtiaVal=document.getElementById('nc-gtia').value;
@@ -6374,7 +6506,9 @@ function compraAgregarCelular(){
     capacidad:document.getElementById('nc-cap').value||null,
     bateria:batVal?parseInt(batVal):null,
     estado_equipo:document.getElementById('nc-estado-eq').value,
-    costoValor:costoVal?parseFloat(costoVal):0,
+    // El envio (si se cargo) se suma al costo del equipo -- no genera un movimiento aparte,
+    // pasa a formar parte del costo total igual que el costo base.
+    costoValor:(costoVal?parseFloat(costoVal):0)+(envioVal?parseFloat(envioVal):0),
     costoMoneda:costoMoneda,
     precio_lista:listaVal?parseFloat(listaVal):0,
     garantia_proveedor:gtiaVal?parseInt(gtiaVal):0,
@@ -6384,7 +6518,7 @@ function compraAgregarCelular(){
     reservaItemId:reservaVal?parseInt(reservaVal):null
   });
   // Clear fields
-  ['nc-imei','nc-marca','nc-modelo','nc-color','nc-bat','nc-costo','nc-lista','nc-gtia','nc-proveedor','nc-obs'].forEach(function(id){
+  ['nc-imei','nc-marca','nc-modelo','nc-color','nc-bat','nc-costo','nc-envio','nc-lista','nc-gtia','nc-proveedor','nc-obs'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.value='';
   });
   document.getElementById('nc-cap').value='';
@@ -6463,6 +6597,7 @@ function ventaCelSeleccionar(id){
   ventaCarritoTemp.push({
     id:cel.id,imei:cel.imei,marca:cel.marca,modelo:cel.modelo,color:cel.color,capacidad:cel.capacidad,
     costoTotal:celCostoTotal(cel),
+    precioLista:parseFloat(cel.precio_lista)||0,
     precioVentaMoneda:'ARS',
     precioVentaValor:parseFloat(cel.precio_lista)||0
   });
@@ -6470,8 +6605,7 @@ function ventaCelSeleccionar(id){
   input.value='';input.focus();
   var dd=document.getElementById('venta-cel-search-ac');
   dd.classList.remove('show');dd.innerHTML='';
-  renderVentaCarrito();
-  ventaCalcGanancia();
+  ventaRecalcularPrecioFinal();
 }
 
 function ventaCelSearchKey(evt){
@@ -6497,35 +6631,122 @@ function ventaCelSearchKey(evt){
   }
 }
 
+var ventaModoPrecio='proporcional';
+
 function renderVentaCarrito(){
   var el=document.getElementById('venta-carrito');
   if(!el)return;
+  var disabled=ventaModoPrecio!=='manual';
   if(!ventaCarritoTemp.length){
     el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:8px 0;">Busca al menos un celular para agregarlo a la venta.</div>';
+  }else{
+    el.innerHTML='<div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:6px;">'+ventaCarritoTemp.length+' celular(es) en la venta:</div>'+
+      ventaCarritoTemp.map(function(c,i){
+        return'<div class="cart-row" style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
+          '<div style="flex:1;min-width:0;">'+
+            '<div><span class="mono" style="color:var(--text3);font-size:10px;margin-right:8px;">'+c.imei+'</span>'+
+            '<strong>'+c.marca+' '+c.modelo+'</strong>'+
+            (c.color?' '+c.color:'')+(c.capacidad?' '+c.capacidad:'')+
+            '</div>'+
+            '<div style="font-size:10px;color:var(--text3);margin-top:2px;">Costo: '+fmtARS(c.costoTotal)+' · lista: '+fmtARS(c.precioLista)+'</div>'+
+          '</div>'+
+          '<input type="number" value="'+c.precioVentaValor+'" min="0" step="0.01" placeholder="Precio venta" class="cart-row-price" style="padding:6px 8px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg2);color:var(--text);font-size:12px;" data-idx="'+i+'" onchange="ventaCarritoSetPrecio(this.dataset.idx,this.value)" '+(disabled?'disabled':'')+'>'+
+          '<select data-idx="'+i+'" class="cart-row-currency" style="padding:6px 4px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg2);color:var(--text);font-size:12px;" onchange="ventaCarritoSetMoneda(this.dataset.idx,this.value)" '+(disabled?'disabled':'')+'>'+
+            '<option value="ARS"'+(c.precioVentaMoneda==='ARS'?' selected':'')+'>ARS</option>'+
+            '<option value="USD"'+(c.precioVentaMoneda==='USD'?' selected':'')+'>USD</option>'+
+          '</select>'+
+          '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;flex-shrink:0;" data-idx="'+i+'" onclick="ventaQuitarDelCarrito(this.dataset.idx)">x</button>'+
+          '</div>';
+      }).join('');
+  }
+  ventaUpdateSugerido();
+  ventaSyncPrecioFinalManual();
+  ventaCalcGanancia();
+}
+function ventaCarritoSetPrecio(idx,val){ventaCarritoTemp[parseInt(idx)].precioVentaValor=parseFloat(val)||0;ventaSyncPrecioFinalManual();ventaCalcGanancia();}
+function ventaCarritoSetMoneda(idx,val){ventaCarritoTemp[parseInt(idx)].precioVentaMoneda=val;renderVentaCarrito();}
+function ventaQuitarDelCarrito(idx){ventaCarritoTemp.splice(parseInt(idx),1);ventaRecalcularPrecioFinal();}
+
+function ventaUpdateSugerido(){
+  var sugerido=ventaCarritoTemp.reduce(function(s,c){return s+c.precioLista;},0);
+  var el=document.getElementById('venta-precio-sugerido');
+  if(el)el.textContent=fmtARS(sugerido);
+  return sugerido;
+}
+
+// En modo manual el campo "Precio final" solo refleja la suma en vivo de las lineas (no se edita).
+function ventaSyncPrecioFinalManual(){
+  if(ventaModoPrecio!=='manual')return;
+  var inputFinal=document.getElementById('venta-precio-final');
+  if(inputFinal)inputFinal.value=ventaTotalArs().toFixed(2);
+}
+
+function ventaCambiarModoPrecio(modo){
+  ventaModoPrecio=modo;
+  var inputFinal=document.getElementById('venta-precio-final');
+  if(inputFinal)inputFinal.readOnly=(modo==='manual');
+  ventaRecalcularPrecioFinal();
+}
+
+function ventaAplicarPrecioFinal(){
+  ventaRecalcularPrecioFinal();
+}
+
+// Punto de entrada unico: recalcula precioVentaValor de todo el carrito (en la moneda de cada
+// linea) segun el modo activo y el "Precio final de la venta" tipeado, todo en terminos ARS.
+function ventaRecalcularPrecioFinal(){
+  if(ventaModoPrecio!=='manual'){
+    var inputFinal=document.getElementById('venta-precio-final');
+    var montoArs=inputFinal?parseFloat(inputFinal.value):NaN;
+    if(!(montoArs>=0)){
+      ventaCarritoTemp.forEach(function(c){c.precioVentaValor=ventaArsAMoneda(c.precioLista,c.precioVentaMoneda);});
+    }else if(ventaModoPrecio==='ultimo'){
+      ventaDistribuirUltimo(ventaCarritoTemp,montoArs);
+    }else{
+      ventaDistribuirProporcional(ventaCarritoTemp,montoArs);
+    }
+  }
+  renderVentaCarrito();
+}
+
+// Convierte un monto ARS al valor que corresponde en la moneda propia de la linea.
+function ventaArsAMoneda(arsValue,moneda){
+  if(moneda==='USD')return dolarBlue?Math.round((arsValue/dolarBlue)*100)/100:arsValue;
+  return Math.round(arsValue*100)/100;
+}
+
+// Reparte el precio final proporcionalmente al precio de lista (en ARS) de cada linea,
+// reconvirtiendo cada una a su propia moneda. La ultima linea absorbe el redondeo.
+function ventaDistribuirProporcional(carrito,montoFinalArs){
+  if(!carrito.length)return;
+  var totalListaArs=carrito.reduce(function(s,c){return s+c.precioLista;},0);
+  if(!totalListaArs){
+    var partesIguales=montoFinalArs/carrito.length;
+    carrito.forEach(function(c){c.precioVentaValor=ventaArsAMoneda(partesIguales,c.precioVentaMoneda);});
     return;
   }
-  el.innerHTML='<div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:6px;">'+ventaCarritoTemp.length+' celular(es) en la venta:</div>'+
-    ventaCarritoTemp.map(function(c,i){
-      return'<div class="cart-row" style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
-        '<div style="flex:1;min-width:0;">'+
-          '<div><span class="mono" style="color:var(--text3);font-size:10px;margin-right:8px;">'+c.imei+'</span>'+
-          '<strong>'+c.marca+' '+c.modelo+'</strong>'+
-          (c.color?' '+c.color:'')+(c.capacidad?' '+c.capacidad:'')+
-          '</div>'+
-          '<div style="font-size:10px;color:var(--text3);margin-top:2px;">Costo: '+fmtARS(c.costoTotal)+'</div>'+
-        '</div>'+
-        '<input type="number" value="'+c.precioVentaValor+'" min="0" step="0.01" placeholder="Precio venta" class="cart-row-price" style="padding:6px 8px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg2);color:var(--text);font-size:12px;" data-idx="'+i+'" onchange="ventaCarritoSetPrecio(this.dataset.idx,this.value)">'+
-        '<select data-idx="'+i+'" class="cart-row-currency" style="padding:6px 4px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg2);color:var(--text);font-size:12px;" onchange="ventaCarritoSetMoneda(this.dataset.idx,this.value)">'+
-          '<option value="ARS"'+(c.precioVentaMoneda==='ARS'?' selected':'')+'>ARS</option>'+
-          '<option value="USD"'+(c.precioVentaMoneda==='USD'?' selected':'')+'>USD</option>'+
-        '</select>'+
-        '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;flex-shrink:0;" data-idx="'+i+'" onclick="ventaQuitarDelCarrito(this.dataset.idx)">x</button>'+
-        '</div>';
-    }).join('');
+  var acumuladoArs=0;
+  for(var i=0;i<carrito.length;i++){
+    var c=carrito[i];
+    var esUltimo=i===carrito.length-1;
+    var nuevoArs=esUltimo?(montoFinalArs-acumuladoArs):Math.round((c.precioLista/totalListaArs)*montoFinalArs*100)/100;
+    acumuladoArs+=nuevoArs;
+    c.precioVentaValor=ventaArsAMoneda(nuevoArs,c.precioVentaMoneda);
+  }
 }
-function ventaCarritoSetPrecio(idx,val){ventaCarritoTemp[parseInt(idx)].precioVentaValor=parseFloat(val)||0;ventaCalcGanancia();}
-function ventaCarritoSetMoneda(idx,val){ventaCarritoTemp[parseInt(idx)].precioVentaMoneda=val;renderVentaCarrito();ventaCalcGanancia();}
-function ventaQuitarDelCarrito(idx){ventaCarritoTemp.splice(parseInt(idx),1);renderVentaCarrito();ventaCalcGanancia();}
+
+// Todas las lineas salvo la ultima vuelven a su precio de lista; la ultima absorbe el descuento.
+function ventaDistribuirUltimo(carrito,montoFinalArs){
+  if(!carrito.length)return;
+  var acumuladoArs=0;
+  for(var i=0;i<carrito.length-1;i++){
+    var c=carrito[i];
+    c.precioVentaValor=ventaArsAMoneda(c.precioLista,c.precioVentaMoneda);
+    acumuladoArs+=c.precioLista;
+  }
+  var last=carrito[carrito.length-1];
+  last.precioVentaValor=ventaArsAMoneda(montoFinalArs-acumuladoArs,last.precioVentaMoneda);
+}
 
 function ventaTotalArs(){
   return ventaCarritoTemp.reduce(function(s,c){return s+convertirMoneda(c.precioVentaValor,c.precioVentaMoneda).ars;},0);
@@ -6687,6 +6908,64 @@ function ventaCalcSaldoReserva(){
     (saldo<0?'<div style="color:var(--red);font-size:11px;margin-top:6px;">El anticipo + parte de pago supera el valor total. Revisa los precios de venta.</div>':'');
 }
 
+// ── Accesorios (Tiendas) agregados a la venta de un celular. Precio siempre editable a mano
+// (sin el selector proporcional/ultimo/manual de Tiendas: es un monto chico y secundario). Al
+// guardar (celGuardarOp) se registran como una venta de Tiendas aparte, ver ese bloque.
+var accesorioCarritoTemp=[];
+
+function ventaAccesorioAgregar(){
+  var cod=document.getElementById('venta-accesorio-codigo-input').value.trim().toUpperCase();
+  var cant=parseInt(document.getElementById('venta-accesorio-cantidad-input').value)||1;
+  var p=productosTiendas.find(function(x){return x.codigo===cod;});
+  if(!p){showToast('Codigo no encontrado',true);return;}
+  if((p.stock||0)<cant)showToast('Aviso: stock disponible '+(p.stock||0)+', se registra igual',false);
+  var existing=accesorioCarritoTemp.find(function(c){return c.codigo===cod;});
+  if(existing){
+    existing.cantidad+=cant;
+  }else{
+    var precioLista=parseFloat(p.precio_venta_ars||0);
+    accesorioCarritoTemp.push({codigo:p.codigo,descripcion:p.descripcion,precio_lista:precioLista,precio_cobrado:precioLista,cantidad:cant,stockDisponible:p.stock||0});
+  }
+  document.getElementById('venta-accesorio-codigo-input').value='';
+  document.getElementById('venta-accesorio-cantidad-input').value='1';
+  renderVentaAccesorios();
+}
+
+function ventaAccesorioSetPrecio(idx,val){
+  var c=accesorioCarritoTemp[parseInt(idx)];
+  if(c)c.precio_cobrado=parseFloat(val)||0;
+  renderVentaAccesorios();
+}
+
+function ventaAccesorioQuitar(idx){accesorioCarritoTemp.splice(parseInt(idx),1);renderVentaAccesorios();}
+
+function ventaAccesoriosTotal(){
+  return accesorioCarritoTemp.reduce(function(s,c){return s+c.precio_cobrado*c.cantidad;},0);
+}
+
+function renderVentaAccesorios(){
+  var el=document.getElementById('venta-accesorios-carrito');
+  if(!el)return;
+  if(!accesorioCarritoTemp.length){
+    el.innerHTML='';
+  }else{
+    el.innerHTML=accesorioCarritoTemp.map(function(c,i){
+      var subtotal=c.precio_cobrado*c.cantidad;
+      return'<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;flex-wrap:wrap;">'+
+        '<span class="mono" style="color:var(--text3);font-size:10px;">'+c.codigo+'</span>'+
+        '<span style="flex:1;min-width:90px;">'+c.descripcion+'</span>'+
+        '<span style="color:var(--text2);">x'+c.cantidad+'</span>'+
+        '<span style="font-size:10px;color:var(--text3);">lista: '+fmtARS(c.precio_lista)+'</span>'+
+        '<input type="number" value="'+c.precio_cobrado+'" min="0" step="0.01" data-idx="'+i+'" oninput="ventaAccesorioSetPrecio(this.dataset.idx,this.value)" style="width:100px;padding:5px 8px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg);color:var(--green);font-family:monospace;font-size:12px;outline:none;" title="Precio cobrado por unidad">'+
+        '<span style="color:var(--green);font-family:monospace;font-weight:600;">'+fmtARS(subtotal)+'</span>'+
+        '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;" data-idx="'+i+'" onclick="ventaAccesorioQuitar(this.dataset.idx)">x</button>'+
+        '</div>';
+    }).join('');
+  }
+  var totalEl=document.getElementById('venta-accesorios-total');
+  if(totalEl)totalEl.textContent=accesorioCarritoTemp.length?'Total accesorios: '+fmtARS(ventaAccesoriosTotal()):'';
+}
+
 function ppAgregarCelular(){
   var imei=document.getElementById('pp-imei-input').value.trim();
   var existing=celulares.find(function(c){return c.imei===imei;});
@@ -6742,6 +7021,68 @@ function celAbrirRepFromTable(imei){
     document.getElementById('rep-imei-input').value=imei;
     repBuscarIMEI();
   },100);
+}
+
+// Buscador inteligente (marca/modelo/color/capacidad/IMEI a la vez, todas las palabras tienen
+// que aparecer) -- mismo patron que ventaBuscarCelular/ventaCelSeleccionar/ventaCelSearchKey en
+// la venta de Celulares, pero de seleccion unica (no carrito) y sin excluir equipos que ya esten
+// EN REPARACION (repBuscarIMEI ya los admite; solo se excluyen los VENDIDO).
+var repCelAcActiveIdx=-1;
+function repBuscarCelular(input){
+  var q=input.value.trim().toLowerCase();
+  var dd=document.getElementById('rep-cel-search-ac');
+  repCelAcActiveIdx=-1;
+  if(!q){dd.classList.remove('show');dd.innerHTML='';return;}
+  var terms=q.split(/\s+/).filter(Boolean);
+  var matches=celulares.filter(function(c){
+    if(c.estado==='VENDIDO')return false;
+    var texto=((c.marca||'')+' '+(c.modelo||'')+' '+(c.color||'')+' '+(c.capacidad||'')+' '+c.imei).toLowerCase();
+    return terms.every(function(t){return texto.indexOf(t)>-1;});
+  }).slice(0,10);
+  if(!matches.length){
+    dd.innerHTML='<div class="ac-empty">Sin equipos que coincidan</div>';
+    dd.classList.add('show');
+    return;
+  }
+  dd.innerHTML=matches.map(function(c,i){
+    return'<div class="ac-item" data-idx="'+i+'" data-id="'+c.id+'" onclick="repCelSeleccionar(this.dataset.id)">'+
+      '<span class="ac-item-code">'+c.marca+' '+c.modelo+'</span>'+
+      '<span class="ac-item-desc">'+(c.color||'-')+' · '+(c.capacidad||'-')+' · '+c.estado+' · ...'+c.imei.slice(-6)+'</span>'+
+      '</div>';
+  }).join('');
+  dd.classList.add('show');
+}
+
+function repCelSeleccionar(id){
+  var cel=celulares.find(function(c){return String(c.id)===String(id);});
+  if(!cel)return;
+  document.getElementById('rep-imei-input').value=cel.imei;
+  var dd=document.getElementById('rep-cel-search-ac');
+  dd.classList.remove('show');dd.innerHTML='';
+  repBuscarIMEI();
+}
+
+function repCelSearchKey(evt){
+  var dd=document.getElementById('rep-cel-search-ac');
+  var items=dd.querySelectorAll('.ac-item');
+  if(!items.length)return;
+  if(evt.key==='ArrowDown'){
+    evt.preventDefault();
+    repCelAcActiveIdx=Math.min(repCelAcActiveIdx+1,items.length-1);
+    items.forEach(function(it,i){it.classList.toggle('ac-active',i===repCelAcActiveIdx);});
+    items[repCelAcActiveIdx].scrollIntoView({block:'nearest'});
+  }else if(evt.key==='ArrowUp'){
+    evt.preventDefault();
+    repCelAcActiveIdx=Math.max(repCelAcActiveIdx-1,0);
+    items.forEach(function(it,i){it.classList.toggle('ac-active',i===repCelAcActiveIdx);});
+    items[repCelAcActiveIdx].scrollIntoView({block:'nearest'});
+  }else if(evt.key==='Enter'){
+    evt.preventDefault();
+    var idx=repCelAcActiveIdx>=0?repCelAcActiveIdx:0;
+    if(items[idx])repCelSeleccionar(items[idx].dataset.id);
+  }else if(evt.key==='Escape'){
+    dd.classList.remove('show');
+  }
 }
 
 function repBuscarIMEI(){
@@ -6988,6 +7329,45 @@ async function celGuardarOp(){
           });
         }
       }
+      // Accesorios (Tiendas) vendidos junto con el celular: se registran como una venta de
+      // Tiendas aparte, con su propio movimiento (unidad TIENDAS). Asi el Resumen de Tiendas,
+      // el desglose por unidad y el deshacer de ventas (revertirRegistrosDeVenta, que filtra por
+      // unidad) siguen funcionando sin tocarlos -- para esos flujos es indistinguible de una
+      // venta de Tiendas comun.
+      if(accesorioCarritoTemp.length){
+        var accesorioTotal=ventaAccesoriosTotal();
+        var descAccesorios=accesorioCarritoTemp.map(function(a){return a.codigo+' x'+a.cantidad;}).join(', ');
+        var movIdAccesorios=await guardarMovimientoInternoConId({
+          fecha:ventaFecha,unidad:'TIENDAS',operacion:'VENTAS',
+          categoria:'DIRECTA',descripcion:'Accesorios (venta celular) — '+descAccesorios,
+          ingreso:accesorioTotal,egreso:0,metodo:ventaMetodo,mensaje:ventaCliente||'',canal_venta:canalVenta,
+          tiene_garantia:false,dias_garantia:null,fecha_vencimiento_garantia:null
+        });
+        for(var aci=0;aci<accesorioCarritoTemp.length;aci++){
+          var acc=accesorioCarritoTemp[aci];
+          var prodAcc=productosTiendas.find(function(p){return p.codigo===acc.codigo;});
+          if(prodAcc){
+            var nuevoStockAcc=(parseInt(prodAcc.stock)||0)-acc.cantidad;
+            var resStockAcc=await fetch(SUPA_URL+'/rest/v1/productos_tiendas?id=eq.'+prodAcc.id,{
+              method:'PATCH',
+              headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+              body:JSON.stringify({stock:nuevoStockAcc})
+            });
+            if(!resStockAcc.ok){var eSAcc=await resStockAcc.text();showToast('Error stock '+acc.codigo+': '+eSAcc.slice(0,60),true);return false;}
+          }
+          await fetch(SUPA_URL+'/rest/v1/ventas_tiendas',{
+            method:'POST',
+            headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+            body:JSON.stringify({
+              fecha:ventaFecha,codigo:acc.codigo,descripcion:acc.descripcion,cantidad:acc.cantidad,
+              precio_unitario:acc.precio_cobrado,precio_lista:acc.precio_lista,total:acc.precio_cobrado*acc.cantidad,
+              metodo_pago:ventaMetodo,cliente:ventaCliente,canal_venta:canalVenta,movimiento_id:movIdAccesorios
+            })
+          });
+        }
+        await crearDeudaSiCorresponde('TIENDAS',ventaCliente,ventaFecha,accesorioTotal,ventaMetodo,movIdAccesorios);
+        await tieCargarDatos();
+      }
       await crearDeudaSiCorresponde('CELULARES',ventaCliente,ventaFecha,ingresoVenta,ventaMetodo,movIdVenta);
       if(ventaCliente)await ensureCliente(ventaCliente);
       // Parte de pago: equipos recibidos a cambio, se suman al stock.
@@ -7155,6 +7535,8 @@ document.addEventListener('DOMContentLoaded',function(){
 var productosTiendas=[];
 var ventasTiendas=[];
 var comprasTiendas=[];
+var combos=[];
+var comboProductos=[];
 var tieSubMenuOpen=false;
 var tieCurrentOp='';
 var tventaCarritoTemp=[];
@@ -7246,7 +7628,7 @@ function goTie(name,el){
   document.querySelectorAll('.nav-item,.nav-subitem').forEach(function(n){n.classList.remove('active');});
   document.getElementById('screen-'+name).classList.add('active');
   if(el)el.classList.add('active');
-  var titles={'tie-stock':'Tiendas — Stock','tie-ventas':'Tiendas — Ventas','tie-resumen':'Tiendas — Resumen'};
+  var titles={'tie-stock':'Tiendas — Stock','tie-ventas':'Tiendas — Ventas','tie-resumen':'Tiendas — Resumen','tie-combos':'Tiendas — Combos'};
   document.getElementById('page-title').textContent=titles[name]||name;
   if(name==='tie-resumen')tieRenderResumen();
   else tieRenderTabla(name.replace('tie-',''));
@@ -7296,6 +7678,18 @@ async function tieCargarDatos(){
     });
     var data3=await res3.json();
     if(Array.isArray(data3))comprasTiendas=data3;
+
+    var res4=await fetch(SUPA_URL+'/rest/v1/combos?select=*&order=nombre.asc',{
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    });
+    var data4=await res4.json();
+    if(Array.isArray(data4))combos=data4;
+
+    var res5=await fetch(SUPA_URL+'/rest/v1/combo_productos?select=*',{
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    });
+    var data5=await res5.json();
+    if(Array.isArray(data5))comboProductos=data5;
 
     // Populate category filter
     var cats=[];
@@ -7376,7 +7770,183 @@ function tieRenderTabla(tipo){
         '<td><button class="btn-del" data-id="'+v.id+'" onclick="tieEliminarVenta(this.dataset.id)" title="Eliminar">x</button></td>'+
         '</tr>';
     }).join('');
+  }else if(tipo==='combos'){
+    var search=document.getElementById('combo-search')?document.getElementById('combo-search').value.toLowerCase():'';
+    var filtrado=combos.filter(function(c){return!search||c.nombre.toLowerCase().includes(search);});
+    var tbody=document.getElementById('tie-tbody-combos');
+    if(!tbody)return;
+    if(!filtrado.length){tbody.innerHTML='<tr><td colspan="6" class="empty-row">No hay combos creados</td></tr>';return;}
+    tbody.innerHTML=filtrado.map(function(c){
+      var activo=c.estado==='ACTIVO';
+      return'<tr>'+
+        '<td style="font-weight:600;">'+c.nombre+'</td>'+
+        '<td style="font-size:11px;color:var(--text2);">'+comboProductosResumen(c.id)+'</td>'+
+        '<td class="mono" style="color:var(--text3);">'+fmtARS(comboPrecioSugerido(c.id))+'</td>'+
+        '<td class="mono" style="color:var(--green);font-weight:600;">'+fmtARS(c.precio_promocional||0)+'</td>'+
+        '<td><span class="mono" style="font-size:10px;color:'+(activo?'var(--green)':'var(--text3)')+';cursor:pointer;" data-id="'+c.id+'" data-estado="'+c.estado+'" onclick="comboToggleEstado(this.dataset.id,this.dataset.estado)">'+c.estado+'</span></td>'+
+        '<td><button class="btn btn-sm" data-id="'+c.id+'" onclick="comboAbrirEditar(this.dataset.id)">Editar</button></td>'+
+        '</tr>';
+    }).join('');
   }
+}
+
+function comboPrecioSugerido(comboId){
+  return comboProductos.filter(function(cp){return cp.combo_id===comboId;}).reduce(function(s,cp){
+    var p=productosTiendas.find(function(x){return x.codigo===cp.codigo;});
+    return s+(p?parseFloat(p.precio_venta_ars||0)*cp.cantidad:0);
+  },0);
+}
+
+function comboProductosResumen(comboId){
+  var items=comboProductos.filter(function(cp){return cp.combo_id===comboId;});
+  if(!items.length)return'-';
+  return items.map(function(cp){
+    var p=productosTiendas.find(function(x){return x.codigo===cp.codigo;});
+    return cp.cantidad+'x '+(p?p.descripcion:cp.codigo);
+  }).join(', ');
+}
+
+async function comboToggleEstado(id,estadoActual){
+  var nuevoEstado=estadoActual==='ACTIVO'?'INACTIVO':'ACTIVO';
+  try{
+    var res=await fetch(SUPA_URL+'/rest/v1/combos?id=eq.'+id,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+      body:JSON.stringify({estado:nuevoEstado})
+    });
+    if(!res.ok){showToast('Error al cambiar estado',true);return;}
+    var c=combos.find(function(x){return String(x.id)===String(id);});
+    if(c)c.estado=nuevoEstado;
+    tieRenderTabla('combos');
+    showToast('Combo '+(nuevoEstado==='ACTIVO'?'activado':'desactivado'));
+  }catch(e){showToast('Error de conexion',true);}
+}
+
+// ── Alta/edicion de combos ──
+var comboProductosTemp=[];
+var comboEditandoId=null;
+
+function comboAbrirNuevo(){
+  comboEditandoId=null;
+  document.getElementById('combo-modal-title').textContent='Nuevo combo';
+  document.getElementById('combo-nombre').value='';
+  document.getElementById('combo-descripcion').value='';
+  document.getElementById('combo-estado').value='ACTIVO';
+  document.getElementById('combo-precio-promocional').value='';
+  comboProductosTemp=[];
+  renderComboProductosLista();
+  document.getElementById('combo-modal').classList.add('show');
+}
+
+function comboAbrirEditar(id){
+  var c=combos.find(function(x){return String(x.id)===String(id);});
+  if(!c)return;
+  comboEditandoId=c.id;
+  document.getElementById('combo-modal-title').textContent='Editar combo';
+  document.getElementById('combo-nombre').value=c.nombre;
+  document.getElementById('combo-descripcion').value=c.descripcion||'';
+  document.getElementById('combo-estado').value=c.estado||'ACTIVO';
+  document.getElementById('combo-precio-promocional').value=c.precio_promocional||0;
+  comboProductosTemp=comboProductos.filter(function(cp){return cp.combo_id===c.id;}).map(function(cp){return{codigo:cp.codigo,cantidad:cp.cantidad};});
+  renderComboProductosLista();
+  document.getElementById('combo-modal').classList.add('show');
+}
+
+function comboCerrarModal(){
+  document.getElementById('combo-modal').classList.remove('show');
+}
+
+function comboAgregarProducto(){
+  var cod=document.getElementById('combo-prod-codigo-input').value.trim().toUpperCase();
+  var cant=parseInt(document.getElementById('combo-prod-cantidad-input').value)||1;
+  var p=productosTiendas.find(function(x){return x.codigo===cod;});
+  if(!p){showToast('Codigo no encontrado',true);return;}
+  var existing=comboProductosTemp.find(function(cp){return cp.codigo===cod;});
+  if(existing)existing.cantidad+=cant;
+  else comboProductosTemp.push({codigo:cod,cantidad:cant});
+  document.getElementById('combo-prod-codigo-input').value='';
+  document.getElementById('combo-prod-cantidad-input').value='1';
+  renderComboProductosLista();
+}
+
+function comboQuitarProducto(idx){
+  comboProductosTemp.splice(parseInt(idx),1);
+  renderComboProductosLista();
+}
+
+function renderComboProductosLista(){
+  var el=document.getElementById('combo-prod-lista');
+  var sugerido=0;
+  if(!comboProductosTemp.length){
+    el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:8px 0;">Agrega al menos un producto.</div>';
+  }else{
+    el.innerHTML=comboProductosTemp.map(function(cp,i){
+      var p=productosTiendas.find(function(x){return x.codigo===cp.codigo;});
+      var precioLista=p?parseFloat(p.precio_venta_ars||0):0;
+      var subtotal=precioLista*cp.cantidad;
+      sugerido+=subtotal;
+      return'<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
+        '<span class="mono" style="color:var(--text3);font-size:10px;">'+cp.codigo+'</span>'+
+        '<span style="flex:1;min-width:90px;">'+(p?p.descripcion:'(producto no encontrado)')+'</span>'+
+        '<span style="color:var(--text2);">x'+cp.cantidad+'</span>'+
+        '<span style="color:var(--text3);font-family:monospace;">'+fmtARS(subtotal)+'</span>'+
+        '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;" data-idx="'+i+'" onclick="comboQuitarProducto(this.dataset.idx)">x</button>'+
+        '</div>';
+    }).join('');
+  }
+  document.getElementById('combo-precio-sugerido').textContent=fmtARS(sugerido);
+}
+
+async function comboGuardar(){
+  var nombre=document.getElementById('combo-nombre').value.trim();
+  var descripcion=document.getElementById('combo-descripcion').value.trim()||null;
+  var estado=document.getElementById('combo-estado').value;
+  var precioPromocional=parseFloat(document.getElementById('combo-precio-promocional').value)||0;
+  if(!nombre){showToast('El nombre es obligatorio',true);return;}
+  if(!comboProductosTemp.length){showToast('Agrega al menos un producto',true);return;}
+  if(!precioPromocional||precioPromocional<=0){showToast('Ingresa el precio promocional',true);return;}
+  var btn=document.getElementById('combo-btn-guardar');
+  btn.disabled=true;btn.textContent='Guardando...';
+  try{
+    var comboId=comboEditandoId;
+    var payload={nombre:nombre,descripcion:descripcion,precio_promocional:precioPromocional,estado:estado};
+    if(comboId){
+      var resU=await fetch(SUPA_URL+'/rest/v1/combos?id=eq.'+comboId,{
+        method:'PATCH',
+        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+        body:JSON.stringify(payload)
+      });
+      if(!resU.ok){var eU=await resU.text();showToast('Error: '+eU.slice(0,80),true);return;}
+      await fetch(SUPA_URL+'/rest/v1/combo_productos?combo_id=eq.'+comboId,{
+        method:'DELETE',
+        headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'}
+      });
+    }else{
+      var resC=await fetch(SUPA_URL+'/rest/v1/combos',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=representation'},
+        body:JSON.stringify(payload)
+      });
+      if(!resC.ok){var eC=await resC.text();showToast('Error: '+eC.slice(0,80),true);return;}
+      var creado=await resC.json();
+      comboId=creado&&creado[0]?creado[0].id:null;
+    }
+    if(comboId){
+      for(var i=0;i<comboProductosTemp.length;i++){
+        var cp=comboProductosTemp[i];
+        await fetch(SUPA_URL+'/rest/v1/combo_productos',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+          body:JSON.stringify({combo_id:comboId,codigo:cp.codigo,cantidad:cp.cantidad})
+        });
+      }
+    }
+    showToast('Combo guardado');
+    comboCerrarModal();
+    await tieCargarDatos();
+    tieRenderTabla('combos');
+  }catch(e){showToast('Error de conexion',true);}
+  finally{btn.disabled=false;btn.textContent='Guardar';}
 }
 
 function tieRenderResumen(){
@@ -7485,14 +8055,19 @@ function tieAbrirOp(op,codigoPre){
 function tventaResetForm(){
   metodoSplitReset('tventa');
   tventaCarritoTemp=[];
+  tventaModoPrecio='proporcional';
+  document.querySelectorAll('input[name="tventa-modo-precio"]').forEach(function(r){r.checked=(r.value==='proporcional');});
+  var inputFinal=document.getElementById('tventa-precio-final');if(inputFinal){inputFinal.value='';inputFinal.readOnly=false;}
   document.getElementById('tventa-carrito').innerHTML='';
   document.getElementById('tventa-canal').value='';
-  ['tventa-codigo-input','tventa-cliente','tventa-monto1','tventa-monto2','tventa-monto3'].forEach(function(id){
+  ['tventa-codigo-input','tventa-cliente','tventa-monto1','tventa-monto2','tventa-monto3','tventa-combo-input'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.value='';
   });
+  var comboAc=document.getElementById('tventa-combo-ac');if(comboAc){comboAc.classList.remove('show');comboAc.innerHTML='';}
   ['tventa-metodo1','tventa-metodo2','tventa-metodo3'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   var cant=document.getElementById('tventa-cantidad-input');if(cant)cant.value='1';
   var mixtoInfo=document.getElementById('tventa-mixto-info');if(mixtoInfo)mixtoInfo.textContent='';
+  var sugerido=document.getElementById('tventa-sugerido');if(sugerido)sugerido.textContent='$0';
   garantiaResetForm('tventa');
 }
 
@@ -7529,13 +8104,22 @@ function tcompraBuscarCodigo(){
   tcompraCalcSubtotal();
 }
 
+// El envio se ingresa como total de esta linea (no por unidad) y se reparte entre las
+// unidades agregadas -- pasa a formar parte del costo unitario del producto, no genera un
+// movimiento aparte.
+function tcompraPrecioUnitConEnvio(cant,precioUsd){
+  var envioTotal=parseFloat(document.getElementById('tcompra-envio-usd').value)||0;
+  return precioUsd+(cant?envioTotal/cant:0);
+}
+
 function tcompraCalcSubtotal(){
   var cant=parseInt(document.getElementById('tcompra-cantidad').value)||0;
   var precioUsd=parseFloat(document.getElementById('tcompra-precio-usd').value)||0;
-  var subtotalUsd=cant*precioUsd;
+  var precioUnitFinal=tcompraPrecioUnitConEnvio(cant,precioUsd);
+  var subtotalUsd=cant*precioUnitFinal;
   var subtotalArs=subtotalUsd*(dolarBlue||1);
   var info=document.getElementById('tcompra-subtotal-info');
-  if(info)info.textContent=cant&&precioUsd?'Subtotal: '+fmtUSD(subtotalUsd)+' = '+fmtARS(subtotalArs):'';
+  if(info)info.textContent=cant&&precioUsd?'Subtotal: '+fmtUSD(subtotalUsd)+' = '+fmtARS(subtotalArs)+(precioUnitFinal!==precioUsd?' (incluye envio: '+fmtUSD(precioUnitFinal)+'/u)':''):'';
 }
 
 function tcompraUpdateModeloProgreso(){
@@ -7597,14 +8181,16 @@ function tcompraAgregarAlCarrito(){
     var asignado=tcompraModelosTemp.reduce(function(s,m){return s+m.cantidad;},0);
     if(asignado!==cant){showToast('Repartiste '+asignado+' de '+cant+'. Completa el reparto por modelo.',true);return;}
   }
-  var subtotalArs=cant*precioUsd*(dolarBlue||1);
+  var precioUnitFinal=tcompraPrecioUnitConEnvio(cant,precioUsd);
+  var subtotalArs=cant*precioUnitFinal*(dolarBlue||1);
   tcompraCarritoTemp.push({
     tipo:'existente',id:tcompraProdActual.id,codigo:tcompraProdActual.codigo,
-    descripcion:tcompraProdActual.descripcion,cantidad:cant,precio_usd:precioUsd,
+    descripcion:tcompraProdActual.descripcion,cantidad:cant,precio_usd:precioUnitFinal,
     modelos:esFunda?tcompraModelosTemp.slice():[],subtotal_ars:subtotalArs,esFunda:esFunda
   });
   document.getElementById('tcompra-codigo-input').value='';
   document.getElementById('tcompra-prod-info').style.display='none';
+  document.getElementById('tcompra-envio-usd').value='';
   tcompraProdActual=null;
   tcompraModelosTemp=[];
   renderTcompraCarrito();
@@ -7687,13 +8273,15 @@ function tnpCrearProducto(){
     var asignado=tnpModelosTemp.reduce(function(s,m){return s+m.cantidad;},0);
     if(asignado!==cantidad){showToast('Repartiste '+asignado+' de '+cantidad+'. Completa el reparto por modelo.',true);return;}
   }
-  var subtotalArs=cantidad*precioUsd*(dolarBlue||1);
+  var envioTotal=parseFloat(document.getElementById('tnp-envio-usd').value)||0;
+  var precioUnitFinal=precioUsd+(cantidad?envioTotal/cantidad:0);
+  var subtotalArs=cantidad*precioUnitFinal*(dolarBlue||1);
   tcompraCarritoTemp.push({
     tipo:'nuevo',codigo:codigo,categoria:categoria,descripcion:descripcion,
-    cantidad:cantidad,precio_usd:precioUsd,precio_venta_ars:ventaArs,
+    cantidad:cantidad,precio_usd:precioUnitFinal,precio_venta_ars:ventaArs,
     modelos:esFunda?tnpModelosTemp.slice():[],subtotal_ars:subtotalArs,esFunda:esFunda
   });
-  ['tnp-codigo','tnp-categoria','tnp-descripcion','tnp-costo-usd','tnp-venta-ars','tnp-cantidad'].forEach(function(id){
+  ['tnp-codigo','tnp-categoria','tnp-descripcion','tnp-costo-usd','tnp-envio-usd','tnp-venta-ars','tnp-cantidad'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.value='';
   });
   document.getElementById('tnp-modelo-wrap').style.display='none';
@@ -7735,13 +8323,17 @@ function tcompraUpdateTotal(){
 }
 
 // ── VENTA: carrito ──
+var tventaModoPrecio='proporcional';
+
 function tventaAgregarProducto(){
   var cod=document.getElementById('tventa-codigo-input').value.trim().toUpperCase();
   var cant=parseInt(document.getElementById('tventa-cantidad-input').value)||1;
   var p=productosTiendas.find(function(x){return x.codigo===cod;});
   if(!p){showToast('Codigo no encontrado',true);return;}
   if((p.stock||0)<cant)showToast('Aviso: stock disponible '+(p.stock||0)+', se registra igual',false);
-  var existing=tventaCarritoTemp.find(function(c){return c.codigo===cod;});
+  // No fusiona con una linea que venga de un combo (combo_id) -- si lo hiciera, esta unidad
+  // suelta heredaria el precio ya rebajado del combo en vez de su precio de lista.
+  var existing=tventaCarritoTemp.find(function(c){return c.codigo===cod&&!c.combo_id;});
   if(existing){
     existing.cantidad+=cant;
   }else{
@@ -7750,14 +8342,77 @@ function tventaAgregarProducto(){
   }
   document.getElementById('tventa-codigo-input').value='';
   document.getElementById('tventa-cantidad-input').value='1';
-  renderTventaCarrito();
+  tventaRecalcular();
 }
 
+function tventaBuscarCombo(input){
+  var q=input.value.trim().toLowerCase();
+  var dd=document.getElementById('tventa-combo-ac');
+  if(!q){dd.classList.remove('show');dd.innerHTML='';return;}
+  var matches=combos.filter(function(c){return c.estado==='ACTIVO'&&c.nombre.toLowerCase().indexOf(q)>-1;}).slice(0,8);
+  if(!matches.length){
+    dd.innerHTML='<div class="ac-empty">Sin combos activos que coincidan</div>';
+    dd.classList.add('show');
+    return;
+  }
+  dd.innerHTML=matches.map(function(c){
+    return'<div class="ac-item" data-id="'+c.id+'" onclick="tventaAgregarCombo(this.dataset.id)">'+
+      '<span class="ac-item-code">'+c.nombre+'</span>'+
+      '<span class="ac-item-desc">'+comboProductosResumen(c.id)+' · '+fmtARS(c.precio_promocional)+'</span>'+
+      '</div>';
+  }).join('');
+  dd.classList.add('show');
+}
+
+// Agrega todos los productos del combo al carrito con el precio promocional repartido entre
+// ellos (mismo algoritmo que tventaDistribuirProporcional, acotado solo a estas lineas). Fuerza
+// el modo a Manual para que el resto del carrito no pise este precio ya fijado.
+function tventaAgregarCombo(comboId){
+  var combo=combos.find(function(c){return String(c.id)===String(comboId);});
+  if(!combo)return;
+  var items=comboProductos.filter(function(cp){return cp.combo_id===combo.id;});
+  if(!items.length){showToast('Este combo no tiene productos cargados',true);return;}
+  var lineas=[];
+  for(var i=0;i<items.length;i++){
+    var cp=items[i];
+    var p=productosTiendas.find(function(x){return x.codigo===cp.codigo;});
+    if(!p){showToast('El producto '+cp.codigo+' del combo ya no existe',true);continue;}
+    var precioLista=parseFloat(p.precio_venta_ars||0);
+    lineas.push({codigo:p.codigo,descripcion:p.descripcion,precio_lista:precioLista,precio_cobrado:precioLista,cantidad:cp.cantidad,stockDisponible:p.stock||0,combo_id:combo.id,combo_nombre:combo.nombre});
+  }
+  if(!lineas.length)return;
+  var totalListaCombo=lineas.reduce(function(s,l){return s+l.precio_lista*l.cantidad;},0);
+  var precioPromo=parseFloat(combo.precio_promocional)||0;
+  if(!totalListaCombo){
+    var partesIguales=precioPromo/lineas.length;
+    lineas.forEach(function(l){l.precio_cobrado=Math.round((partesIguales/l.cantidad)*100)/100;});
+  }else{
+    var acumulado=0;
+    for(var j=0;j<lineas.length;j++){
+      var l=lineas[j];
+      var subtotalLista=l.precio_lista*l.cantidad;
+      var esUltimo=j===lineas.length-1;
+      var nuevoSubtotal=esUltimo?(precioPromo-acumulado):Math.round((subtotalLista/totalListaCombo)*precioPromo*100)/100;
+      acumulado+=nuevoSubtotal;
+      l.precio_cobrado=Math.round((nuevoSubtotal/l.cantidad)*100)/100;
+    }
+  }
+  tventaCarritoTemp.push.apply(tventaCarritoTemp,lineas);
+  document.getElementById('tventa-combo-input').value='';
+  document.getElementById('tventa-combo-ac').classList.remove('show');
+  tventaModoPrecio='manual';
+  document.querySelectorAll('input[name="tventa-modo-precio"]').forEach(function(r){r.checked=(r.value==='manual');});
+  var inputFinal=document.getElementById('tventa-precio-final');if(inputFinal)inputFinal.readOnly=true;
+  renderTventaCarrito();
+  showToast('Combo agregado: '+lineas.length+' producto(s)');
+}
+
+// Edicion manual de una linea (solo activo en modo "manual", los inputs quedan disabled en los otros modos).
 function tventaUpdatePrecioCobrado(idx,val){
   var c=tventaCarritoTemp[parseInt(idx)];
   if(c)c.precio_cobrado=parseFloat(val)||0;
   tventaUpdateLineaVisual(idx);
-  tventaUpdateTotal();
+  tventaSyncPrecioFinalManual();
 }
 
 function tventaUpdateLineaVisual(idx){
@@ -7774,51 +8429,111 @@ function tventaUpdateLineaVisual(idx){
 
 function renderTventaCarrito(){
   var el=document.getElementById('tventa-carrito');
-  if(!tventaCarritoTemp.length){el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:8px 0;">Agrega productos arriba por codigo.</div>';tventaUpdateTotal();return;}
-  el.innerHTML=tventaCarritoTemp.map(function(c,i){
-    var subtotalCobrado=c.precio_cobrado*c.cantidad;
-    var subtotalLista=c.precio_lista*c.cantidad;
-    var descuento=subtotalLista-subtotalCobrado;
-    var descuentoTag=descuento>0?'<span style="color:var(--amber);font-size:10px;">desc. '+fmtARS(descuento)+'</span>':'';
-    return'<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;flex-wrap:wrap;">'+
-      '<span class="mono" style="color:var(--text3);font-size:10px;">'+c.codigo+'</span>'+
-      '<span style="flex:1;min-width:90px;">'+c.descripcion+'</span>'+
-      '<span style="color:var(--text2);">x'+c.cantidad+'</span>'+
-      '<span style="font-size:10px;color:var(--text3);">lista: '+fmtARS(c.precio_lista)+'</span>'+
-      '<input type="number" value="'+c.precio_cobrado+'" min="0" step="0.01" data-idx="'+i+'" oninput="tventaUpdatePrecioCobrado(this.dataset.idx,this.value)" style="width:100px;padding:5px 8px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg);color:var(--green);font-family:monospace;font-size:12px;outline:none;" title="Precio cobrado por unidad">'+
-      '<span id="tventa-desc-'+i+'">'+descuentoTag+'</span>'+
-      '<span id="tventa-sub-'+i+'" style="color:var(--green);font-family:monospace;font-weight:600;">'+fmtARS(subtotalCobrado)+'</span>'+
-      '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;" data-idx="'+i+'" onclick="tventaQuitarProducto(this.dataset.idx)">x</button>'+
-      '</div>';
-  }).join('');
-  tventaUpdateTotal();
+  var disabled=tventaModoPrecio!=='manual';
+  if(!tventaCarritoTemp.length){
+    el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:8px 0;">Agrega productos arriba por codigo.</div>';
+  }else{
+    el.innerHTML=tventaCarritoTemp.map(function(c,i){
+      var subtotalCobrado=c.precio_cobrado*c.cantidad;
+      var subtotalLista=c.precio_lista*c.cantidad;
+      var descuento=subtotalLista-subtotalCobrado;
+      var descuentoTag=descuento>0?'<span style="color:var(--amber);font-size:10px;">desc. '+fmtARS(descuento)+'</span>':'';
+      var comboTag=c.combo_id?'<span style="color:var(--purple);font-size:10px;">Combo: '+c.combo_nombre+'</span>':'';
+      return'<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;flex-wrap:wrap;">'+
+        '<span class="mono" style="color:var(--text3);font-size:10px;">'+c.codigo+'</span>'+
+        '<span style="flex:1;min-width:90px;">'+c.descripcion+comboTag+'</span>'+
+        '<span style="color:var(--text2);">x'+c.cantidad+'</span>'+
+        '<span style="font-size:10px;color:var(--text3);">lista: '+fmtARS(c.precio_lista)+'</span>'+
+        '<input type="number" value="'+c.precio_cobrado+'" min="0" step="0.01" data-idx="'+i+'" oninput="tventaUpdatePrecioCobrado(this.dataset.idx,this.value)" '+(disabled?'disabled':'')+' style="width:100px;padding:5px 8px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg);color:var(--green);font-family:monospace;font-size:12px;outline:none;" title="Precio cobrado por unidad">'+
+        '<span id="tventa-desc-'+i+'">'+descuentoTag+'</span>'+
+        '<span id="tventa-sub-'+i+'" style="color:var(--green);font-family:monospace;font-weight:600;">'+fmtARS(subtotalCobrado)+'</span>'+
+        '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;" data-idx="'+i+'" onclick="tventaQuitarProducto(this.dataset.idx)">x</button>'+
+        '</div>';
+    }).join('');
+  }
+  tventaUpdateSugerido();
+  tventaSyncPrecioFinalManual();
 }
-function tventaQuitarProducto(idx){tventaCarritoTemp.splice(parseInt(idx),1);renderTventaCarrito();}
+function tventaQuitarProducto(idx){tventaCarritoTemp.splice(parseInt(idx),1);tventaRecalcular();}
+
+function tventaUpdateSugerido(){
+  var sugerido=tventaCarritoTemp.reduce(function(s,c){return s+c.precio_lista*c.cantidad;},0);
+  var el=document.getElementById('tventa-sugerido');
+  if(el)el.textContent=fmtARS(sugerido);
+  return sugerido;
+}
 
 function tventaUpdateTotal(){
-  var total=tventaCarritoTemp.reduce(function(s,c){return s+c.precio_cobrado*c.cantidad;},0);
-  var el=document.getElementById('tventa-total');
-  if(el)el.textContent=fmtARS(total);
-  return total;
+  return tventaCarritoTemp.reduce(function(s,c){return s+c.precio_cobrado*c.cantidad;},0);
 }
 
-// Si se ingreso un monto de pago distinto al total (precio de lista) del carrito,
-// ese monto ingresado pasa a ser el valor real de venta y la diferencia es descuento.
-// Se reparte proporcionalmente entre los items del carrito (el ultimo absorbe el redondeo).
-function tventaAplicarDescuentoPorPago(carrito,montoIngresado){
-  if(!(montoIngresado>0)||!carrito.length)return false;
-  var totalActual=carrito.reduce(function(s,c){return s+c.precio_cobrado*c.cantidad;},0);
-  if(!totalActual||Math.abs(totalActual-montoIngresado)<0.01)return false;
+// En modo manual el campo "Precio final" no se edita: solo refleja la suma en vivo de las lineas.
+function tventaSyncPrecioFinalManual(){
+  if(tventaModoPrecio!=='manual')return;
+  var inputFinal=document.getElementById('tventa-precio-final');
+  if(inputFinal)inputFinal.value=tventaUpdateTotal().toFixed(2);
+}
+
+function tventaCambiarModoPrecio(modo){
+  tventaModoPrecio=modo;
+  var inputFinal=document.getElementById('tventa-precio-final');
+  if(inputFinal)inputFinal.readOnly=(modo==='manual');
+  tventaRecalcular();
+}
+
+// Punto de entrada unico: recalcula los precio_cobrado de todo el carrito segun el modo activo
+// y el valor tipeado en "Precio final de la venta", y vuelve a pintar el carrito.
+function tventaRecalcular(){
+  if(tventaModoPrecio!=='manual'){
+    var inputFinal=document.getElementById('tventa-precio-final');
+    var monto=inputFinal?parseFloat(inputFinal.value):NaN;
+    if(!(monto>=0)){
+      tventaCarritoTemp.forEach(function(c){c.precio_cobrado=c.precio_lista;});
+    }else if(tventaModoPrecio==='ultimo'){
+      tventaDistribuirUltimo(tventaCarritoTemp,monto);
+    }else{
+      tventaDistribuirProporcional(tventaCarritoTemp,monto);
+    }
+  }
+  renderTventaCarrito();
+}
+
+// Llamado desde el oninput del campo "Precio final de la venta".
+function tventaAplicarPrecioFinal(){
+  tventaRecalcular();
+}
+
+// Reparte el precio final proporcionalmente al precio de lista de cada linea
+// (el ultimo item absorbe el redondeo para que la suma cierre exacto).
+function tventaDistribuirProporcional(carrito,montoFinal){
+  if(!carrito.length)return;
+  var totalLista=carrito.reduce(function(s,c){return s+c.precio_lista*c.cantidad;},0);
+  if(!totalLista){
+    var partesIguales=montoFinal/carrito.length;
+    carrito.forEach(function(c){c.precio_cobrado=Math.round((partesIguales/c.cantidad)*100)/100;});
+    return;
+  }
   var acumulado=0;
   for(var i=0;i<carrito.length;i++){
     var c=carrito[i];
-    var subtotalActual=c.precio_cobrado*c.cantidad;
+    var subtotalLista=c.precio_lista*c.cantidad;
     var esUltimo=i===carrito.length-1;
-    var nuevoSubtotal=esUltimo?(montoIngresado-acumulado):Math.round((subtotalActual/totalActual)*montoIngresado*100)/100;
+    var nuevoSubtotal=esUltimo?(montoFinal-acumulado):Math.round((subtotalLista/totalLista)*montoFinal*100)/100;
     acumulado+=nuevoSubtotal;
     c.precio_cobrado=Math.round((nuevoSubtotal/c.cantidad)*100)/100;
   }
-  return true;
+}
+
+// Todas las lineas salvo la ultima quedan a precio de lista; la ultima absorbe todo el descuento.
+function tventaDistribuirUltimo(carrito,montoFinal){
+  if(!carrito.length)return;
+  var acumulado=0;
+  for(var i=0;i<carrito.length-1;i++){
+    carrito[i].precio_cobrado=carrito[i].precio_lista;
+    acumulado+=carrito[i].precio_lista*carrito[i].cantidad;
+  }
+  var last=carrito[carrito.length-1];
+  last.precio_cobrado=Math.round(((montoFinal-acumulado)/last.cantidad)*100)/100;
 }
 
 function tventaUpdateMixto(){
@@ -7972,8 +8687,6 @@ async function tieGuardarOp(){
       var garantiaVenta=garantiaLeer('tventa',fecha);
       if(!garantiaVenta.valido){showToast('Ingresa una cantidad valida de dias de garantia',true);return;}
       var cliente=document.getElementById('tventa-cliente').value||null;
-      var montoIngresado=(parseFloat(document.getElementById('tventa-monto1').value)||0)+(parseFloat(document.getElementById('tventa-monto2').value)||0)+(parseFloat(document.getElementById('tventa-monto3').value)||0);
-      tventaAplicarDescuentoPorPago(tventaCarritoTemp,montoIngresado);
       var metodoStr=tventaGetMetodoStr();
       var total=tventaUpdateTotal();
       var descGeneral=tventaCarritoTemp.map(function(c){var d=c.precio_lista>c.precio_cobrado?' (desc.)':'';return c.codigo+' x'+c.cantidad+d;}).join(', ');
@@ -8007,7 +8720,7 @@ async function tieGuardarOp(){
           body:JSON.stringify({
             fecha:fecha,codigo:item.codigo,descripcion:item.descripcion,cantidad:item.cantidad,
             precio_unitario:item.precio_cobrado,precio_lista:item.precio_lista,total:item.precio_cobrado*item.cantidad,
-            metodo_pago:metodoStr,cliente:cliente,canal_venta:canalVenta,movimiento_id:movIdTVenta
+            metodo_pago:metodoStr,cliente:cliente,canal_venta:canalVenta,movimiento_id:movIdTVenta,combo_id:item.combo_id||null
           })
         });
       }
@@ -8204,13 +8917,17 @@ async function tdetGuardar(){
 var ftventaCarritoTemp=[];
 var ftcompraProdActual=null;
 
+var ftventaModoPrecio='proporcional';
+
 function ftventaAgregarProducto(){
   var cod=document.getElementById('ftventa-codigo-input').value.trim().toUpperCase();
   var cant=parseInt(document.getElementById('ftventa-cantidad-input').value)||1;
   var p=productosTiendas.find(function(x){return x.codigo===cod;});
   if(!p){showToast('Codigo no encontrado',true);return;}
   if((p.stock||0)<cant)showToast('Aviso: stock disponible '+(p.stock||0)+', se registra igual',false);
-  var existing=ftventaCarritoTemp.find(function(c){return c.codigo===cod;});
+  // No fusiona con una linea que venga de un combo (combo_id) -- si lo hiciera, esta unidad
+  // suelta heredaria el precio ya rebajado del combo en vez de su precio de lista.
+  var existing=ftventaCarritoTemp.find(function(c){return c.codigo===cod&&!c.combo_id;});
   if(existing){
     existing.cantidad+=cant;
   }else{
@@ -8219,14 +8936,73 @@ function ftventaAgregarProducto(){
   }
   document.getElementById('ftventa-codigo-input').value='';
   document.getElementById('ftventa-cantidad-input').value='1';
+  ftventaRecalcular();
+}
+
+function ftventaBuscarCombo(input){
+  var q=input.value.trim().toLowerCase();
+  var dd=document.getElementById('ftventa-combo-ac');
+  if(!q){dd.classList.remove('show');dd.innerHTML='';return;}
+  var matches=combos.filter(function(c){return c.estado==='ACTIVO'&&c.nombre.toLowerCase().indexOf(q)>-1;}).slice(0,8);
+  if(!matches.length){
+    dd.innerHTML='<div class="ac-empty">Sin combos activos que coincidan</div>';
+    dd.classList.add('show');
+    return;
+  }
+  dd.innerHTML=matches.map(function(c){
+    return'<div class="ac-item" data-id="'+c.id+'" onclick="ftventaAgregarCombo(this.dataset.id)">'+
+      '<span class="ac-item-code">'+c.nombre+'</span>'+
+      '<span class="ac-item-desc">'+comboProductosResumen(c.id)+' · '+fmtARS(c.precio_promocional)+'</span>'+
+      '</div>';
+  }).join('');
+  dd.classList.add('show');
+}
+
+function ftventaAgregarCombo(comboId){
+  var combo=combos.find(function(c){return String(c.id)===String(comboId);});
+  if(!combo)return;
+  var items=comboProductos.filter(function(cp){return cp.combo_id===combo.id;});
+  if(!items.length){showToast('Este combo no tiene productos cargados',true);return;}
+  var lineas=[];
+  for(var i=0;i<items.length;i++){
+    var cp=items[i];
+    var p=productosTiendas.find(function(x){return x.codigo===cp.codigo;});
+    if(!p){showToast('El producto '+cp.codigo+' del combo ya no existe',true);continue;}
+    var precioLista=parseFloat(p.precio_venta_ars||0);
+    lineas.push({codigo:p.codigo,descripcion:p.descripcion,precio_lista:precioLista,precio_cobrado:precioLista,cantidad:cp.cantidad,stockDisponible:p.stock||0,combo_id:combo.id,combo_nombre:combo.nombre});
+  }
+  if(!lineas.length)return;
+  var totalListaCombo=lineas.reduce(function(s,l){return s+l.precio_lista*l.cantidad;},0);
+  var precioPromo=parseFloat(combo.precio_promocional)||0;
+  if(!totalListaCombo){
+    var partesIguales=precioPromo/lineas.length;
+    lineas.forEach(function(l){l.precio_cobrado=Math.round((partesIguales/l.cantidad)*100)/100;});
+  }else{
+    var acumulado=0;
+    for(var j=0;j<lineas.length;j++){
+      var l=lineas[j];
+      var subtotalLista=l.precio_lista*l.cantidad;
+      var esUltimo=j===lineas.length-1;
+      var nuevoSubtotal=esUltimo?(precioPromo-acumulado):Math.round((subtotalLista/totalListaCombo)*precioPromo*100)/100;
+      acumulado+=nuevoSubtotal;
+      l.precio_cobrado=Math.round((nuevoSubtotal/l.cantidad)*100)/100;
+    }
+  }
+  ftventaCarritoTemp.push.apply(ftventaCarritoTemp,lineas);
+  document.getElementById('ftventa-combo-input').value='';
+  document.getElementById('ftventa-combo-ac').classList.remove('show');
+  ftventaModoPrecio='manual';
+  document.querySelectorAll('input[name="ftventa-modo-precio"]').forEach(function(r){r.checked=(r.value==='manual');});
+  var inputFinal=document.getElementById('ftventa-precio-final');if(inputFinal)inputFinal.readOnly=true;
   renderFtventaCarrito();
+  showToast('Combo agregado: '+lineas.length+' producto(s)');
 }
 
 function ftventaUpdatePrecioCobrado(idx,val){
   var c=ftventaCarritoTemp[parseInt(idx)];
   if(c)c.precio_cobrado=parseFloat(val)||0;
   ftventaUpdateLineaVisual(idx);
-  ftventaUpdateTotal();
+  ftventaSyncPrecioFinalManual();
 }
 
 function ftventaUpdateLineaVisual(idx){
@@ -8244,32 +9020,104 @@ function ftventaUpdateLineaVisual(idx){
 function renderFtventaCarrito(){
   var el=document.getElementById('ftventa-carrito');
   if(!el)return;
-  if(!ftventaCarritoTemp.length){el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:8px 0;">Agrega productos por codigo arriba.</div>';ftventaUpdateTotal();return;}
-  el.innerHTML=ftventaCarritoTemp.map(function(c,i){
-    var subtotalCobrado=c.precio_cobrado*c.cantidad;
-    var subtotalLista=c.precio_lista*c.cantidad;
-    var descuento=subtotalLista-subtotalCobrado;
-    var descuentoTag=descuento>0?'<span style="color:var(--amber);font-size:10px;">desc. '+fmtARS(descuento)+'</span>':'';
-    return'<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;flex-wrap:wrap;">'+
-      '<span class="mono" style="color:var(--text3);font-size:10px;">'+c.codigo+'</span>'+
-      '<span style="flex:1;min-width:90px;">'+c.descripcion+'</span>'+
-      '<span style="color:var(--text2);">x'+c.cantidad+'</span>'+
-      '<span style="font-size:10px;color:var(--text3);">lista: '+fmtARS(c.precio_lista)+'</span>'+
-      '<input type="number" value="'+c.precio_cobrado+'" min="0" step="0.01" data-idx="'+i+'" oninput="ftventaUpdatePrecioCobrado(this.dataset.idx,this.value)" style="width:100px;padding:5px 8px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg);color:var(--green);font-family:monospace;font-size:12px;outline:none;" title="Precio cobrado por unidad">'+
-      '<span id="ftventa-desc-'+i+'">'+descuentoTag+'</span>'+
-      '<span id="ftventa-sub-'+i+'" style="color:var(--green);font-family:monospace;font-weight:600;">'+fmtARS(subtotalCobrado)+'</span>'+
-      '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;" data-idx="'+i+'" onclick="ftventaQuitarProducto(this.dataset.idx)">x</button>'+
-      '</div>';
-  }).join('');
-  ftventaUpdateTotal();
+  var disabled=ftventaModoPrecio!=='manual';
+  if(!ftventaCarritoTemp.length){
+    el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:8px 0;">Agrega productos por codigo arriba.</div>';
+  }else{
+    el.innerHTML=ftventaCarritoTemp.map(function(c,i){
+      var subtotalCobrado=c.precio_cobrado*c.cantidad;
+      var subtotalLista=c.precio_lista*c.cantidad;
+      var descuento=subtotalLista-subtotalCobrado;
+      var descuentoTag=descuento>0?'<span style="color:var(--amber);font-size:10px;">desc. '+fmtARS(descuento)+'</span>':'';
+      var comboTag=c.combo_id?'<span style="color:var(--purple);font-size:10px;">Combo: '+c.combo_nombre+'</span>':'';
+      return'<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;flex-wrap:wrap;">'+
+        '<span class="mono" style="color:var(--text3);font-size:10px;">'+c.codigo+'</span>'+
+        '<span style="flex:1;min-width:90px;">'+c.descripcion+comboTag+'</span>'+
+        '<span style="color:var(--text2);">x'+c.cantidad+'</span>'+
+        '<span style="font-size:10px;color:var(--text3);">lista: '+fmtARS(c.precio_lista)+'</span>'+
+        '<input type="number" value="'+c.precio_cobrado+'" min="0" step="0.01" data-idx="'+i+'" oninput="ftventaUpdatePrecioCobrado(this.dataset.idx,this.value)" '+(disabled?'disabled':'')+' style="width:100px;padding:5px 8px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg);color:var(--green);font-family:monospace;font-size:12px;outline:none;" title="Precio cobrado por unidad">'+
+        '<span id="ftventa-desc-'+i+'">'+descuentoTag+'</span>'+
+        '<span id="ftventa-sub-'+i+'" style="color:var(--green);font-family:monospace;font-weight:600;">'+fmtARS(subtotalCobrado)+'</span>'+
+        '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;" data-idx="'+i+'" onclick="ftventaQuitarProducto(this.dataset.idx)">x</button>'+
+        '</div>';
+    }).join('');
+  }
+  ftventaUpdateSugerido();
+  ftventaSyncPrecioFinalManual();
 }
-function ftventaQuitarProducto(idx){ftventaCarritoTemp.splice(parseInt(idx),1);renderFtventaCarrito();}
+function ftventaQuitarProducto(idx){ftventaCarritoTemp.splice(parseInt(idx),1);ftventaRecalcular();}
+
+function ftventaUpdateSugerido(){
+  var sugerido=ftventaCarritoTemp.reduce(function(s,c){return s+c.precio_lista*c.cantidad;},0);
+  var el=document.getElementById('ftventa-sugerido');
+  if(el)el.textContent=fmtARS(sugerido);
+  return sugerido;
+}
 
 function ftventaUpdateTotal(){
-  var total=ftventaCarritoTemp.reduce(function(s,c){return s+c.precio_cobrado*c.cantidad;},0);
-  var el=document.getElementById('ftventa-total');
-  if(el)el.textContent=fmtARS(total);
-  return total;
+  return ftventaCarritoTemp.reduce(function(s,c){return s+c.precio_cobrado*c.cantidad;},0);
+}
+
+function ftventaSyncPrecioFinalManual(){
+  if(ftventaModoPrecio!=='manual')return;
+  var inputFinal=document.getElementById('ftventa-precio-final');
+  if(inputFinal)inputFinal.value=ftventaUpdateTotal().toFixed(2);
+}
+
+function ftventaCambiarModoPrecio(modo){
+  ftventaModoPrecio=modo;
+  var inputFinal=document.getElementById('ftventa-precio-final');
+  if(inputFinal)inputFinal.readOnly=(modo==='manual');
+  ftventaRecalcular();
+}
+
+function ftventaRecalcular(){
+  if(ftventaModoPrecio!=='manual'){
+    var inputFinal=document.getElementById('ftventa-precio-final');
+    var monto=inputFinal?parseFloat(inputFinal.value):NaN;
+    if(!(monto>=0)){
+      ftventaCarritoTemp.forEach(function(c){c.precio_cobrado=c.precio_lista;});
+    }else if(ftventaModoPrecio==='ultimo'){
+      ftventaDistribuirUltimo(ftventaCarritoTemp,monto);
+    }else{
+      ftventaDistribuirProporcional(ftventaCarritoTemp,monto);
+    }
+  }
+  renderFtventaCarrito();
+}
+
+function ftventaAplicarPrecioFinal(){
+  ftventaRecalcular();
+}
+
+function ftventaDistribuirProporcional(carrito,montoFinal){
+  if(!carrito.length)return;
+  var totalLista=carrito.reduce(function(s,c){return s+c.precio_lista*c.cantidad;},0);
+  if(!totalLista){
+    var partesIguales=montoFinal/carrito.length;
+    carrito.forEach(function(c){c.precio_cobrado=Math.round((partesIguales/c.cantidad)*100)/100;});
+    return;
+  }
+  var acumulado=0;
+  for(var i=0;i<carrito.length;i++){
+    var c=carrito[i];
+    var subtotalLista=c.precio_lista*c.cantidad;
+    var esUltimo=i===carrito.length-1;
+    var nuevoSubtotal=esUltimo?(montoFinal-acumulado):Math.round((subtotalLista/totalLista)*montoFinal*100)/100;
+    acumulado+=nuevoSubtotal;
+    c.precio_cobrado=Math.round((nuevoSubtotal/c.cantidad)*100)/100;
+  }
+}
+
+function ftventaDistribuirUltimo(carrito,montoFinal){
+  if(!carrito.length)return;
+  var acumulado=0;
+  for(var i=0;i<carrito.length-1;i++){
+    carrito[i].precio_cobrado=carrito[i].precio_lista;
+    acumulado+=carrito[i].precio_lista*carrito[i].cantidad;
+  }
+  var last=carrito[carrito.length-1];
+  last.precio_cobrado=Math.round(((montoFinal-acumulado)/last.cantidad)*100)/100;
 }
 
 function ftventaUpdateMixto(){
@@ -8328,13 +9176,19 @@ function ftcompraBuscarCodigo(){
   ftcompraCalcSubtotal();
 }
 
+function ftcompraPrecioUnitConEnvio(cant,precioUsd){
+  var envioTotal=parseFloat(document.getElementById('ftcompra-envio-usd').value)||0;
+  return precioUsd+(cant?envioTotal/cant:0);
+}
+
 function ftcompraCalcSubtotal(){
   var cant=parseInt(document.getElementById('ftcompra-cantidad').value)||0;
   var precioUsd=parseFloat(document.getElementById('ftcompra-precio-usd').value)||0;
-  var subtotalUsd=cant*precioUsd;
+  var precioUnitFinal=ftcompraPrecioUnitConEnvio(cant,precioUsd);
+  var subtotalUsd=cant*precioUnitFinal;
   var subtotalArs=subtotalUsd*(dolarBlue||1);
   var info=document.getElementById('ftcompra-subtotal-info');
-  if(info)info.textContent=cant&&precioUsd?'Subtotal: '+fmtUSD(subtotalUsd)+' = '+fmtARS(subtotalArs):'';
+  if(info)info.textContent=cant&&precioUsd?'Subtotal: '+fmtUSD(subtotalUsd)+' = '+fmtARS(subtotalArs)+(precioUnitFinal!==precioUsd?' (incluye envio: '+fmtUSD(precioUnitFinal)+'/u)':''):'';
 }
 
 function ftcompraUpdateModeloProgreso(){
@@ -8396,14 +9250,16 @@ function ftcompraAgregarAlCarrito(){
     var asignado=ftcompraModelosTemp.reduce(function(s,m){return s+m.cantidad;},0);
     if(asignado!==cant){showToast('Repartiste '+asignado+' de '+cant+'. Completa el reparto por modelo.',true);return;}
   }
-  var subtotalArs=cant*precioUsd*(dolarBlue||1);
+  var precioUnitFinal=ftcompraPrecioUnitConEnvio(cant,precioUsd);
+  var subtotalArs=cant*precioUnitFinal*(dolarBlue||1);
   ftcompraCarritoTemp.push({
     tipo:'existente',id:ftcompraProdActual.id,codigo:ftcompraProdActual.codigo,
-    descripcion:ftcompraProdActual.descripcion,cantidad:cant,precio_usd:precioUsd,
+    descripcion:ftcompraProdActual.descripcion,cantidad:cant,precio_usd:precioUnitFinal,
     modelos:esFunda?ftcompraModelosTemp.slice():[],subtotal_ars:subtotalArs,esFunda:esFunda
   });
   document.getElementById('ftcompra-codigo-input').value='';
   document.getElementById('ftcompra-prod-info').style.display='none';
+  document.getElementById('ftcompra-envio-usd').value='';
   ftcompraProdActual=null;
   ftcompraModelosTemp=[];
   renderFtcompraCarrito();
@@ -8486,13 +9342,15 @@ function ftnpCrearProducto(){
     var asignado=ftnpModelosTemp.reduce(function(s,m){return s+m.cantidad;},0);
     if(asignado!==cantidad){showToast('Repartiste '+asignado+' de '+cantidad+'. Completa el reparto por modelo.',true);return;}
   }
-  var subtotalArs=cantidad*precioUsd*(dolarBlue||1);
+  var envioTotal=parseFloat(document.getElementById('ftnp-envio-usd').value)||0;
+  var precioUnitFinal=precioUsd+(cantidad?envioTotal/cantidad:0);
+  var subtotalArs=cantidad*precioUnitFinal*(dolarBlue||1);
   ftcompraCarritoTemp.push({
     tipo:'nuevo',codigo:codigo,categoria:categoria,descripcion:descripcion,
-    cantidad:cantidad,precio_usd:precioUsd,precio_venta_ars:ventaArs,
+    cantidad:cantidad,precio_usd:precioUnitFinal,precio_venta_ars:ventaArs,
     modelos:esFunda?ftnpModelosTemp.slice():[],subtotal_ars:subtotalArs,esFunda:esFunda
   });
-  ['ftnp-codigo','ftnp-categoria','ftnp-descripcion','ftnp-costo-usd','ftnp-venta-ars','ftnp-cantidad'].forEach(function(id){
+  ['ftnp-codigo','ftnp-categoria','ftnp-descripcion','ftnp-costo-usd','ftnp-envio-usd','ftnp-venta-ars','ftnp-cantidad'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.value='';
   });
   document.getElementById('ftnp-modelo-wrap').style.display='none';
@@ -8543,8 +9401,6 @@ async function tieGuardarDesdeForm(op){
       var garantiaVenta=garantiaLeer('ftventa',fecha);
       if(!garantiaVenta.valido){showToast('Ingresa una cantidad valida de dias de garantia',true);return;}
       var cliente=document.getElementById('ftventa-cliente').value||null;
-      var montoIngresado=(parseFloat(document.getElementById('ftventa-monto1').value)||0)+(parseFloat(document.getElementById('ftventa-monto2').value)||0)+(parseFloat(document.getElementById('ftventa-monto3').value)||0);
-      tventaAplicarDescuentoPorPago(ftventaCarritoTemp,montoIngresado);
       var metodoStr=ftventaGetMetodoStr();
       var total=ftventaUpdateTotal();
       var descGeneral=ftventaCarritoTemp.map(function(c){var d=c.precio_lista>c.precio_cobrado?' (desc.)':'';return c.codigo+' x'+c.cantidad+d;}).join(', ');
@@ -8574,7 +9430,7 @@ async function tieGuardarDesdeForm(op){
           body:JSON.stringify({
             fecha:fecha,codigo:item.codigo,descripcion:item.descripcion,cantidad:item.cantidad,
             precio_unitario:item.precio_cobrado,precio_lista:item.precio_lista,total:item.precio_cobrado*item.cantidad,
-            metodo_pago:metodoStr,cliente:cliente,canal_venta:canalVenta,movimiento_id:movIdFtVenta
+            metodo_pago:metodoStr,cliente:cliente,canal_venta:canalVenta,movimiento_id:movIdFtVenta,combo_id:item.combo_id||null
           })
         });
       }
