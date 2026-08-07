@@ -301,6 +301,27 @@ tr:hover td{background:var(--bg3);}
 .rd-badge-green{background:var(--rd-green-lt);color:var(--rd-green);}
 .rd-badge-red{background:var(--rd-red-lt);color:var(--rd-red);}
 .rd-modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.07);}
+/* ===== Asistente por bloques (wizard) — reutilizable para cualquier flujo paso a paso ===== */
+.rd-wizard-steps{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--rd-text3);margin-bottom:20px;flex-wrap:wrap;}
+.rd-step-badge{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:rgba(255,255,255,0.06);color:var(--rd-text3);flex-shrink:0;transition:background .15s ease,color .15s ease;}
+.rd-step-badge.active{background:var(--rd-green-lt);color:var(--rd-green);}
+.rd-step-badge.done{background:var(--rd-green);color:var(--rd-bg);}
+.rd-step-label{color:var(--rd-text3);}
+.rd-step-label.active{color:var(--rd-text);font-weight:600;}
+.rd-step-line{flex:0 0 20px;height:1px;background:rgba(255,255,255,0.1);}
+.rd-wizard-block{background:var(--rd-card);border:1px solid var(--rd-border);border-radius:14px;padding:20px 22px;margin-bottom:16px;}
+.rd-wizard-block-title{font-size:11px;font-weight:600;letter-spacing:0.07em;color:var(--rd-text3);text-transform:uppercase;margin-bottom:16px;}
+.rd-btn-primary{background:var(--rd-green);border:1px solid var(--rd-green);color:#0e1512;border-radius:8px;padding:12px 20px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:filter .15s ease;}
+.rd-btn-primary:hover{filter:brightness(1.06);}
+.rd-btn-primary:disabled{opacity:0.5;cursor:not-allowed;filter:none;}
+.rd-summary-box{background:var(--rd-bg);border:1px solid var(--rd-border);border-radius:10px;padding:14px 16px;margin-top:14px;}
+.rd-summary-row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--rd-text2);padding:4px 0;}
+.rd-summary-row.total{border-top:1px solid var(--rd-border);margin-top:6px;padding-top:10px;font-size:14px;font-weight:700;color:var(--rd-text);}
+.rd-info-card{background:var(--rd-card);border:1px solid var(--rd-border);border-radius:10px;padding:14px 16px;margin-bottom:10px;}
+.rd-info-card-row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.rd-info-card-row:last-child{border-bottom:none;}
+.rd-info-card-row label{color:var(--rd-text3);font-size:11px;text-transform:uppercase;letter-spacing:0.04em;}
+.rd-info-card-row span{color:var(--rd-text);font-family:'JetBrains Mono',monospace;font-weight:600;}
 .rd-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
 .rd-cal-grid+.rd-cal-grid{margin-top:6px;}
 .rd-cal-day{min-height:88px;border:1px solid var(--rd-border);border-radius:8px;padding:6px;background:var(--rd-card);cursor:pointer;transition:border-color .12s ease;overflow:hidden;}
@@ -955,121 +976,152 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
 
         <!-- CELULARES: VENTA -->
         <div id="f-cel-venta" style="display:none;">
-          <div class="cel-fgroup cel-form-full" style="margin-bottom:12px;"><label>¿Esta venta corresponde a una reserva?</label>
-            <select id="venta-es-reserva" onchange="ventaToggleReserva()"><option value="NO">No</option><option value="SI">Si</option></select></div>
-          <div id="venta-reserva-wrap" style="display:none;margin-bottom:14px;">
-            <div class="ac-wrap" style="display:block;margin-bottom:10px;">
-              <input type="text" id="venta-reserva-search" placeholder="Buscar por cliente, modelo o N de reserva..." autocomplete="off" oninput="ventaBuscarReserva(this)" style="width:100%;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-              <div class="ac-dropdown" id="venta-reserva-search-ac"></div>
-            </div>
-            <div id="venta-reserva-info"></div>
+          <div class="rd-wizard-steps" id="venta-wizard-steps">
+            <span class="rd-step-badge done">①</span><span class="rd-step-label">Información</span>
+            <span class="rd-step-line"></span>
+            <span class="rd-step-badge" id="venta-step-badge-2">②</span><span class="rd-step-label" id="venta-step-label-2">Cliente</span>
+            <span class="rd-step-line"></span>
+            <span class="rd-step-badge" id="venta-step-badge-3">③</span><span class="rd-step-label" id="venta-step-label-3">Productos</span>
+            <span class="rd-step-line"></span>
+            <span class="rd-step-badge" id="venta-step-badge-4">④</span><span class="rd-step-label" id="venta-step-label-4">Cobro</span>
+            <span class="rd-step-line"></span>
+            <span class="rd-step-badge" id="venta-step-badge-5">⑤</span><span class="rd-step-label" id="venta-step-label-5">Confirmación</span>
           </div>
-          <div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Agregar celulares a la venta (marca, modelo, color, capacidad o IMEI)</div>
-          <div class="ac-wrap" style="margin-bottom:12px;display:block;">
-            <input type="text" id="venta-cel-search" placeholder="Ej: 17 Pro Max, negro, 256GB..." autocomplete="off" oninput="ventaBuscarCelular(this)" onkeydown="ventaCelSearchKey(event)" style="width:100%;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-            <div class="ac-dropdown" id="venta-cel-search-ac"></div>
+
+          <!-- BLOQUE 2: Cliente y canal de venta -->
+          <div id="venta-bloque2" class="rd-wizard-block">
+            <div class="rd-wizard-block-title">② Cliente y canal de venta</div>
+            <div class="rd-fgrid">
+              <div class="rd-fgroup rd-full">
+                <label>Cliente *</label>
+                <div class="ac-wrap"><input type="text" id="venta-cliente" placeholder="Buscar o escribir nombre..." autocomplete="off" oninput="cliAutocomplete(this,'venta-cliente-ac');ventaWizardEvaluar();" onchange="ventaWizardEvaluar()"><div class="ac-dropdown" id="venta-cliente-ac"></div></div>
+              </div>
+              <div class="rd-fgroup"><label>DNI</label><input type="text" id="venta-dni"></div>
+              <div class="rd-fgroup"><label>Teléfono</label><input type="text" id="venta-telefono"></div>
+              <div class="rd-fgroup"><label>Email</label><input type="email" id="venta-email"></div>
+              <div class="rd-fgroup"><label>Instagram</label><input type="text" id="venta-instagram"></div>
+              <div class="rd-fgroup rd-full">
+                <label>Canal de venta *</label>
+                <select id="venta-canal-venta" onchange="ventaWizardEvaluar()"><option value="">Selecciona...</option></select>
+              </div>
+            </div>
           </div>
-          <div id="venta-carrito" style="margin-bottom:14px;"></div>
-          <div id="venta-form-ext">
-            <div class="ganancia-box" style="margin-bottom:10px;">
-              <div><div class="ganancia-label">Precio sugerido</div></div>
-              <div class="ganancia-val" id="venta-precio-sugerido">$0</div>
+
+          <!-- BLOQUE 3: Productos y servicios -->
+          <div id="venta-bloque3" class="rd-wizard-block" style="display:none;">
+            <div class="rd-wizard-block-title">③ Productos y servicios</div>
+            <label style="font-size:11px;color:var(--rd-text3);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">Agregar celular (IMEI, marca, modelo o color)</label>
+            <div class="ac-wrap" style="margin:8px 0 14px;display:block;">
+              <input type="text" id="venta-cel-search" class="rd-input" style="width:100%;" placeholder="Ej: IPhone 17 Pro, negro, 256GB..." autocomplete="off" oninput="ventaBuscarCelular(this)" onkeydown="ventaCelSearchKey(event)">
+              <div class="ac-dropdown" id="venta-cel-search-ac"></div>
             </div>
-            <div class="cel-fgroup cel-form-full" style="margin-bottom:10px;">
-              <label>¿Como se reparte el descuento?</label>
-              <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:4px;font-size:12px;color:var(--text2);">
-                <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="venta-modo-precio" value="proporcional" checked onchange="ventaCambiarModoPrecio(this.value)"> Repartir proporcionalmente</label>
-                <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="venta-modo-precio" value="ultimo" onchange="ventaCambiarModoPrecio(this.value)"> Solo al ultimo producto</label>
-                <label style="display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="radio" name="venta-modo-precio" value="manual" onchange="ventaCambiarModoPrecio(this.value)"> Manual</label>
-              </div>
-            </div>
-            <div class="cel-fgroup cel-form-full" style="margin-bottom:14px;">
-              <label>Precio final de la venta (ARS)</label>
-              <input type="number" id="venta-precio-final" min="0" step="0.01" placeholder="0" oninput="ventaAplicarPrecioFinal()" style="width:100%;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--green);font-family:monospace;font-size:14px;font-weight:600;outline:none;">
-            </div>
-            <div class="cel-form-grid">
-              <div class="cel-fgroup"><label>Cliente</label><div class="ac-wrap"><input type="text" id="venta-cliente" placeholder="Nombre..." autocomplete="off" oninput="cliAutocomplete(this,'venta-cliente-ac')"><div class="ac-dropdown" id="venta-cliente-ac"></div></div></div>
-              <div class="cel-fgroup cel-form-full">
-                <label>Metodo de pago</label>
-                <div class="metodo-split-grid" style="gap:6px;margin-top:4px;">
-                  <select id="venta-metodo1" onchange="ventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
-                  <input type="number" id="venta-monto1" placeholder="Monto 1" min="0" step="0.01" oninput="ventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-                  <span class="metodo-split-extra hidden" id="venta-split2">
-                    <select id="venta-metodo2" onchange="ventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
-                    <input type="number" id="venta-monto2" placeholder="Monto 2" min="0" step="0.01" oninput="ventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-                  </span>
-                  <span class="metodo-split-extra hidden" id="venta-split3">
-                    <select id="venta-metodo3" onchange="ventaUpdateMixto()"><option value="">-</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
-                    <input type="number" id="venta-monto3" placeholder="Monto 3" min="0" step="0.01" oninput="ventaUpdateMixto()" style="padding:8px 11px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-                  </span>
-                  <button type="button" class="metodo-split-add-btn" id="venta-split-add-btn" onclick="metodoSplitAgregar('venta')">+ Agregar método de pago</button>
-                </div>
-                <div id="venta-mixto-info" style="font-size:11px;color:var(--text3);margin-top:5px;font-family:monospace;"></div>
-              </div>
-            </div>
-            <div style="margin-top:10px;">
-              <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);cursor:pointer;">
-                <input type="checkbox" id="venta-cuotas-check" onchange="ventaToggleCuotas()"> Venta en cuotas
-              </label>
-              <div id="venta-cuotas-form" style="display:none;margin-top:10px;background:var(--bg3);border-radius:var(--r);padding:14px;">
-                <div class="cel-form-grid">
-                  <div class="cel-fgroup"><label>Cantidad de cuotas</label><input type="number" id="vc-cantidad" placeholder="6" min="1" oninput="ventaCalcCuota()"></div>
-                  <div class="cel-fgroup"><label>Monto por cuota (ARS)</label><input type="number" id="vc-monto" placeholder="0" min="0" oninput="ventaCalcCuota()"></div>
-                  <div class="cel-fgroup"><label>Fecha primer pago</label><input type="date" id="vc-inicio"></div>
-                  <div class="cel-fgroup"><label>Frecuencia</label>
-                    <select id="vc-frecuencia"><option value="mensual">Mensual</option><option value="quincenal">Quincenal</option><option value="semanal">Semanal</option></select></div>
-                  <div class="cel-fgroup cel-form-full"><label>Fecha limite acordada</label><input type="date" id="vc-limite"></div>
-                </div>
-                <div style="font-size:11px;color:var(--text3);font-family:monospace;margin-top:8px;" id="vc-info"></div>
-              </div>
-            </div>
-            <div class="ganancia-box">
-              <div><div class="ganancia-label">Ganancia neta estimada</div></div>
-              <div class="ganancia-val" id="venta-ganancia">$0</div>
-            </div>
-            <div id="venta-saldo-box" style="display:none;background:var(--bg3);border-radius:var(--r);padding:14px;margin-top:12px;font-size:12px;"></div>
-            <div style="font-size:10px;color:var(--text3);font-family:monospace;margin:14px 0 8px;text-transform:uppercase;letter-spacing:0.08em;">Accesorios (opcional)</div>
-            <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <div id="venta-carrito"></div>
+
+            <div style="height:1px;background:rgba(255,255,255,0.07);margin:18px 0;"></div>
+            <label style="font-size:11px;color:var(--rd-text3);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">Accesorios (opcional)</label>
+            <div style="display:flex;gap:8px;margin:8px 0 12px;">
               <div class="ac-wrap" style="flex:1;">
-                <input type="text" id="venta-accesorio-codigo-input" placeholder="Codigo o descripcion del accesorio..." autocomplete="off" oninput="tieAutocomplete(this,'venta-accesorio-ac')" onkeydown="tieAutocompleteKey(event,'venta-accesorio-ac',function(c){tieAutocompleteSelect('venta-accesorio-codigo-input','venta-accesorio-ac',c);})" style="width:100%;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;text-transform:uppercase;">
+                <input type="text" id="venta-accesorio-codigo-input" class="rd-input" style="width:100%;text-transform:uppercase;" placeholder="Codigo o descripcion del accesorio..." autocomplete="off" oninput="tieAutocomplete(this,'venta-accesorio-ac')" onkeydown="tieAutocompleteKey(event,'venta-accesorio-ac',function(c){tieAutocompleteSelect('venta-accesorio-codigo-input','venta-accesorio-ac',c);})">
                 <div class="ac-dropdown" id="venta-accesorio-ac"></div>
               </div>
-              <input type="number" id="venta-accesorio-cantidad-input" placeholder="Cant." min="1" value="1" style="width:80px;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-              <button class="btn" onclick="ventaAccesorioAgregar()">+ Agregar</button>
+              <input type="number" id="venta-accesorio-cantidad-input" class="rd-input" style="width:80px;" placeholder="Cant." min="1" value="1">
+              <button class="rd-btn" onclick="ventaAccesorioAgregar()">+ Agregar</button>
             </div>
             <div id="venta-accesorios-carrito" style="margin-bottom:8px;"></div>
-            <div style="font-size:11px;color:var(--text3);font-family:monospace;margin-bottom:14px;" id="venta-accesorios-total"></div>
-            <div style="font-size:10px;color:var(--text3);font-family:monospace;margin:14px 0 8px;text-transform:uppercase;letter-spacing:0.08em;">Parte de pago (opcional)</div>
-            <div style="display:flex;gap:8px;margin-bottom:8px;">
-              <input type="text" id="pp-imei-input" placeholder="IMEI del celular como parte de pago..." style="flex:1;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;outline:none;">
-              <button class="btn" onclick="ppAgregarCelular()">+ Agregar</button>
+            <div style="font-size:11px;color:var(--rd-text3);font-family:'JetBrains Mono',monospace;margin-bottom:6px;" id="venta-accesorios-total"></div>
+
+            <div class="rd-summary-box" id="venta-resumen-costo">
+              <div class="rd-summary-row"><span>Costo del celular</span><span id="venta-costo-celular">USD 0</span></div>
+              <div class="rd-summary-row"><span>Costo accesorios</span><span id="venta-costo-accesorios">USD 0</span></div>
+              <div class="rd-summary-row total"><span>Costo total</span><span id="venta-costo-total">USD 0</span></div>
             </div>
-            <div id="pp-lista" style="margin-bottom:8px;"></div>
-            <div id="pp-form-new" style="display:none;background:var(--bg3);border-radius:var(--r);padding:14px;margin-bottom:10px;">
-              <div style="font-size:11px;color:var(--text3);margin-bottom:10px;font-family:monospace;">NUEVO EQUIPO COMO PARTE DE PAGO</div>
-              <div class="cel-form-grid">
-                <div class="cel-fgroup"><label>IMEI</label><input type="text" id="pp-imei"></div>
-                <div class="cel-fgroup"><label>Marca</label><input type="text" id="pp-marca"></div>
-                <div class="cel-fgroup"><label>Modelo</label><input type="text" id="pp-modelo"></div>
-                <div class="cel-fgroup"><label>Color</label><input type="text" id="pp-color"></div>
-                <div class="cel-fgroup"><label>GB</label>
-                  <select id="pp-cap"><option value="">-</option><option>64GB</option><option>128GB</option><option>256GB</option><option>512GB</option><option>1TB</option></select></div>
-                <div class="cel-fgroup"><label>Bateria %</label><input type="number" id="pp-bat" placeholder="100" min="0" max="100"></div>
-                <div class="cel-fgroup"><label>Estado</label>
-                  <select id="pp-estado"><option>NUEVO</option><option>SEMI NUEVO</option><option>USADO</option></select></div>
-                <div class="cel-fgroup"><label>Valor recibido (ARS)</label><input type="number" id="pp-valor" placeholder="0"></div>
+          </div>
+
+          <!-- BLOQUE 4: Cobro -->
+          <div id="venta-bloque4" class="rd-wizard-block" style="display:none;">
+            <div class="rd-wizard-block-title">④ Cobro</div>
+            <div class="metodo-split-grid" style="gap:6px;">
+              <select id="venta-metodo1" class="rd-select" onchange="ventaUpdateMixto()"><option value="">Metodo...</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
+              <input type="number" id="venta-monto1" class="rd-input" placeholder="Monto" min="0" step="0.01" oninput="ventaUpdateMixto()">
+              <span class="metodo-split-extra hidden" id="venta-split2">
+                <select id="venta-metodo2" class="rd-select" onchange="ventaUpdateMixto()"><option value="">Metodo...</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
+                <input type="number" id="venta-monto2" class="rd-input" placeholder="Monto" min="0" step="0.01" oninput="ventaUpdateMixto()">
+              </span>
+              <span class="metodo-split-extra hidden" id="venta-split3">
+                <select id="venta-metodo3" class="rd-select" onchange="ventaUpdateMixto()"><option value="">Metodo...</option><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option><option>DEUDA</option></select>
+                <input type="number" id="venta-monto3" class="rd-input" placeholder="Monto" min="0" step="0.01" oninput="ventaUpdateMixto()">
+              </span>
+              <button type="button" class="metodo-split-add-btn" id="venta-split-add-btn" onclick="metodoSplitAgregar('venta')">+ Agregar método de pago</button>
+            </div>
+            <div id="venta-mixto-info" style="font-size:11px;color:var(--rd-text3);margin-top:6px;font-family:'JetBrains Mono',monospace;"></div>
+
+            <div style="margin-top:16px;">
+              <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--rd-text2);cursor:pointer;">
+                <input type="checkbox" id="venta-cuotas-check" onchange="ventaToggleCuotas()"> Venta en cuotas
+              </label>
+              <div id="venta-cuotas-form" style="display:none;margin-top:10px;">
+                <div class="rd-fgrid">
+                  <div class="rd-fgroup"><label>Cantidad de cuotas</label><input type="number" id="vc-cantidad" placeholder="6" min="1" oninput="ventaCalcCuota()"></div>
+                  <div class="rd-fgroup"><label>Moneda</label><select id="vc-moneda" onchange="ventaCalcCuota()"><option value="ARS">ARS</option><option value="USD">USD</option></select></div>
+                  <div class="rd-fgroup"><label>Monto por cuota</label><input type="number" id="vc-monto" placeholder="0" min="0" oninput="ventaCalcCuota()"></div>
+                  <div class="rd-fgroup"><label>Fecha primer pago</label><input type="date" id="vc-inicio"></div>
+                  <div class="rd-fgroup"><label>Frecuencia</label>
+                    <select id="vc-frecuencia"><option value="mensual">Mensual</option><option value="quincenal">Quincenal</option><option value="semanal">Semanal</option></select></div>
+                </div>
+                <div id="vc-cuotas-lista" style="margin-top:10px;"></div>
+                <div style="font-size:11px;color:var(--rd-text3);font-family:'JetBrains Mono',monospace;margin-top:8px;" id="vc-info"></div>
               </div>
-              <button class="btn btn-sm" onclick="ppConfirmarNuevo()">Confirmar parte de pago</button>
             </div>
-            <div class="cel-form-grid" style="margin-top:10px;">
-              <div class="cel-fgroup"><label>¿Tiene garantia? *</label>
+
+            <div style="height:1px;background:rgba(255,255,255,0.07);margin:18px 0;"></div>
+            <label style="font-size:11px;color:var(--rd-text3);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">¿Recibe un celular como parte de pago?</label>
+            <select id="venta-es-parte-pago" onchange="ppToggle()" class="rd-select" style="display:block;margin:8px 0 12px;width:160px;"><option value="NO">No</option><option value="SI">Si</option></select>
+            <div id="venta-pp-wrap" style="display:none;">
+              <div style="display:flex;gap:8px;margin-bottom:8px;">
+                <input type="text" id="pp-imei-input" class="rd-input" style="flex:1;" placeholder="IMEI del celular como parte de pago...">
+                <button class="rd-btn" onclick="ppAgregarCelular()">+ Agregar</button>
+              </div>
+              <div id="pp-lista" style="margin-bottom:8px;"></div>
+              <div id="pp-form-new" style="display:none;background:var(--rd-bg);border:1px solid var(--rd-border);border-radius:10px;padding:14px;margin-bottom:10px;">
+                <div style="font-size:11px;color:var(--rd-text3);margin-bottom:10px;font-family:'JetBrains Mono',monospace;">NUEVO EQUIPO COMO PARTE DE PAGO</div>
+                <div class="rd-fgrid">
+                  <div class="rd-fgroup"><label>IMEI</label><input type="text" id="pp-imei"></div>
+                  <div class="rd-fgroup"><label>Marca</label><input type="text" id="pp-marca"></div>
+                  <div class="rd-fgroup"><label>Modelo</label><input type="text" id="pp-modelo"></div>
+                  <div class="rd-fgroup"><label>Color</label><input type="text" id="pp-color"></div>
+                  <div class="rd-fgroup"><label>Capacidad</label>
+                    <select id="pp-cap"><option value="">-</option><option>64GB</option><option>128GB</option><option>256GB</option><option>512GB</option><option>1TB</option></select></div>
+                  <div class="rd-fgroup"><label>Salud de batería %</label><input type="number" id="pp-bat" placeholder="100" min="0" max="100"></div>
+                  <div class="rd-fgroup"><label>Estado</label>
+                    <select id="pp-estado"><option value="NUEVO">Nuevo</option><option value="SEMI NUEVO">Seminuevo</option><option value="USADO">Usado</option></select></div>
+                  <div class="rd-fgroup"><label>Moneda</label><select id="pp-moneda"><option value="ARS">ARS</option><option value="USD">USD</option></select></div>
+                  <div class="rd-fgroup"><label>Valor tomado</label><input type="number" id="pp-valor" placeholder="0"></div>
+                </div>
+                <button class="rd-btn" style="margin-top:10px;" onclick="ppConfirmarNuevo()">Confirmar parte de pago</button>
+              </div>
+            </div>
+
+            <div class="rd-summary-box" id="venta-rentabilidad-box">
+              <div class="rd-summary-row"><span>Ingresos (métodos de cobro)</span><span id="venta-rent-ingresos">$0</span></div>
+              <div class="rd-summary-row"><span>+ Valor parte de pago</span><span id="venta-rent-pp">$0</span></div>
+              <div class="rd-summary-row"><span>− Costo celular</span><span id="venta-rent-costo-cel">$0</span></div>
+              <div class="rd-summary-row"><span>− Costo accesorios</span><span id="venta-rent-costo-acc">$0</span></div>
+              <div class="rd-summary-row total"><span>Rentabilidad de la operación</span><span id="venta-rentabilidad">$0</span></div>
+            </div>
+          </div>
+
+          <!-- BLOQUE 5: Confirmación -->
+          <div id="venta-bloque5" class="rd-wizard-block" style="display:none;">
+            <div class="rd-wizard-block-title">⑤ Confirmación</div>
+            <div class="rd-fgrid">
+              <div class="rd-fgroup"><label>¿Tiene garantía? *</label>
                 <select id="venta-tiene-garantia" onchange="garantiaToggle('venta')"><option value="NO">No</option><option value="SI">Si</option></select></div>
-              <div class="cel-fgroup" id="venta-dias-garantia-wrap" style="display:none;"><label>Dias de garantia</label>
+              <div class="rd-fgroup" id="venta-dias-garantia-wrap" style="display:none;"><label>Días de garantía</label>
                 <input type="number" id="venta-dias-garantia" value="30" min="1"></div>
             </div>
-            <div class="fa">
-              <button class="btn" onclick="clearForm()">Limpiar</button>
-              <button class="btn btn-p" onclick="celGuardarDesdeForm('venta')">Guardar venta</button>
+            <div style="display:flex;gap:10px;margin-top:20px;">
+              <button class="rd-btn-primary" style="flex:1;" onclick="celGuardarDesdeForm('venta')">Guardar venta</button>
+              <button class="rd-btn" onclick="clearForm()">Limpiar</button>
             </div>
           </div>
         </div>
@@ -1609,6 +1661,14 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
 
     <!-- CONFIG -->
     <div class="screen" id="screen-config">
+      <div class="sec-label">General</div>
+      <div class="cfg-grid" style="margin-bottom:20px;">
+        <div class="cfg-card">
+          <div class="cfg-title">Garantia por defecto</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">Dias que se sugieren al activar "Tiene garantia" en una venta o servicio (se puede editar en cada operacion).</div>
+          <input type="number" id="cfg-dias-garantia" min="1" value="30" style="width:100%;padding:9px 12px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg3);color:var(--text);font-size:13px;">
+        </div>
+      </div>
       <div class="sec-label">Listas desplegables</div>
       <div class="cfg-grid" id="cfg-grid"></div>
       <div style="display:flex;justify-content:flex-end;">
@@ -2407,6 +2467,7 @@ var DEFAULT_CONFIG={
   operaciones:['VENTAS','SERVICIOS','COMPRA','GASTOS','INVERSION','FINANCIERO'],
   metodos:['MP','EFECTIVO','USD','NARANJA X','A LIQUIDAR','DEUDA'],
   canales:['LOCAL','VENTA DIRECTA','INSTAGRAM','MERCADO LIBRE','TIENDA NUBE'],
+  diasGarantiaDefault:30,
   categorias:{
     VENTAS:['DIRECTA','TIENDA ONLINE','MERCADO LIBRE','INSTAGRAM','MAYORISTA','LOCAL'],
     SERVICIOS:['REPARACION','REVISION','SOFTWARE','LIMPIEZA','DIAGNOSTICO'],
@@ -2419,6 +2480,7 @@ var DEFAULT_CONFIG={
 var cfg=JSON.parse(localStorage.getItem('dm_cfg')||'null')||DEFAULT_CONFIG;
 if(cfg.metodos.indexOf('DEUDA')===-1)cfg.metodos.push('DEUDA');
 if(!cfg.canales||!cfg.canales.length)cfg.canales=DEFAULT_CONFIG.canales.slice();
+if(!cfg.diasGarantiaDefault)cfg.diasGarantiaDefault=DEFAULT_CONFIG.diasGarantiaDefault;
 // La operacion "Ajuste" se elimino de Cargar movimiento: los ajustes ahora se hacen solo desde
 // Movimientos Financieros -> Ajuste de Caja. Se limpia tambien de configs viejas guardadas en localStorage.
 cfg.operaciones=cfg.operaciones.filter(function(o){return o!=='AJUSTE';});
@@ -2519,6 +2581,10 @@ function fmtShort(n){
   return n<0?'-'+s:s;
 }
 function fd(d){if(!d)return'-';var s=String(d).slice(0,10);var p=s.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
+// Formatea un monto en su propia moneda explicita (a diferencia de fmtSmart, que convierte segun
+// el toggle global de moneda de la pantalla) -- para cuotas, parte de pago, etc. donde la moneda
+// de cada linea nunca se debe asumir.
+function fmtMoneda(monto,moneda){return moneda==='USD'?fmtUSD(monto):fmtARS(monto);}
 
 // ============ GARANTIA (compartido por todos los formularios de venta/servicio) ============
 function garantiaToggle(prefix){
@@ -2526,12 +2592,12 @@ function garantiaToggle(prefix){
   var wrap=document.getElementById(prefix+'-dias-garantia-wrap');
   wrap.style.display=val==='SI'?'block':'none';
   var dias=document.getElementById(prefix+'-dias-garantia');
-  if(val==='SI'&&!dias.value)dias.value=30;
+  if(val==='SI'&&!dias.value)dias.value=cfg.diasGarantiaDefault||30;
 }
 function garantiaResetForm(prefix){
   var tg=document.getElementById(prefix+'-tiene-garantia');if(tg)tg.value='NO';
   var wrap=document.getElementById(prefix+'-dias-garantia-wrap');if(wrap)wrap.style.display='none';
-  var dias=document.getElementById(prefix+'-dias-garantia');if(dias)dias.value='30';
+  var dias=document.getElementById(prefix+'-dias-garantia');if(dias)dias.value=cfg.diasGarantiaDefault||30;
 }
 function garantiaCalcVencimiento(fecha,dias){
   var d=new Date((fecha||new Date().toISOString().slice(0,10))+'T12:00:00');
@@ -3037,6 +3103,8 @@ function populateSelects(){
   scv.innerHTML='<option value="">Selecciona...</option>'+cfg.canales.map(function(c){return'<option>'+c+'</option>';}).join('');
   var stv=document.getElementById('tventa-canal');
   stv.innerHTML='<option value="">Selecciona...</option>'+cfg.canales.map(function(c){return'<option>'+c+'</option>';}).join('');
+  var svc=document.getElementById('venta-canal-venta');
+  if(svc)svc.innerHTML='<option value="">Selecciona...</option>'+cfg.canales.map(function(c){return'<option>'+c+'</option>';}).join('');
   var fo=document.getElementById('fil-o');
   fo.innerHTML='<option value="">Todas las operaciones</option>'+cfg.operaciones.map(function(o){return'<option>'+o+'</option>';}).join('');
   var fm=document.getElementById('fil-m');
@@ -3132,13 +3200,10 @@ function metodoSplitReset(prefix){
 function ventaResetForm(){
   metodoSplitReset('venta');
   ventaCarritoTemp=[];
-  ventaModoPrecio='proporcional';
-  document.querySelectorAll('input[name="venta-modo-precio"]').forEach(function(r){r.checked=(r.value==='proporcional');});
-  var inputFinal=document.getElementById('venta-precio-final');if(inputFinal){inputFinal.value='';inputFinal.readOnly=false;}
-  var sugerido=document.getElementById('venta-precio-sugerido');if(sugerido)sugerido.textContent='$0';
   if(document.getElementById('venta-carrito'))renderVentaCarrito();
-  ['venta-cel-search','venta-cliente','venta-monto1','venta-monto2','venta-monto3',
-    'vc-cantidad','vc-monto','vc-inicio','vc-limite','pp-imei-input',
+  ['venta-cel-search','venta-cliente','venta-dni','venta-telefono','venta-email','venta-instagram','venta-canal-venta',
+    'venta-monto1','venta-monto2','venta-monto3',
+    'vc-cantidad','vc-monto','vc-inicio','pp-imei-input',
     'venta-accesorio-codigo-input'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.value='';
   });
@@ -3149,15 +3214,47 @@ function ventaResetForm(){
   renderVentaAccesorios();
   ['venta-metodo1','venta-metodo2','venta-metodo3'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   var freq=document.getElementById('vc-frecuencia');if(freq)freq.value='mensual';
+  var vcMoneda=document.getElementById('vc-moneda');if(vcMoneda)vcMoneda.value='ARS';
   var cuotasCheck=document.getElementById('venta-cuotas-check');if(cuotasCheck)cuotasCheck.checked=false;
+  var cuotasForm=document.getElementById('venta-cuotas-form');if(cuotasForm)cuotasForm.style.display='none';
   var mixtoInfo=document.getElementById('venta-mixto-info');if(mixtoInfo)mixtoInfo.textContent='';
   var vcInfo=document.getElementById('vc-info');if(vcInfo)vcInfo.textContent='';
-  var ganancia=document.getElementById('venta-ganancia');if(ganancia){ganancia.textContent='$0';ganancia.style.color='';}
+  var vcLista=document.getElementById('vc-cuotas-lista');if(vcLista)vcLista.innerHTML='';
+  ventaCuotasTemp=[];
+  var esPP=document.getElementById('venta-es-parte-pago');if(esPP)esPP.value='NO';
+  var ppWrap=document.getElementById('venta-pp-wrap');if(ppWrap)ppWrap.style.display='none';
   var ppLista=document.getElementById('pp-lista');if(ppLista)ppLista.innerHTML='';
+  var ppFormNew=document.getElementById('pp-form-new');if(ppFormNew)ppFormNew.style.display='none';
+  ppListaTemp=[];
   garantiaResetForm('venta');
-  var esReserva=document.getElementById('venta-es-reserva');if(esReserva)esReserva.value='NO';
-  var resWrap=document.getElementById('venta-reserva-wrap');if(resWrap)resWrap.style.display='none';
-  ventaLimpiarReserva();
+  ventaWizardEvaluar();
+}
+
+// Determina que bloques del asistente de Venta de Celular mostrar segun lo que ya se completo,
+// y actualiza los indicadores de paso (Bloque1/Info siempre "hecho" al llegar aca -- para eso
+// hace falta haber elegido Fecha/Unidad/Operacion). No se valida nada estricto aca, solo UX:
+// la validacion real (bloqueante) pasa en celGuardarOp al guardar.
+function ventaWizardEvaluar(){
+  var cliente=(document.getElementById('venta-cliente')||{}).value||'';
+  var canal=(document.getElementById('venta-canal-venta')||{}).value||'';
+  var bloque2ok=!!(cliente.trim()&&canal);
+  var bloque3ok=ventaCarritoTemp.length>0;
+  var bloque4ok=ventaMetodoTotal()>0;
+  var b3=document.getElementById('venta-bloque3');if(b3)b3.style.display=bloque2ok?'block':'none';
+  var b4=document.getElementById('venta-bloque4');if(b4)b4.style.display=(bloque2ok&&bloque3ok)?'block':'none';
+  var b5=document.getElementById('venta-bloque5');if(b5)b5.style.display=(bloque2ok&&bloque3ok&&bloque4ok)?'block':'none';
+  ventaWizardStepBadge(2,true,bloque2ok);
+  ventaWizardStepBadge(3,bloque2ok,bloque3ok);
+  ventaWizardStepBadge(4,bloque2ok&&bloque3ok,bloque4ok);
+  ventaWizardStepBadge(5,bloque2ok&&bloque3ok&&bloque4ok,false);
+}
+function ventaWizardStepBadge(n,activo,hecho){
+  var badge=document.getElementById('venta-step-badge-'+n);
+  var label=document.getElementById('venta-step-label-'+n);
+  if(!badge)return;
+  badge.classList.toggle('done',!!hecho);
+  badge.classList.toggle('active',!!activo&&!hecho);
+  if(label)label.classList.toggle('active',!!activo);
 }
 
 // Limpia por completo el formulario de venta de Tiendas dentro de Cargar movimiento (ftventa-*).
@@ -3193,7 +3290,7 @@ function onOperacionChange(){
     var el=document.getElementById('f-tie-'+o);
     if(el)el.style.display='none';
   });
-  document.getElementById('f-canal-row').style.display=op==='VENTAS'?'block':'none';
+  document.getElementById('f-canal-row').style.display=(op==='VENTAS'&&unidad!=='CELULARES')?'block':'none';
   document.getElementById('f-equipo-row').style.display=op==='SERVICIOS'?'block':'none';
   document.getElementById('f-garantia-row').style.display=(op==='VENTAS'||op==='SERVICIOS')?'block':'none';
   if(!(op==='VENTAS'||op==='SERVICIOS'))garantiaResetForm('f');
@@ -3538,10 +3635,9 @@ async function ejecutarBorrarVentaCelular(id,mantenerReserva){
 
 async function ejecutarBorrarReserva(id){
   var r=celReservas.find(function(x){return String(x.id)===String(id);});
-  // Los items ya ASIGNADOS (equipo apartado, RESERVADO en stock, venta todavia sin cerrar) deben
-  // liberarse antes de borrar la reserva -- si no, el celular queda huerfano en RESERVADO. Los
-  // items ENTREGADO (venta ya cerrada) no se tocan: para deshacer una venta cerrada se borra su
-  // movimiento del saldo, no la reserva.
+  // Los items ASIGNADOS quedan sin reserva; el celular vinculado ya estaba EN STOCK (no bloqueado)
+  // pero de todas formas se reafirma su estado por las dudas de que algun dato viejo lo tuviera
+  // como RESERVADO (formato previo a este cambio).
   var itemsAsignados=celItemsDeReserva(id).filter(function(i){return i.estado==='ASIGNADO'&&i.celular_id;});
   for(var i=0;i<itemsAsignados.length;i++){
     await fetch(SUPA_URL+'/rest/v1/celulares?id=eq.'+itemsAsignados[i].celular_id,{
@@ -4186,6 +4282,7 @@ function toggleConcil(fecha,checked){
 
 
 function renderConfig(){
+  var dg=document.getElementById('cfg-dias-garantia');if(dg)dg.value=cfg.diasGarantiaDefault||30;
   var sections=[{key:'unidades',label:'Unidades de negocio'},{key:'operaciones',label:'Operaciones'},{key:'metodos',label:'Metodos de pago'},{key:'canales',label:'Canales de venta'}];
   var catSections=cfg.operaciones.map(function(op){return{key:'cat_'+op,label:'Categorias — '+op,op:op};});
   var all=sections.concat(catSections);
@@ -4205,7 +4302,11 @@ function addItem(key,op){
 function removeItem(key,idx,op){
   if(key.indexOf('cat_')===0){cfg.categorias[op].splice(idx,1);}else{cfg[key].splice(idx,1);}renderConfig();
 }
-function saveConfig(){localStorage.setItem('dm_cfg',JSON.stringify(cfg));populateSelects();showToast('Configuracion guardada');}
+function saveConfig(){
+  var dg=document.getElementById('cfg-dias-garantia');
+  if(dg)cfg.diasGarantiaDefault=parseInt(dg.value)||30;
+  localStorage.setItem('dm_cfg',JSON.stringify(cfg));populateSelects();showToast('Configuracion guardada');
+}
 
 function setU(u){curU=u;document.getElementById('page-title').textContent=u;renderU();}
 function renderU(){
@@ -5853,7 +5954,10 @@ async function cargarCelularesReservas(){
   }catch(e){console.log('Reservas load error',e);}
 }
 
-// Etiqueta+accion de un item de reserva segun su estado (PENDIENTE/ASIGNADO/ENTREGADO).
+// Etiqueta+accion de un item de reserva segun su estado. ASIGNADO es el estado final: la reserva
+// (el compromiso comercial) se cumple en cuanto el equipo pedido entra a stock, no cuando se
+// vende -- por eso ya no depende de ENTREGADO. Ese estado se deja reconocido solo por compatibilidad
+// con reservas viejas que ya lo tuvieran guardado de antes de este cambio.
 function celItemLineaHtml(item){
   var desc='<strong>'+(item.marca?item.marca+' ':'')+item.modelo+'</strong>'+(item.color?' '+item.color:'')+(item.capacidad?' '+item.capacidad:'');
   if(item.estado==='ENTREGADO'){
@@ -5863,7 +5967,7 @@ function celItemLineaHtml(item){
     var cel=celulares.find(function(c){return String(c.id)===String(item.celular_id);});
     var imeiTxt=cel?' · IMEI '+cel.imei:'';
     return'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">'+desc+imeiTxt+
-      ' <span class="badge" style="background:var(--amber-lt);color:var(--amber);font-size:10px;">Asignado</span>'+
+      ' <span class="badge b-vendido" style="font-size:10px;">Reserva cumplida</span>'+
       '<button class="btn btn-sm" style="color:var(--red);" onclick="celDeshacerAsignacion('+item.id+')">Deshacer asignacion</button>'+
       '</div>';
   }
@@ -5995,9 +6099,10 @@ async function celReservaGuardar(){
   finally{btn.disabled=false;btn.textContent='Guardar';}
 }
 
-// ── ASIGNAR un celular a un item de reserva: apenas lo "aparta" (celular pasa a RESERVADO,
-// item pasa a ASIGNADO). No es la venta -- no toca precio, garantia ni movimientos. Por eso es
-// deshacible con celDeshacerAsignacion mientras el item no este ENTREGADO (venta ya cobrada). ──
+// ── ASIGNAR un celular a un item de reserva: vincula el equipo que llego a stock con el
+// compromiso comercial del cliente (item pasa a ASIGNADO). El celular sigue EN STOCK y se vende
+// despues por el asistente de Venta de Celular como cualquier otro -- la reserva no vuelve a
+// intervenir en esa venta. Deshacible con celDeshacerAsignacion mientras el item siga ASIGNADO. ──
 var celAsignarItemId=null,celAsignarCelular=null;
 
 function celAsignarAbrir(itemId){
@@ -6086,15 +6191,17 @@ function caAsignarSearchKey(evt){
     dd.classList.remove('show');
   }
 }
-// Aparta (no vende) un celular para un item de reserva: el celular queda RESERVADO (ya no
-// aparece disponible para otra venta) y el item queda ASIGNADO. La venta real -- precio,
-// garantia, movimiento -- se cierra recien en Cargar Movimiento cuando se cobra el saldo.
+// Vincula un celular al item de una reserva pendiente: la reserva es solo el compromiso
+// comercial (senia) con el cliente, no representa una venta ni bloquea el equipo -- el celular
+// queda EN STOCK, disponible para venderse normalmente por el asistente de Venta de Celular
+// (a ese cliente o a cualquier otro). El item de reserva pasa a ASIGNADO, que es su estado
+// final: la reserva ya cumplio su proposito en cuanto el equipo que pedia el cliente entro a stock.
 async function celAsignarItemSoft(celular,item){
   var hoy=new Date().toISOString().slice(0,10);
   var res=await fetch(SUPA_URL+'/rest/v1/celulares?id=eq.'+celular.id,{
     method:'PATCH',
     headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
-    body:JSON.stringify({estado:'RESERVADO'})
+    body:JSON.stringify({estado:'EN STOCK'})
   });
   if(!res.ok){var e=await res.text();return{ok:false,error:e.slice(0,80)};}
   var resI=await fetch(SUPA_URL+'/rest/v1/celulares_reservas_items?id=eq.'+item.id,{
@@ -6106,9 +6213,10 @@ async function celAsignarItemSoft(celular,item){
   return{ok:true};
 }
 
-// Inverso exacto de celAsignarItemSoft: libera el celular a EN STOCK y devuelve el item a
-// PENDIENTE. Solo tiene sentido mientras el item no este ENTREGADO (venta ya cerrada) -- en ese
-// caso la unica forma de deshacer es borrar el movimiento del saldo (revertirRegistrosDeVenta).
+// Inverso exacto de celAsignarItemSoft: desvincula el celular de la reserva (sigue EN STOCK,
+// ya no cambia de estado) y devuelve el item a PENDIENTE. Si el celular ya se vendio por el
+// asistente de Venta, esta funcion no aplica -- deshacer esa venta se hace borrando el movimiento
+// (revertirRegistrosDeVenta), sin tocar la reserva.
 async function celDeshacerAsignacion(itemId){
   var item=celReservaItems.find(function(x){return String(x.id)===String(itemId);});
   if(!item||item.estado!=='ASIGNADO')return;
@@ -6595,7 +6703,7 @@ function ventaCelSeleccionar(id){
   if(!cel)return;
   if(ventaCarritoTemp.some(function(c){return c.id===cel.id;})){showToast('Ese celular ya esta en la venta',true);return;}
   ventaCarritoTemp.push({
-    id:cel.id,imei:cel.imei,marca:cel.marca,modelo:cel.modelo,color:cel.color,capacidad:cel.capacidad,
+    id:cel.id,imei:cel.imei,marca:cel.marca,modelo:cel.modelo,color:cel.color,capacidad:cel.capacidad,bateria:cel.bateria,
     costoTotal:celCostoTotal(cel),
     precioLista:parseFloat(cel.precio_lista)||0,
     precioVentaMoneda:'ARS',
@@ -6605,7 +6713,8 @@ function ventaCelSeleccionar(id){
   input.value='';input.focus();
   var dd=document.getElementById('venta-cel-search-ac');
   dd.classList.remove('show');dd.innerHTML='';
-  ventaRecalcularPrecioFinal();
+  renderVentaCarrito();
+  ventaWizardEvaluar();
 }
 
 function ventaCelSearchKey(evt){
@@ -6631,125 +6740,62 @@ function ventaCelSearchKey(evt){
   }
 }
 
-var ventaModoPrecio='proporcional';
-
+// Bloque 3: tarjeta por celular con la info del equipo en filas etiqueta/valor, mas un renglon
+// de precio de venta editable (precargado con el precio de lista, pero el usuario lo puede
+// cambiar libremente). Ya no existe un "precio final" agregado ni reparto entre lineas -- cada
+// linea es independiente.
 function renderVentaCarrito(){
   var el=document.getElementById('venta-carrito');
   if(!el)return;
-  var disabled=ventaModoPrecio!=='manual';
   if(!ventaCarritoTemp.length){
-    el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:8px 0;">Busca al menos un celular para agregarlo a la venta.</div>';
+    el.innerHTML='<div class="rd-empty" style="padding:18px 0;">Busca al menos un celular para agregarlo a la venta.</div>';
   }else{
-    el.innerHTML='<div style="font-size:10px;color:var(--text3);font-family:monospace;margin-bottom:6px;">'+ventaCarritoTemp.length+' celular(es) en la venta:</div>'+
-      ventaCarritoTemp.map(function(c,i){
-        return'<div class="cart-row" style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
-          '<div style="flex:1;min-width:0;">'+
-            '<div><span class="mono" style="color:var(--text3);font-size:10px;margin-right:8px;">'+c.imei+'</span>'+
-            '<strong>'+c.marca+' '+c.modelo+'</strong>'+
-            (c.color?' '+c.color:'')+(c.capacidad?' '+c.capacidad:'')+
-            '</div>'+
-            '<div style="font-size:10px;color:var(--text3);margin-top:2px;">Costo: '+fmtARS(c.costoTotal)+' · lista: '+fmtARS(c.precioLista)+'</div>'+
-          '</div>'+
-          '<input type="number" value="'+c.precioVentaValor+'" min="0" step="0.01" placeholder="Precio venta" class="cart-row-price" style="padding:6px 8px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg2);color:var(--text);font-size:12px;" data-idx="'+i+'" onchange="ventaCarritoSetPrecio(this.dataset.idx,this.value)" '+(disabled?'disabled':'')+'>'+
-          '<select data-idx="'+i+'" class="cart-row-currency" style="padding:6px 4px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg2);color:var(--text);font-size:12px;" onchange="ventaCarritoSetMoneda(this.dataset.idx,this.value)" '+(disabled?'disabled':'')+'>'+
+    el.innerHTML=ventaCarritoTemp.map(function(c,i){
+      return'<div class="rd-info-card">'+
+        '<div class="rd-info-card-row"><label>Marca</label><span>'+c.marca+'</span></div>'+
+        '<div class="rd-info-card-row"><label>Modelo</label><span>'+c.modelo+'</span></div>'+
+        '<div class="rd-info-card-row"><label>Color</label><span>'+(c.color||'-')+'</span></div>'+
+        '<div class="rd-info-card-row"><label>Capacidad</label><span>'+(c.capacidad||'-')+'</span></div>'+
+        '<div class="rd-info-card-row"><label>Batería</label><span>'+(c.bateria?c.bateria+'%':'-')+'</span></div>'+
+        '<div class="rd-info-card-row"><label>IMEI</label><span>'+c.imei+'</span></div>'+
+        '<div class="rd-info-card-row"><label>Precio de venta</label><span style="display:flex;gap:6px;font-family:inherit;">'+
+          '<input type="number" value="'+c.precioVentaValor+'" min="0" step="0.01" data-idx="'+i+'" onchange="ventaCarritoSetPrecio(this.dataset.idx,this.value)" style="width:110px;padding:5px 8px;border:1px solid rgba(255,255,255,0.1);border-radius:6px;background:var(--rd-bg);color:var(--rd-text);font-family:\'JetBrains Mono\',monospace;font-size:12px;">'+
+          '<select data-idx="'+i+'" onchange="ventaCarritoSetMoneda(this.dataset.idx,this.value)" class="rd-select">'+
             '<option value="ARS"'+(c.precioVentaMoneda==='ARS'?' selected':'')+'>ARS</option>'+
             '<option value="USD"'+(c.precioVentaMoneda==='USD'?' selected':'')+'>USD</option>'+
           '</select>'+
-          '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;flex-shrink:0;" data-idx="'+i+'" onclick="ventaQuitarDelCarrito(this.dataset.idx)">x</button>'+
-          '</div>';
-      }).join('');
+        '</span></div>'+
+        '<button class="rd-btn" style="margin-top:10px;color:var(--rd-red);border-color:var(--rd-red);" data-idx="'+i+'" onclick="ventaQuitarDelCarrito(this.dataset.idx)">Quitar</button>'+
+        '</div>';
+    }).join('')+
+    '<div style="font-size:11px;color:var(--rd-text3);font-family:\'JetBrains Mono\',monospace;margin:6px 0 4px;">Precio de venta total cargado: '+fmtARS(ventaTotalArs())+'</div>';
   }
-  ventaUpdateSugerido();
-  ventaSyncPrecioFinalManual();
-  ventaCalcGanancia();
+  ventaCalcCostoResumen();
 }
-function ventaCarritoSetPrecio(idx,val){ventaCarritoTemp[parseInt(idx)].precioVentaValor=parseFloat(val)||0;ventaSyncPrecioFinalManual();ventaCalcGanancia();}
+function ventaCarritoSetPrecio(idx,val){ventaCarritoTemp[parseInt(idx)].precioVentaValor=parseFloat(val)||0;renderVentaCarrito();}
 function ventaCarritoSetMoneda(idx,val){ventaCarritoTemp[parseInt(idx)].precioVentaMoneda=val;renderVentaCarrito();}
-function ventaQuitarDelCarrito(idx){ventaCarritoTemp.splice(parseInt(idx),1);ventaRecalcularPrecioFinal();}
-
-function ventaUpdateSugerido(){
-  var sugerido=ventaCarritoTemp.reduce(function(s,c){return s+c.precioLista;},0);
-  var el=document.getElementById('venta-precio-sugerido');
-  if(el)el.textContent=fmtARS(sugerido);
-  return sugerido;
-}
-
-// En modo manual el campo "Precio final" solo refleja la suma en vivo de las lineas (no se edita).
-function ventaSyncPrecioFinalManual(){
-  if(ventaModoPrecio!=='manual')return;
-  var inputFinal=document.getElementById('venta-precio-final');
-  if(inputFinal)inputFinal.value=ventaTotalArs().toFixed(2);
-}
-
-function ventaCambiarModoPrecio(modo){
-  ventaModoPrecio=modo;
-  var inputFinal=document.getElementById('venta-precio-final');
-  if(inputFinal)inputFinal.readOnly=(modo==='manual');
-  ventaRecalcularPrecioFinal();
-}
-
-function ventaAplicarPrecioFinal(){
-  ventaRecalcularPrecioFinal();
-}
-
-// Punto de entrada unico: recalcula precioVentaValor de todo el carrito (en la moneda de cada
-// linea) segun el modo activo y el "Precio final de la venta" tipeado, todo en terminos ARS.
-function ventaRecalcularPrecioFinal(){
-  if(ventaModoPrecio!=='manual'){
-    var inputFinal=document.getElementById('venta-precio-final');
-    var montoArs=inputFinal?parseFloat(inputFinal.value):NaN;
-    if(!(montoArs>=0)){
-      ventaCarritoTemp.forEach(function(c){c.precioVentaValor=ventaArsAMoneda(c.precioLista,c.precioVentaMoneda);});
-    }else if(ventaModoPrecio==='ultimo'){
-      ventaDistribuirUltimo(ventaCarritoTemp,montoArs);
-    }else{
-      ventaDistribuirProporcional(ventaCarritoTemp,montoArs);
-    }
-  }
-  renderVentaCarrito();
-}
-
-// Convierte un monto ARS al valor que corresponde en la moneda propia de la linea.
-function ventaArsAMoneda(arsValue,moneda){
-  if(moneda==='USD')return dolarBlue?Math.round((arsValue/dolarBlue)*100)/100:arsValue;
-  return Math.round(arsValue*100)/100;
-}
-
-// Reparte el precio final proporcionalmente al precio de lista (en ARS) de cada linea,
-// reconvirtiendo cada una a su propia moneda. La ultima linea absorbe el redondeo.
-function ventaDistribuirProporcional(carrito,montoFinalArs){
-  if(!carrito.length)return;
-  var totalListaArs=carrito.reduce(function(s,c){return s+c.precioLista;},0);
-  if(!totalListaArs){
-    var partesIguales=montoFinalArs/carrito.length;
-    carrito.forEach(function(c){c.precioVentaValor=ventaArsAMoneda(partesIguales,c.precioVentaMoneda);});
-    return;
-  }
-  var acumuladoArs=0;
-  for(var i=0;i<carrito.length;i++){
-    var c=carrito[i];
-    var esUltimo=i===carrito.length-1;
-    var nuevoArs=esUltimo?(montoFinalArs-acumuladoArs):Math.round((c.precioLista/totalListaArs)*montoFinalArs*100)/100;
-    acumuladoArs+=nuevoArs;
-    c.precioVentaValor=ventaArsAMoneda(nuevoArs,c.precioVentaMoneda);
-  }
-}
-
-// Todas las lineas salvo la ultima vuelven a su precio de lista; la ultima absorbe el descuento.
-function ventaDistribuirUltimo(carrito,montoFinalArs){
-  if(!carrito.length)return;
-  var acumuladoArs=0;
-  for(var i=0;i<carrito.length-1;i++){
-    var c=carrito[i];
-    c.precioVentaValor=ventaArsAMoneda(c.precioLista,c.precioVentaMoneda);
-    acumuladoArs+=c.precioLista;
-  }
-  var last=carrito[carrito.length-1];
-  last.precioVentaValor=ventaArsAMoneda(montoFinalArs-acumuladoArs,last.precioVentaMoneda);
-}
+function ventaQuitarDelCarrito(idx){ventaCarritoTemp.splice(parseInt(idx),1);renderVentaCarrito();ventaWizardEvaluar();}
 
 function ventaTotalArs(){
   return ventaCarritoTemp.reduce(function(s,c){return s+convertirMoneda(c.precioVentaValor,c.precioVentaMoneda).ars;},0);
+}
+
+// Costo interno de la mercaderia (Bloque 3, "Resumen del costo") -- nunca el precio de venta.
+// Se usa despues para la rentabilidad del Bloque 4, junto con lo efectivamente cobrado.
+function ventaAccesorioCostoArs(){
+  return accesorioCarritoTemp.reduce(function(s,c){
+    var p=productosTiendas.find(function(x){return x.codigo===c.codigo;});
+    var costoUsd=p?parseFloat(p.precio_costo_usd)||0:0;
+    return s+(costoUsd*(dolarBlue||0)*c.cantidad);
+  },0);
+}
+function ventaCalcCostoResumen(){
+  var costoCel=ventaCarritoTemp.reduce(function(s,c){return s+c.costoTotal;},0);
+  var costoAcc=ventaAccesorioCostoArs();
+  var elCel=document.getElementById('venta-costo-celular');if(elCel)elCel.textContent=fmtARS(costoCel);
+  var elAcc=document.getElementById('venta-costo-accesorios');if(elAcc)elAcc.textContent=fmtARS(costoAcc);
+  var elTot=document.getElementById('venta-costo-total');if(elTot)elTot.textContent=fmtARS(costoCel+costoAcc);
+  ventaCalcRentabilidad();
 }
 
 function ventaUpdateMixto(){
@@ -6766,146 +6812,26 @@ function ventaUpdateMixto(){
   if(m3&&v3)parts.push(m3+': '+fmtARS(v3));
   var info=document.getElementById('venta-mixto-info');
   if(info)info.textContent=parts.length?'Total ingresado: '+fmtARS(total)+' ('+parts.join(' + ')+')':'';
+  ventaCalcRentabilidad();
+  ventaWizardEvaluar();
 }
 
-function ventaCalcGanancia(){
-  var totalVenta=ventaTotalArs();
-  var totalCosto=ventaCarritoTemp.reduce(function(s,c){return s+c.costoTotal;},0);
-  var gan=totalVenta-totalCosto;
-  var el=document.getElementById('venta-ganancia');
-  if(el){el.textContent=fmtARS(gan);el.style.color=gan>=0?'var(--green)':'var(--red)';}
-  ventaCalcSaldoReserva();
-}
-
-// ── Venta ligada a una reserva: se busca la reserva, sus items ya ASIGNADOS se agregan solos
-// al carrito (mismo ventaCelSeleccionar de siempre) y los que faltan se resuelven con un
-// buscador propio por item. El saldo a cobrar = total del carrito - anticipo - parte de pago;
-// el movimiento del anticipo nunca se toca (ver celGuardarOp, rama venta). ──
-var ventaReservaSeleccionada=null,ventaReservaItemResuelto={};
-
-function ventaToggleReserva(){
-  var si=document.getElementById('venta-es-reserva').value==='SI';
-  document.getElementById('venta-reserva-wrap').style.display=si?'block':'none';
-  if(!si)ventaLimpiarReserva();
-}
-function ventaLimpiarReserva(){
-  ventaReservaSeleccionada=null;
-  ventaReservaItemResuelto={};
-  document.getElementById('venta-reserva-info').innerHTML='';
-  document.getElementById('venta-reserva-search').value='';
-  ventaCalcSaldoReserva();
-}
-
-var ventaResAcActiveIdx=-1;
-function ventaBuscarReserva(input){
-  var q=input.value.trim().toLowerCase();
-  var dd=document.getElementById('venta-reserva-search-ac');
-  if(!q){dd.classList.remove('show');dd.innerHTML='';return;}
-  var terms=q.split(/\s+/).filter(Boolean);
-  var matches=celReservas.filter(function(r){
-    if(celReservaCompleta(r))return false;
-    var texto=(r.cliente+' '+(r.modelo||'')+' '+r.id).toLowerCase();
-    return terms.every(function(t){return texto.indexOf(t)>-1;});
-  }).slice(0,10);
-  if(!matches.length){dd.innerHTML='<div class="ac-empty">Sin reservas que coincidan</div>';dd.classList.add('show');return;}
-  dd.innerHTML=matches.map(function(r){
-    return'<div class="ac-item" data-id="'+r.id+'" onclick="ventaSeleccionarReserva(this.dataset.id)">'+
-      '<span class="ac-item-code">#'+r.id+' '+r.cliente+'</span>'+
-      '<span class="ac-item-desc">'+(r.modelo||'-')+' · Abonado '+fmtSmart(r.importe)+'</span>'+
-      '</div>';
-  }).join('');
-  dd.classList.add('show');
-}
-
-function ventaSeleccionarReserva(reservaId){
-  var r=celReservas.find(function(x){return String(x.id)===String(reservaId);});
-  if(!r)return;
-  ventaReservaSeleccionada=r;
-  ventaReservaItemResuelto={};
-  document.getElementById('venta-reserva-search').value='';
-  var dd=document.getElementById('venta-reserva-search-ac');dd.classList.remove('show');dd.innerHTML='';
-  document.getElementById('venta-cliente').value=r.cliente;
-  // Los items ya asignados (equipo apartado desde Stock o Reservas) se agregan solos al carrito.
-  celItemsDeReserva(r.id).forEach(function(it){
-    if(it.estado==='ASIGNADO'&&it.celular_id){
-      ventaCelSeleccionar(it.celular_id);
-      ventaReservaItemResuelto[it.id]=it.celular_id;
-    }
-  });
-  ventaRenderReservaInfo();
-}
-
-function ventaRenderReservaInfo(){
-  var r=ventaReservaSeleccionada;
-  var el=document.getElementById('venta-reserva-info');
-  if(!r){el.innerHTML='';return;}
-  var items=celItemsDeReserva(r.id);
-  var faltan=items.filter(function(it){return it.estado!=='ASIGNADO'&&it.estado!=='ENTREGADO'&&!ventaReservaItemResuelto[it.id];}).length;
-  var html='<div style="background:var(--bg3);border-radius:var(--r);padding:12px;font-size:12px;">'+
-    '<div style="margin-bottom:6px;"><strong>Reserva #'+r.id+' — '+r.cliente+'</strong> · Abonado '+fmtSmart(r.importe)+' el '+fd(r.fecha)+'</div>';
-  html+=items.map(function(it){
-    var resuelto=it.estado==='ASIGNADO'||it.estado==='ENTREGADO'||ventaReservaItemResuelto[it.id];
-    var linea='<div style="display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap;"><span>'+(it.marca?it.marca+' ':'')+it.modelo+(it.color?' '+it.color:'')+'</span>';
-    if(resuelto){
-      linea+=' <span class="badge b-vendido" style="font-size:10px;">Equipo elegido</span>';
-    }else{
-      linea+='<div class="ac-wrap" style="flex:1;min-width:200px;">'+
-        '<input type="text" placeholder="Buscar equipo para este item..." data-iid="'+it.id+'" oninput="ventaBuscarParaItem(this)" style="width:100%;padding:6px 10px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg);color:var(--text);font-size:12px;outline:none;">'+
-        '<div class="ac-dropdown" id="venta-item-ac-'+it.id+'"></div>'+
-        '</div>';
-    }
-    return linea+'</div>';
-  }).join('');
-  if(faltan)html+='<div style="margin-top:8px;color:var(--amber);font-size:11px;">Faltan '+faltan+' equipo(s) por elegir antes de poder guardar.</div>';
-  html+='</div>';
-  el.innerHTML=html;
-}
-
-function ventaBuscarParaItem(input){
-  var itemId=input.dataset.iid;
-  var q=input.value.trim().toLowerCase();
-  var dd=document.getElementById('venta-item-ac-'+itemId);
-  if(!dd)return;
-  if(!q){dd.classList.remove('show');dd.innerHTML='';return;}
-  var terms=q.split(/\s+/).filter(Boolean);
-  var yaEnCarrito={};ventaCarritoTemp.forEach(function(c){yaEnCarrito[c.id]=true;});
-  var matches=celulares.filter(function(c){
-    if(c.estado!=='EN STOCK'||yaEnCarrito[c.id])return false;
-    var texto=((c.marca||'')+' '+(c.modelo||'')+' '+(c.color||'')+' '+(c.capacidad||'')+' '+c.imei).toLowerCase();
-    return terms.every(function(t){return texto.indexOf(t)>-1;});
-  }).slice(0,8);
-  if(!matches.length){dd.innerHTML='<div class="ac-empty">Sin equipos disponibles</div>';dd.classList.add('show');return;}
-  dd.innerHTML=matches.map(function(c){
-    return'<div class="ac-item" data-id="'+c.id+'" onclick="ventaElegirParaItem(\''+itemId+'\',this.dataset.id)">'+
-      '<span class="ac-item-code">'+c.marca+' '+c.modelo+'</span>'+
-      '<span class="ac-item-desc">'+(c.color||'-')+' · '+(c.capacidad||'-')+' · IMEI ...'+c.imei.slice(-6)+'</span>'+
-      '</div>';
-  }).join('');
-  dd.classList.add('show');
-}
-
-function ventaElegirParaItem(itemId,celId){
-  ventaCelSeleccionar(celId);
-  ventaReservaItemResuelto[itemId]=celId;
-  ventaRenderReservaInfo();
-}
-
-function ventaCalcSaldoReserva(){
-  var box=document.getElementById('venta-saldo-box');
-  if(!box)return;
-  var r=ventaReservaSeleccionada;
-  if(!r){box.style.display='none';return;}
-  box.style.display='block';
-  var total=ventaTotalArs();
-  var abonado=parseFloat(r.importe)||0;
-  var ppTotal=ppListaTemp.reduce(function(s,p){return s+(parseFloat(p.valor)||0);},0);
-  var saldo=Math.round((total-abonado-ppTotal)*100)/100;
-  box.innerHTML=
-    '<div style="display:flex;justify-content:space-between;padding:3px 0;"><span>Valor total de los celulares</span><strong>'+fmtARS(total)+'</strong></div>'+
-    '<div style="display:flex;justify-content:space-between;padding:3px 0;"><span>Reserva abonada</span><strong>'+fmtARS(abonado)+'</strong></div>'+
-    (ppTotal?'<div style="display:flex;justify-content:space-between;padding:3px 0;"><span>Parte de pago</span><strong>'+fmtARS(ppTotal)+'</strong></div>':'')+
-    '<div style="display:flex;justify-content:space-between;padding:6px 0 0;border-top:1px solid var(--border-md);margin-top:4px;font-size:14px;"><span>Saldo a cobrar</span><strong style="color:'+(saldo<0?'var(--red)':'var(--green)')+';">'+fmtARS(saldo)+'</strong></div>'+
-    (saldo<0?'<div style="color:var(--red);font-size:11px;margin-top:6px;">El anticipo + parte de pago supera el valor total. Revisa los precios de venta.</div>':'');
+// Bloque 4: rentabilidad = ingresos efectivamente cobrados (metodos de pago) + valor del celular
+// recibido como parte de pago (no es efectivo, pero es valor recibido) - costo del celular -
+// costo de los accesorios. Solo informativo, no se persiste como campo aparte.
+function ventaCalcRentabilidad(){
+  var ingresos=ventaMetodoTotal();
+  var ppValor=ppListaTemp.reduce(function(s,p){return s+(p.valorArs!=null?p.valorArs:(parseFloat(p.valor)||0));},0);
+  var costoCel=ventaCarritoTemp.reduce(function(s,c){return s+c.costoTotal;},0);
+  var costoAcc=ventaAccesorioCostoArs();
+  var rent=ingresos+ppValor-costoCel-costoAcc;
+  var set=function(id,val){var el=document.getElementById(id);if(el)el.textContent=fmtARS(val);};
+  set('venta-rent-ingresos',ingresos);
+  set('venta-rent-pp',ppValor);
+  set('venta-rent-costo-cel',costoCel);
+  set('venta-rent-costo-acc',costoAcc);
+  var elRent=document.getElementById('venta-rentabilidad');
+  if(elRent){elRent.textContent=fmtARS(rent);elRent.style.color=rent>=0?'var(--rd-green)':'var(--rd-red)';}
 }
 
 // ── Accesorios (Tiendas) agregados a la venta de un celular. Precio siempre editable a mano
@@ -6951,19 +6877,32 @@ function renderVentaAccesorios(){
   }else{
     el.innerHTML=accesorioCarritoTemp.map(function(c,i){
       var subtotal=c.precio_cobrado*c.cantidad;
-      return'<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;flex-wrap:wrap;">'+
-        '<span class="mono" style="color:var(--text3);font-size:10px;">'+c.codigo+'</span>'+
-        '<span style="flex:1;min-width:90px;">'+c.descripcion+'</span>'+
-        '<span style="color:var(--text2);">x'+c.cantidad+'</span>'+
-        '<span style="font-size:10px;color:var(--text3);">lista: '+fmtARS(c.precio_lista)+'</span>'+
-        '<input type="number" value="'+c.precio_cobrado+'" min="0" step="0.01" data-idx="'+i+'" oninput="ventaAccesorioSetPrecio(this.dataset.idx,this.value)" style="width:100px;padding:5px 8px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg);color:var(--green);font-family:monospace;font-size:12px;outline:none;" title="Precio cobrado por unidad">'+
-        '<span style="color:var(--green);font-family:monospace;font-weight:600;">'+fmtARS(subtotal)+'</span>'+
-        '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;" data-idx="'+i+'" onclick="ventaAccesorioQuitar(this.dataset.idx)">x</button>'+
+      return'<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--rd-bg);border:1px solid var(--rd-border);border-radius:8px;margin-bottom:6px;font-size:12px;flex-wrap:wrap;">'+
+        '<span style="color:var(--rd-text3);font-size:10px;font-family:\'JetBrains Mono\',monospace;">'+c.codigo+'</span>'+
+        '<span style="flex:1;min-width:90px;color:var(--rd-text);">'+c.descripcion+'</span>'+
+        '<span style="color:var(--rd-text2);">x'+c.cantidad+'</span>'+
+        '<span style="font-size:10px;color:var(--rd-text3);">lista: '+fmtARS(c.precio_lista)+'</span>'+
+        '<input type="number" value="'+c.precio_cobrado+'" min="0" step="0.01" data-idx="'+i+'" oninput="ventaAccesorioSetPrecio(this.dataset.idx,this.value)" style="width:100px;padding:5px 8px;border:1px solid rgba(255,255,255,0.1);border-radius:6px;background:var(--rd-card);color:var(--rd-green);font-family:\'JetBrains Mono\',monospace;font-size:12px;outline:none;" title="Precio cobrado por unidad">'+
+        '<span style="color:var(--rd-green);font-family:\'JetBrains Mono\',monospace;font-weight:600;">'+fmtARS(subtotal)+'</span>'+
+        '<button class="rd-btn" style="color:var(--rd-red);border-color:var(--rd-red);" data-idx="'+i+'" onclick="ventaAccesorioQuitar(this.dataset.idx)">x</button>'+
         '</div>';
     }).join('');
   }
   var totalEl=document.getElementById('venta-accesorios-total');
   if(totalEl)totalEl.textContent=accesorioCarritoTemp.length?'Total accesorios: '+fmtARS(ventaAccesoriosTotal()):'';
+  ventaCalcCostoResumen();
+}
+
+// Bloque 4: "¿Recibe un celular como parte de pago?"
+function ppToggle(){
+  var si=document.getElementById('venta-es-parte-pago').value==='SI';
+  document.getElementById('venta-pp-wrap').style.display=si?'block':'none';
+  if(!si){
+    ppListaTemp=[];
+    var lista=document.getElementById('pp-lista');if(lista)lista.innerHTML='';
+    var formNew=document.getElementById('pp-form-new');if(formNew)formNew.style.display='none';
+    ventaCalcRentabilidad();
+  }
 }
 
 function ppAgregarCelular(){
@@ -6971,7 +6910,7 @@ function ppAgregarCelular(){
   var existing=celulares.find(function(c){return c.imei===imei;});
   if(existing){
     // Existing cel - just add to pp list
-    ppListaTemp.push({tipo:'existing',cel:existing,valor:0});
+    ppListaTemp.push({tipo:'existing',cel:existing,valor:0,moneda:'ARS',valorArs:0});
     renderPPLista();
   }else{
     // New cel - show form
@@ -6981,6 +6920,9 @@ function ppAgregarCelular(){
 }
 
 function ppConfirmarNuevo(){
+  var moneda=document.getElementById('pp-moneda').value||'ARS';
+  var valor=parseFloat(document.getElementById('pp-valor').value)||0;
+  var conv=convertirMoneda(valor,moneda);
   ppListaTemp.push({
     tipo:'nuevo',
     imei:document.getElementById('pp-imei').value,
@@ -6990,7 +6932,10 @@ function ppConfirmarNuevo(){
     capacidad:document.getElementById('pp-cap').value,
     bateria:document.getElementById('pp-bat').value,
     estado_equipo:document.getElementById('pp-estado').value,
-    valor:parseFloat(document.getElementById('pp-valor').value)||0,
+    moneda:moneda,
+    valor:valor,
+    valorArs:conv.ars,
+    cotizacion:conv.cotizacion,
     estado:'EN STOCK'
   });
   document.getElementById('pp-form-new').style.display='none';
@@ -7002,16 +6947,35 @@ function renderPPLista(){
   var el=document.getElementById('pp-lista');
   el.innerHTML=!ppListaTemp.length?'':ppListaTemp.map(function(p,i){
     var label=p.tipo==='nuevo'?(p.marca+' '+p.modelo):(p.cel.marca+' '+p.cel.modelo);
-    return'<div class="cart-row" style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg3);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
-      '<span style="flex:1">'+label+'</span>'+
-      '<input type="number" placeholder="Precio de costo (valor recibido) $" class="cart-row-price" style="padding:5px 8px;border:1px solid var(--border-md);border-radius:var(--r);background:var(--bg);color:var(--text);font-size:12px;" value="'+(p.valor||'')+'" data-idx="'+i+'" onchange="ppUpdateValor(this.dataset.idx,this.value)">'+
-      '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;" data-idx="'+i+'" onclick="ppQuitarCelular(this.dataset.idx)">x</button>'+
+    return'<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--rd-bg);border:1px solid var(--rd-border);border-radius:8px;margin-bottom:6px;font-size:12px;flex-wrap:wrap;">'+
+      '<span style="flex:1;color:var(--rd-text);">'+label+'</span>'+
+      '<select data-idx="'+i+'" onchange="ppUpdateMoneda(this.dataset.idx,this.value)" class="rd-select">'+
+        '<option value="ARS"'+((p.moneda||'ARS')==='ARS'?' selected':'')+'>ARS</option>'+
+        '<option value="USD"'+(p.moneda==='USD'?' selected':'')+'>USD</option>'+
+      '</select>'+
+      '<input type="number" placeholder="Valor tomado" value="'+(p.valor||'')+'" data-idx="'+i+'" onchange="ppUpdateValor(this.dataset.idx,this.value)" style="width:110px;padding:5px 8px;border:1px solid rgba(255,255,255,0.1);border-radius:6px;background:var(--rd-card);color:var(--rd-text);font-family:\'JetBrains Mono\',monospace;font-size:12px;">'+
+      '<button class="rd-btn" style="color:var(--rd-red);border-color:var(--rd-red);" data-idx="'+i+'" onclick="ppQuitarCelular(this.dataset.idx)">x</button>'+
       '</div>';
   }).join('');
-  ventaCalcSaldoReserva();
+  ventaCalcRentabilidad();
 }
 
-function ppUpdateValor(idx,val){ppListaTemp[parseInt(idx)].valor=parseFloat(val)||0;ventaCalcSaldoReserva();}
+function ppUpdateValor(idx,val){
+  var p=ppListaTemp[parseInt(idx)];
+  if(!p)return;
+  p.valor=parseFloat(val)||0;
+  var conv=convertirMoneda(p.valor,p.moneda||'ARS');
+  p.valorArs=conv.ars;p.cotizacion=conv.cotizacion;
+  ventaCalcRentabilidad();
+}
+function ppUpdateMoneda(idx,val){
+  var p=ppListaTemp[parseInt(idx)];
+  if(!p)return;
+  p.moneda=val;
+  var conv=convertirMoneda(p.valor||0,val);
+  p.valorArs=conv.ars;p.cotizacion=conv.cotizacion;
+  ventaCalcRentabilidad();
+}
 function ppQuitarCelular(idx){ppListaTemp.splice(parseInt(idx),1);renderPPLista();}
 
 // === REPARACION / REPUESTO ===
@@ -7139,6 +7103,13 @@ function ventaGetMetodoStr(){
   if(m3&&m3.value&&v3&&parseFloat(v3.value))parts.push(m3.value+':'+parseFloat(v3.value));
   return parts.length?parts.join('|'):(document.getElementById('venta-metodo1')?document.getElementById('venta-metodo1').value||'EFECTIVO':'EFECTIVO');
 }
+// Total de los hasta 3 metodos de cobro del Bloque 4 -- es el "ingreso" real de la venta (ya no
+// se deriva del carrito de celulares, ver ventaCalcRentabilidad/celGuardarOp).
+function ventaMetodoTotal(){
+  return(parseFloat(document.getElementById('venta-monto1')&&document.getElementById('venta-monto1').value)||0)
+    +(parseFloat(document.getElementById('venta-monto2')&&document.getElementById('venta-monto2').value)||0)
+    +(parseFloat(document.getElementById('venta-monto3')&&document.getElementById('venta-monto3').value)||0);
+}
 
 // Servicio unico de conversion de moneda, usado por todo el sistema (Celulares y el guardado
 // centralizado de movimientos): convierte un importe cargado en ARS o USD a ambas monedas
@@ -7246,49 +7217,32 @@ async function celGuardarOp(){
     else if(op==='venta'){
       if(!ventaCarritoTemp.length){showToast('Agrega al menos un celular a la venta',true);return false;}
       if(!dolarBlue&&ventaCarritoTemp.some(function(c){return c.precioVentaMoneda==='USD';})){showToast('No se pudo obtener la cotizacion del dolar, actualizala antes de guardar',true);return false;}
-      var canalVenta=document.getElementById('f-canal-venta').value;
+      var canalVenta=document.getElementById('venta-canal-venta').value;
       if(!canalVenta){showToast('Selecciona el Canal de venta',true);return false;}
-      var reserva=ventaReservaSeleccionada;
-      var itemsReserva=reserva?celItemsDeReserva(reserva.id):[];
-      if(reserva){
-        var itemsSinResolver=itemsReserva.filter(function(it){return it.estado!=='ASIGNADO'&&it.estado!=='ENTREGADO'&&!ventaReservaItemResuelto[it.id];});
-        if(itemsSinResolver.length){showToast('Faltan '+itemsSinResolver.length+' equipo(s) de la reserva por elegir',true);return false;}
-      }
+      var ventaCliente=document.getElementById('venta-cliente').value.trim();
+      if(!ventaCliente){showToast('Ingresa el cliente',true);return false;}
       var ventaFecha=document.getElementById('f-fecha').value||new Date().toISOString().slice(0,10);
       var garantiaVenta=garantiaLeer('venta',ventaFecha);
       if(!garantiaVenta.valido){showToast('Ingresa una cantidad valida de dias de garantia',true);return false;}
-      var ventaCliente=document.getElementById('venta-cliente').value||null;
       var ventaMetodo=ventaGetMetodoStr();
-      var totalVenta=ventaTotalArs();
-      // La parte de pago (celular recibido a cambio) se descuenta de lo que efectivamente
-      // ingresa a caja -- el valor tomado nunca fue plata que entro, es el costo del equipo
-      // que se suma a stock (ver mas abajo). Si la venta viene de una reserva, ademas se
-      // descuenta el anticipo (esa plata ya entro y ya tiene su propio movimiento historico,
-      // que no se toca).
-      var ppTotal=ppListaTemp.reduce(function(s,p){return s+(parseFloat(p.valor)||0);},0);
-      var ingresoVenta=Math.round((totalVenta-ppTotal-(reserva?(parseFloat(reserva.importe)||0):0))*100)/100;
-      if(ingresoVenta<0){showToast(reserva?'El anticipo + parte de pago supera el valor total: revisa los precios de venta':'La parte de pago supera el valor total: revisa los precios de venta',true);return false;}
-      var descVenta=(reserva?'Saldo reserva #'+reserva.id+' — ':'')+ventaCarritoTemp.map(function(c){return c.marca+' '+c.modelo+' IMEI:'+c.imei;}).join(', ');
-      // Igual que en la compra: si todos los equipos se vendieron en la misma moneda, el
-      // movimiento la conserva; si estan mezclados, se registra en ARS (ya convertido).
-      var monedaUniformeVenta=ventaCarritoTemp.every(function(c){return c.precioVentaMoneda===ventaCarritoTemp[0].precioVentaMoneda;})?ventaCarritoTemp[0].precioVentaMoneda:'ARS';
-      var importeOriginalVenta=monedaUniformeVenta==='ARS'&&ventaCarritoTemp.some(function(c){return c.precioVentaMoneda!=='ARS';})
-        ?totalVenta
-        :ventaCarritoTemp.reduce(function(s,c){return s+(parseFloat(c.precioVentaValor)||0);},0);
-      // Si hay reserva, el importe_original/importe_equivalente de moneda no puede seguir
-      // representando el total del carrito (eso ya no es lo que se cobra ahora) -- se ajusta al
-      // mismo saldo que se registra como ingreso, siempre en ARS, para no mezclar con USD.
-      if(reserva){monedaUniformeVenta='ARS';importeOriginalVenta=ingresoVenta;}
+      // El ingreso de la venta es lo efectivamente cobrado por los metodos de pago del Bloque 4
+      // -- ya no se deriva de sumar el "precio de venta" cargado en cada linea del carrito (ese
+      // precio por linea solo queda guardado en cada celular para trazabilidad/reportes).
+      var ingresoVenta=ventaMetodoTotal();
+      if(ingresoVenta<=0){showToast('Cargá al menos un metodo de cobro con monto',true);return false;}
+      var esParteDePago=document.getElementById('venta-es-parte-pago')&&document.getElementById('venta-es-parte-pago').value==='SI';
+      if(esParteDePago&&!ppListaTemp.length){showToast('Agrega el celular recibido como parte de pago, o marca "No"',true);return false;}
+      if(document.getElementById('venta-cuotas-check').checked&&!ventaCuotasTemp.length){showToast('Completa los datos de las cuotas',true);return false;}
+      var descVenta=ventaCarritoTemp.map(function(c){return c.marca+' '+c.modelo+' IMEI:'+c.imei;}).join(', ');
       // Movimiento se crea primero para poder enlazar los celulares a su venta (movimiento_id)
       // y poder revertir la venta completa si el movimiento se borra despues (ver revertirRegistrosDeVenta).
       var movIdVenta=await guardarMovimientoInternoConId({
         fecha:ventaFecha,unidad:'CELULARES',operacion:'VENTAS',
         categoria:'DIRECTA',descripcion:descVenta,
-        ingreso:ingresoVenta,egreso:0,metodo:ventaMetodo,mensaje:ventaCliente||'',canal_venta:canalVenta,
-        moneda:monedaUniformeVenta,importe_original:importeOriginalVenta,
-        tiene_garantia:garantiaVenta.tiene_garantia,dias_garantia:garantiaVenta.dias_garantia,fecha_vencimiento_garantia:garantiaVenta.fecha_vencimiento_garantia,
-        reserva_id:reserva?reserva.id:undefined
+        ingreso:ingresoVenta,egreso:0,metodo:ventaMetodo,mensaje:ventaCliente,canal_venta:canalVenta,
+        tiene_garantia:garantiaVenta.tiene_garantia,dias_garantia:garantiaVenta.dias_garantia,fecha_vencimiento_garantia:garantiaVenta.fecha_vencimiento_garantia
       });
+      if(!movIdVenta){showToast('No se pudo registrar el movimiento de la venta',true);return false;}
       for(var vi=0;vi<ventaCarritoTemp.length;vi++){
         var item=ventaCarritoTemp[vi];
         var conv=convertirMoneda(item.precioVentaValor,item.precioVentaMoneda);
@@ -7315,20 +7269,6 @@ async function celGuardarOp(){
           showToast('Error venta ('+item.imei+'): '+eMsg,true);return false;
         }
       }
-      // Si la venta viene de una reserva, se cierran todos sus items (ENTREGADO) -- el anticipo
-      // sigue siendo su propio movimiento historico, sin tocar.
-      if(reserva){
-        for(var ri=0;ri<itemsReserva.length;ri++){
-          var itR=itemsReserva[ri];
-          if(itR.estado==='ENTREGADO')continue;
-          var celIdResuelto=itR.celular_id||ventaReservaItemResuelto[itR.id];
-          await fetch(SUPA_URL+'/rest/v1/celulares_reservas_items?id=eq.'+itR.id,{
-            method:'PATCH',
-            headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
-            body:JSON.stringify({estado:'ENTREGADO',celular_id:celIdResuelto,fecha_entrega:ventaFecha})
-          });
-        }
-      }
       // Accesorios (Tiendas) vendidos junto con el celular: se registran como una venta de
       // Tiendas aparte, con su propio movimiento (unidad TIENDAS). Asi el Resumen de Tiendas,
       // el desglose por unidad y el deshacer de ventas (revertirRegistrosDeVenta, que filtra por
@@ -7340,7 +7280,7 @@ async function celGuardarOp(){
         var movIdAccesorios=await guardarMovimientoInternoConId({
           fecha:ventaFecha,unidad:'TIENDAS',operacion:'VENTAS',
           categoria:'DIRECTA',descripcion:'Accesorios (venta celular) — '+descAccesorios,
-          ingreso:accesorioTotal,egreso:0,metodo:ventaMetodo,mensaje:ventaCliente||'',canal_venta:canalVenta,
+          ingreso:accesorioTotal,egreso:0,metodo:ventaMetodo,mensaje:ventaCliente,canal_venta:canalVenta,
           tiene_garantia:false,dias_garantia:null,fecha_vencimiento_garantia:null
         });
         for(var aci=0;aci<accesorioCarritoTemp.length;aci++){
@@ -7369,10 +7309,17 @@ async function celGuardarOp(){
         await tieCargarDatos();
       }
       await crearDeudaSiCorresponde('CELULARES',ventaCliente,ventaFecha,ingresoVenta,ventaMetodo,movIdVenta);
-      if(ventaCliente)await ensureCliente(ventaCliente);
-      // Parte de pago: equipos recibidos a cambio, se suman al stock.
+      await ensureCliente(ventaCliente,{
+        dni:(document.getElementById('venta-dni').value||'').trim()||null,
+        telefono:(document.getElementById('venta-telefono').value||'').trim()||null,
+        email:(document.getElementById('venta-email').value||'').trim()||null,
+        instagram:(document.getElementById('venta-instagram').value||'').trim()||null
+      });
+      // Parte de pago: equipo recibido a cambio, se suma al stock con su propia moneda y la
+      // cotizacion del dia (para que la rentabilidad historica no cambie si el dolar se mueve).
       for(var i=0;i<ppListaTemp.length;i++){
         var pp=ppListaTemp[i];
+        var ppConv=convertirMoneda(pp.valor,pp.moneda||'ARS');
         if(pp.tipo==='nuevo'){
           var ppPayload={
             imei:pp.imei,
@@ -7382,11 +7329,14 @@ async function celGuardarOp(){
             capacidad:pp.capacidad||null,
             bateria:pp.bateria?parseInt(pp.bateria):null,
             estado_equipo:pp.estado_equipo||'USADO',
-            precio_compra:parseFloat(pp.valor)||0,
+            precio_compra:ppConv.ars,
+            moneda_costo:pp.moneda||'ARS',
+            precio_compra_usd:ppConv.usd,
+            cotizacion_compra:ppConv.cotizacion,
             precio_lista:0,
             estado:'EN STOCK',
             fecha_compra:ventaFecha||null,
-            notas:'Parte de pago — venta a '+(ventaCliente||'cliente')+' ('+ventaCarritoTemp.map(function(c){return c.imei;}).join(', ')+')'
+            notas:'Parte de pago — venta a '+ventaCliente+' ('+ventaCarritoTemp.map(function(c){return c.imei;}).join(', ')+')'
           };
           await fetch(SUPA_URL+'/rest/v1/celulares',{
             method:'POST',
@@ -7400,14 +7350,29 @@ async function celGuardarOp(){
             method:'PATCH',
             headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
             body:JSON.stringify({
-              estado:'EN STOCK',precio_compra:parseFloat(pp.valor)||0,moneda_costo:'ARS',fecha_compra:ventaFecha||null,
+              estado:'EN STOCK',precio_compra:ppConv.ars,moneda_costo:pp.moneda||'ARS',precio_compra_usd:ppConv.usd,cotizacion_compra:ppConv.cotizacion,fecha_compra:ventaFecha||null,
               fecha_venta:null,precio_venta:null,moneda_venta:null,precio_venta_usd:null,cotizacion_venta:null,cliente:null,metodo_pago_venta:null,canal_venta:null,movimiento_id:null,
-              notas:'Parte de pago — venta a '+(ventaCliente||'cliente')+' ('+ventaCarritoTemp.map(function(c){return c.imei;}).join(', ')+')'
+              notas:'Parte de pago — venta a '+ventaCliente+' ('+ventaCarritoTemp.map(function(c){return c.imei;}).join(', ')+')'
             })
           });
         }
       }
-      if(reserva){await celCargarDatos();await cargarCelularesReservas();}
+      // Cuotas (Bloque 4): una fila por cuota en celulares_cuotas -- ver backups/2026-08-07/
+      // migracion_cuotas.sql. Si la tabla todavia no existe (falta correr esa migracion), no se
+      // bloquea el resto de la venta ya guardada, solo se avisa.
+      if(document.getElementById('venta-cuotas-check').checked&&ventaCuotasTemp.length){
+        var cuotasError=false;
+        for(var qi=0;qi<ventaCuotasTemp.length;qi++){
+          var cuota=ventaCuotasTemp[qi];
+          var resCuota=await fetch(SUPA_URL+'/rest/v1/celulares_cuotas',{
+            method:'POST',
+            headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+            body:JSON.stringify({movimiento_id:movIdVenta,numero:cuota.numero,moneda:cuota.moneda,monto:cuota.monto,cotizacion:dolarBlue||null,fecha_vencimiento:cuota.fecha_vencimiento,estado:'PENDIENTE'})
+          });
+          if(!resCuota.ok)cuotasError=true;
+        }
+        if(cuotasError)showToast('La venta se guardo, pero las cuotas no se pudieron registrar (¿falta correr la migracion de cuotas en Supabase?)',true);
+      }
       showToast('Venta registrada correctamente');
     }
 
@@ -7508,23 +7473,68 @@ async function guardarMovimientoInternoConId(data){
 }
 
 // Add rep-costo listener
+var ventaCuotasTemp=[];
+
 function ventaToggleCuotas(){
   var checked=document.getElementById('venta-cuotas-check').checked;
   document.getElementById('venta-cuotas-form').style.display=checked?'block':'none';
   if(checked&&!document.getElementById('vc-inicio').value){
     document.getElementById('vc-inicio').value=new Date().toISOString().slice(0,10);
   }
+  if(checked)ventaCalcCuota();
+  else{ventaCuotasTemp=[];var l=document.getElementById('vc-cuotas-lista');if(l)l.innerHTML='';var i=document.getElementById('vc-info');if(i)i.textContent='';}
 }
 
+function ventaFechaSumarFrecuencia(fechaBase,frecuencia,n){
+  var d=new Date(fechaBase+'T12:00:00');
+  var dias=frecuencia==='semanal'?7:(frecuencia==='quincenal'?15:30);
+  d.setDate(d.getDate()+dias*n);
+  return d.toISOString().slice(0,10);
+}
+
+// Genera una fila por cuota (numero, moneda, monto, vencimiento) segun cantidad/monto/moneda/
+// frecuencia. Cada cuota indica su propia moneda -- nunca se asume, y el usuario puede cambiarla
+// cuota por cuota si hace falta (ver renderVentaCuotas).
 function ventaCalcCuota(){
   var cant=parseInt(document.getElementById('vc-cantidad').value)||0;
   var monto=parseFloat(document.getElementById('vc-monto').value)||0;
-  var total=cant*monto;
+  var moneda=document.getElementById('vc-moneda').value||'ARS';
+  var inicio=document.getElementById('vc-inicio').value||new Date().toISOString().slice(0,10);
+  var frecuencia=document.getElementById('vc-frecuencia').value||'mensual';
+  ventaCuotasTemp=[];
+  for(var i=0;i<cant;i++){
+    ventaCuotasTemp.push({numero:i+1,moneda:moneda,monto:monto,fecha_vencimiento:ventaFechaSumarFrecuencia(inicio,frecuencia,i)});
+  }
+  renderVentaCuotas();
+}
+
+function renderVentaCuotas(){
+  var el=document.getElementById('vc-cuotas-lista');
+  if(!el)return;
+  el.innerHTML=!ventaCuotasTemp.length?'':ventaCuotasTemp.map(function(c,i){
+    return'<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--rd-bg);border:1px solid var(--rd-border);border-radius:8px;margin-bottom:5px;font-size:12px;">'+
+      '<span style="width:64px;color:var(--rd-text2);">Cuota '+c.numero+'</span>'+
+      '<select data-idx="'+i+'" onchange="ventaCuotaSetMoneda(this.dataset.idx,this.value)" class="rd-select">'+
+        '<option value="ARS"'+(c.moneda==='ARS'?' selected':'')+'>ARS</option>'+
+        '<option value="USD"'+(c.moneda==='USD'?' selected':'')+'>USD</option>'+
+      '</select>'+
+      '<input type="number" value="'+c.monto+'" min="0" step="0.01" data-idx="'+i+'" onchange="ventaCuotaSetMonto(this.dataset.idx,this.value)" style="width:100px;padding:5px 8px;border:1px solid rgba(255,255,255,0.1);border-radius:6px;background:var(--rd-card);color:var(--rd-text);font-family:\'JetBrains Mono\',monospace;font-size:12px;">'+
+      '<span style="color:var(--rd-text3);font-size:11px;">vence '+fd(c.fecha_vencimiento)+'</span>'+
+      '</div>';
+  }).join('');
   var info=document.getElementById('vc-info');
-  if(info&&cant&&monto){
-    info.textContent='Total en cuotas: '+fmtARS(total)+' ('+cant+' x '+fmtARS(monto)+')';
+  if(info){
+    if(!ventaCuotasTemp.length){info.textContent='';}
+    else{
+      var porMoneda={};
+      ventaCuotasTemp.forEach(function(c){porMoneda[c.moneda]=(porMoneda[c.moneda]||0)+c.monto;});
+      var partes=Object.keys(porMoneda).map(function(m){return fmtMoneda(porMoneda[m],m);});
+      info.textContent='Total en cuotas: '+partes.join(' + ')+' ('+ventaCuotasTemp.length+' cuota(s))';
+    }
   }
 }
+function ventaCuotaSetMoneda(idx,val){var c=ventaCuotasTemp[parseInt(idx)];if(c)c.moneda=val;renderVentaCuotas();}
+function ventaCuotaSetMonto(idx,val){var c=ventaCuotasTemp[parseInt(idx)];if(c)c.monto=parseFloat(val)||0;renderVentaCuotas();}
 
 document.addEventListener('DOMContentLoaded',function(){
   var repCostoEl=document.getElementById('rep-costo');
