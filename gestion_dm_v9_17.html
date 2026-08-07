@@ -958,8 +958,10 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
               <div class="cel-fgroup cel-form-full"><label>Proveedor</label>
                 <div class="ac-wrap"><input type="text" id="nc-proveedor" autocomplete="off" oninput="provAutocomplete(this,'CELULARES','nc-proveedor-ac')"><div class="ac-dropdown" id="nc-proveedor-ac"></div></div></div>
               <div class="cel-fgroup cel-form-full"><label>Observaciones</label><input type="text" id="nc-obs" placeholder="Estado del equipo, accesorios incluidos, etc..."></div>
-              <div class="cel-fgroup cel-form-full"><label>Asignar a reserva (opcional)</label>
-                <select id="nc-reserva"><option value="">Sin asignar</option></select></div>
+              <div class="cel-fgroup cel-form-full"><label>¿Este equipo corresponde a una reserva pendiente?</label>
+                <select id="nc-es-reserva" onchange="ncReservaToggle()"><option value="NO">No</option><option value="SI">Si</option></select></div>
+              <div class="cel-fgroup cel-form-full" id="nc-reserva-wrap" style="display:none;"><label>Reserva pendiente compatible</label>
+                <select id="nc-reserva"><option value="">Selecciona...</option></select></div>
             </div>
             <button class="btn btn-sm" onclick="compraAgregarCelular()" style="margin-top:4px;">+ Agregar a la lista</button>
           </div>
@@ -1101,6 +1103,11 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
               </div>
             </div>
 
+            <div class="rd-summary-box" id="venta-saldo-reserva-box" style="display:none;">
+              <div class="rd-summary-row"><span>Precio de venta cargado (equipos reservados)</span><span id="venta-saldo-precio">$0</span></div>
+              <div class="rd-summary-row"><span>− Seña ya abonada</span><span id="venta-saldo-abonado">$0</span></div>
+              <div class="rd-summary-row total"><span>Saldo estimado a cobrar</span><span id="venta-saldo-reserva">$0</span></div>
+            </div>
             <div class="rd-summary-box" id="venta-rentabilidad-box">
               <div class="rd-summary-row"><span>Ingresos (métodos de cobro)</span><span id="venta-rent-ingresos">$0</span></div>
               <div class="rd-summary-row"><span>+ Valor parte de pago</span><span id="venta-rent-pp">$0</span></div>
@@ -1768,7 +1775,7 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
       </div>
       <div class="tw"><div class="tw-head"><div class="tw-title">Reservas / pagos anticipados</div></div>
         <table><thead><tr>
-          <th>Cliente</th><th>Equipo</th><th>Importe</th><th>Fecha reserva</th><th>Fecha entrega</th><th>Estado</th><th></th>
+          <th>Cliente</th><th>Equipo</th><th>Importe</th><th>Fecha reserva</th><th>Entrega prometida</th><th>Estado</th><th></th>
         </tr></thead><tbody id="cel-tbody-reservas"></tbody></table>
       </div>
     </div>
@@ -2242,9 +2249,14 @@ volver a "Inicio" aunque una accion del FAB lo haya llevado a una pantalla de es
       <label style="display:flex;align-items:center;gap:8px;margin-bottom:6px;cursor:pointer;"><input type="radio" name="modal-del-reserva-opt" value="restaurar" checked> Restaurar la reserva a Pendiente y liberar el equipo</label>
       <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="radio" name="modal-del-reserva-opt" value="mantener"> Mantener la reserva como Entregada</label>
     </div>
+    <div id="modal-cancelar-reserva-choice" style="display:none;margin-top:12px;padding:12px;background:var(--bg3);border-radius:var(--r);font-size:12px;">
+      <div style="margin-bottom:8px;color:var(--text2);">¿Qué hacemos con el dinero de la seña ya registrado?</div>
+      <label style="display:flex;align-items:center;gap:8px;margin-bottom:6px;cursor:pointer;"><input type="radio" name="modal-cancelar-reserva-opt" value="mantener" checked> Mantener el ingreso registrado</label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="radio" name="modal-cancelar-reserva-opt" value="revertir"> Revertir el ingreso (borrar el movimiento de la seña)</label>
+    </div>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal()">Cancelar</button>
-      <button class="btn" style="background:var(--red);color:#fff;border-color:var(--red);" onclick="confirmDelete()">Eliminar</button>
+      <button class="btn" id="modal-del-confirm-btn" style="background:var(--red);color:#fff;border-color:var(--red);" onclick="confirmDelete()">Eliminar</button>
     </div>
   </div>
 </div>
@@ -2305,14 +2317,20 @@ volver a "Inicio" aunque una accion del FAB lo haya llevado a una pantalla de es
         <div class="cel-fgroup"><label>Color</label><input type="text" id="cri-color"></div>
         <div class="cel-fgroup"><label>Capacidad</label>
           <select id="cri-cap"><option value="">-</option><option>64GB</option><option>128GB</option><option>256GB</option><option>512GB</option><option>1TB</option></select></div>
+        <div class="cel-fgroup"><label>Estado</label>
+          <select id="cri-estado-eq"><option value="NUEVO">Nuevo</option><option value="SEMI NUEVO">Seminuevo</option><option value="USADO">Usado</option></select></div>
+        <div class="cel-fgroup"><label>IMEI (opcional)</label><input type="text" id="cri-imei" placeholder="Si ya se conoce..."></div>
       </div>
       <button class="btn btn-sm" onclick="reservaAgregarItem()" style="margin-top:4px;">+ Agregar equipo</button>
       <div id="cr-items-lista" style="margin-top:10px;"></div>
     </div>
     <div class="cel-form-grid">
-      <div class="cel-fgroup"><label>Importe *</label><div style="display:flex;gap:4px;"><input type="number" id="cr-importe" placeholder="0" min="0" style="flex:1;min-width:0;"><select id="cr-importe-moneda" style="width:72px;flex-shrink:0;"><option value="ARS">ARS</option><option value="USD">USD</option></select></div></div>
+      <div class="cel-fgroup"><label>Pago</label>
+        <select id="cr-tipo-pago"><option value="SEÑA">Pago parcial (Seña)</option><option value="TOTAL">Pago total</option></select></div>
+      <div class="cel-fgroup"><label>Importe recibido *</label><div style="display:flex;gap:4px;"><input type="number" id="cr-importe" placeholder="0" min="0" style="flex:1;min-width:0;"><select id="cr-importe-moneda" style="width:72px;flex-shrink:0;"><option value="ARS">ARS</option><option value="USD">USD</option></select></div></div>
       <div class="cel-fgroup"><label>Metodo de pago</label><select id="cr-metodo"><option>MP</option><option>EFECTIVO</option><option>USD</option><option>NARANJA X</option><option>TRANSFERENCIA</option></select></div>
-      <div class="cel-fgroup"><label>Fecha *</label><input type="date" id="cr-fecha"></div>
+      <div class="cel-fgroup"><label>Fecha de la reserva *</label><input type="date" id="cr-fecha"></div>
+      <div class="cel-fgroup cel-form-full"><label>Fecha prometida de entrega *</label><input type="date" id="cr-fecha-entrega-prometida"></div>
     </div>
     <div class="cel-modal-actions">
       <button class="btn" onclick="celReservaCerrarModal()">Cancelar</button>
@@ -2366,7 +2384,8 @@ volver a "Inicio" aunque una accion del FAB lo haya llevado a una pantalla de es
       <div class="ac-dropdown" id="ca-search-ac"></div>
     </div>
     <div id="ca-imei-info" style="display:none;background:var(--bg3);border-radius:var(--r);padding:12px;margin-bottom:12px;font-size:12px;"></div>
-    <div style="font-size:11px;color:var(--text3);margin-bottom:12px;">El equipo queda apartado para esta reserva. La venta (precio, garantia y cobro del saldo) se cierra despues desde Cargar Movimiento.</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:6px;">El equipo queda vinculado a esta reserva y disponible en stock normal — cuando el cliente lo retire, la Venta lo va a detectar sola.</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:12px;">¿El equipo todavia no está en stock? <span style="color:var(--rd-green);cursor:pointer;font-weight:600;" onclick="celAsignarAbrirComoCompra()">+ Registrar como compra nueva</span></div>
     <div class="cel-modal-actions">
       <button class="btn" onclick="celAsignarCerrarModal()">Cancelar</button>
       <button class="btn btn-p" id="ca-btn-guardar" onclick="celAsignarConfirmar()">Confirmar asignacion</button>
@@ -3158,8 +3177,10 @@ function hideAllFormSections(){
     if(el)el.style.display='none';
   });
   // Reset cel info panels
-  var panels=['rep-cel-info','rep-form-ext','pp-form-new','venta-cuotas-form'];
+  var panels=['rep-cel-info','rep-form-ext','pp-form-new','venta-cuotas-form','nc-reserva-wrap'];
   panels.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});
+  var ncEsReserva=document.getElementById('nc-es-reserva');if(ncEsReserva)ncEsReserva.value='NO';
+  var ncReserva=document.getElementById('nc-reserva');if(ncReserva)ncReserva.value='';
   ventaCarritoTemp=[];repImeiActual=null;
   var repInput=document.getElementById('rep-imei-input');if(repInput)repInput.value='';
   var repAc=document.getElementById('rep-cel-search-ac');if(repAc){repAc.classList.remove('show');repAc.innerHTML='';}
@@ -3305,7 +3326,7 @@ function onOperacionChange(){
         var today=new Date().toISOString().slice(0,10);
         if(celOp==='compra'&&document.getElementById('compra-fecha'))document.getElementById('compra-fecha').value=document.getElementById('f-fecha').value||today;
         if(celOp==='reparacion'&&document.getElementById('rep-fecha'))document.getElementById('rep-fecha').value=document.getElementById('f-fecha').value||today;
-        if(celOp==='compra'){renderCompraLista();celPopularSelectReserva();}
+        if(celOp==='compra'){renderCompraLista();celPopularSelectReserva();var ncEr=document.getElementById('nc-es-reserva');if(ncEr){ncEr.value='NO';ncReservaToggle();}}
         if(celOp==='venta')ventaResetForm();
       }
     }
@@ -3546,7 +3567,11 @@ function askDelete(id,desc,type){
   pendingDelId=id;
   pendingDelType=type||'movimiento';
   var choiceEl=document.getElementById('modal-del-reserva-choice');
+  var cancelChoiceEl=document.getElementById('modal-cancelar-reserva-choice');
   var mostrarEleccionReserva=false;
+  var confirmBtn=document.getElementById('modal-del-confirm-btn');
+  document.getElementById('modal-title').textContent='Eliminar registro';
+  if(confirmBtn){confirmBtn.textContent='Eliminar';confirmBtn.style.background='var(--red)';confirmBtn.style.borderColor='var(--red)';}
   if(type==='venta-celular'){
     // Aviso especifico: esto no borra el equipo, lo devuelve a stock -- distinto del resto de
     // los borrados ("no se puede deshacer"), aca lo que se deshace es la venta en si.
@@ -3554,6 +3579,11 @@ function askDelete(id,desc,type){
     var c=celulares.find(function(x){return String(x.id)===String(id);});
     var mov=c&&c.movimiento_id?movs.find(function(m){return m.id===String(c.movimiento_id);}):null;
     mostrarEleccionReserva=!!(mov&&mov.reservaId);
+  }else if(type==='reserva-cancelar'){
+    document.getElementById('modal-title').textContent='Cancelar reserva';
+    document.getElementById('modal-desc').textContent='Se cancelarán los equipos pendientes/asignados de '+(desc?'"'+desc+'"':'esta reserva')+'. Los equipos ya entregados no se tocan.';
+    if(confirmBtn){confirmBtn.textContent='Cancelar reserva';confirmBtn.style.background='var(--amber)';confirmBtn.style.borderColor='var(--amber)';}
+    if(cancelChoiceEl){cancelChoiceEl.style.display='block';document.querySelector('input[name="modal-cancelar-reserva-opt"][value="mantener"]').checked=true;}
   }else{
     document.getElementById('modal-desc').textContent=desc?('Vas a eliminar: "'+desc+'". Esta accion no se puede deshacer.'):'¿Estás seguro de que deseas eliminar este registro? Esta acción no se puede deshacer.';
   }
@@ -3561,6 +3591,7 @@ function askDelete(id,desc,type){
     choiceEl.style.display=mostrarEleccionReserva?'block':'none';
     if(mostrarEleccionReserva)document.querySelector('input[name="modal-del-reserva-opt"][value="restaurar"]').checked=true;
   }
+  if(cancelChoiceEl&&type!=='reserva-cancelar')cancelChoiceEl.style.display='none';
   document.getElementById('modal-del').classList.add('show');
 }
 function closeModal(){document.getElementById('modal-del').classList.remove('show');pendingDelId=null;}
@@ -3569,13 +3600,16 @@ async function confirmDelete(){
   var id=pendingDelId,type=pendingDelType;
   var sel=document.querySelector('input[name="modal-del-reserva-opt"]:checked');
   var mantenerReserva=type==='venta-celular'&&!!(sel&&sel.value==='mantener');
+  var selCancel=document.querySelector('input[name="modal-cancelar-reserva-opt"]:checked');
+  var revertirSeña=type==='reserva-cancelar'&&!!(selCancel&&selCancel.value==='revertir');
   closeModal();
-  ss('loading','ELIMINANDO...');
+  ss('loading',type==='reserva-cancelar'?'CANCELANDO...':'ELIMINANDO...');
   try{
     if(type==='movimiento')await ejecutarBorrarMovimiento(id);
     else if(type==='celular')await ejecutarBorrarCelular(id);
     else if(type==='venta-celular')await ejecutarBorrarVentaCelular(id,mantenerReserva);
     else if(type==='reserva')await ejecutarBorrarReserva(id);
+    else if(type==='reserva-cancelar')await ejecutarCancelarReserva(id,revertirSeña);
     else if(type==='reparacion')await ejecutarBorrarReparacion(id);
     else if(type==='agenda')await ejecutarBorrarAgenda(id);
     ss('ok','LISTO');
@@ -3648,6 +3682,35 @@ async function ejecutarBorrarReserva(id){
   await fetch(SUPA_URL+'/rest/v1/celulares_reservas?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});
   if(r&&r.movimiento_id)await borrarMovimientoYCascada(r.movimiento_id);
   showToast('Reserva eliminada');
+  await refrescarTodo();
+}
+
+// Cancelar (a diferencia de eliminar) deja la reserva y sus items como registro historico
+// (CANCELADA) en vez de borrarlos. Los items ya ENTREGADO no se tocan -- solo se cancela lo que
+// todavia estaba pendiente/asignado. La seña (el movimiento del ingreso) se mantiene o se revierte
+// segun lo que haya elegido el usuario en el modal (ver askDelete/confirmDelete).
+async function ejecutarCancelarReserva(id,revertirSeña){
+  var r=celReservas.find(function(x){return String(x.id)===String(id);});
+  if(!r)return;
+  var items=celItemsDeReserva(id).filter(function(i){return i.estado!=='ENTREGADO'&&i.estado!=='CANCELADA';});
+  for(var i=0;i<items.length;i++){
+    await fetch(SUPA_URL+'/rest/v1/celulares_reservas_items?id=eq.'+items[i].id,{
+      method:'PATCH',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+      body:JSON.stringify({estado:'CANCELADA'})
+    });
+  }
+  if(revertirSeña&&r.movimiento_id){
+    await borrarMovimientoYCascada(r.movimiento_id);
+  }
+  await fetch(SUPA_URL+'/rest/v1/celulares_reservas?id=eq.'+id,{
+    method:'PATCH',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+    body:JSON.stringify({estado:'CANCELADA'})
+  });
+  await fetch(SUPA_URL+'/rest/v1/agenda?origen=eq.RESERVA&origen_id=eq.'+id+'&estado=in.(PENDIENTE,EN_PROGRESO)',{
+    method:'PATCH',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+    body:JSON.stringify({estado:'CANCELADA'})
+  });
+  showToast('Reserva cancelada');
   await refrescarTodo();
 }
 
@@ -3770,6 +3833,16 @@ async function revertirRegistrosDeVenta(delMov,delId,opts){
             });
           }
         }
+        // El header y su recordatorio de Agenda tambien vuelven atras (ver celGuardarOp, que los
+        // habia pasado a ENTREGADA/COMPLETADA al cerrar la venta).
+        await fetch(SUPA_URL+'/rest/v1/celulares_reservas?id=eq.'+delMov.reservaId,{
+          method:'PATCH',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+          body:JSON.stringify({estado:'PENDIENTE'})
+        });
+        await fetch(SUPA_URL+'/rest/v1/agenda?origen=eq.RESERVA&origen_id=eq.'+delMov.reservaId+'&estado=eq.COMPLETADA',{
+          method:'PATCH',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+          body:JSON.stringify({estado:'PENDIENTE'})
+        });
       }catch(e){console.log('revertir items de reserva error',e);showToast('No se pudo revertir los items de la reserva: revisalos manualmente',true);}
     }
   }
@@ -4062,11 +4135,13 @@ function renderDashboardHome(){
   var stockBajo=productosTiendas.filter(function(p){return(parseInt(p.stock)||0)<5;});
   var enReparacion=celulares.filter(function(c){return c.estado==='EN REPARACION';});
   var deudasVencidas=deudas.filter(function(d){return deudaInfo(d).estado==='VENCIDA';});
+  var reservasPendientes=celReservaItems.filter(function(i){return i.estado==='PENDIENTE';});
 
   var tasks=[];
   if(stockBajo.length)tasks.push({id:'stock-bajo',emoji:'📦',label:'Revisar stock bajo ('+stockBajo.length+' producto'+(stockBajo.length>1?'s':'')+')',onClick:"goTie('tie-stock')"});
   if(enReparacion.length)tasks.push({id:'reparaciones',emoji:'🔧',label:enReparacion.length+' reparacion'+(enReparacion.length>1?'es':'')+' en curso',onClick:"goCel('cel-reparacion')"});
   if(deudasVencidas.length)tasks.push({id:'deudas-vencidas',emoji:'💸',label:'Cobrar '+deudasVencidas.length+' deuda'+(deudasVencidas.length>1?'s':'')+' vencida'+(deudasVencidas.length>1?'s':''),onClick:"go('deudores',null)"});
+  if(reservasPendientes.length)tasks.push({id:'reservas-pendientes',emoji:'📦',label:reservasPendientes.length+' reserva'+(reservasPendientes.length>1?'s':'')+' esperando equipo',onClick:"goCel('cel-reservas')"});
 
   // Actividades de la Agenda para hoy: se suman a la misma lista de "Operaciones de hoy"
   // (no van en un widget aparte) para que el usuario vea todo lo que tiene que hacer en un solo lugar.
@@ -4966,6 +5041,9 @@ function agendaAbrirEditar(id){
   }else if(a.origen==='SERVICIO_TECNICO'){
     origenEl.style.display='block';
     origenEl.innerHTML='Generado automaticamente desde una reparacion de Servicio Tecnico. <span style="color:var(--rd-green);cursor:pointer;font-weight:600;" onclick="agendaCerrarModal();goServ(\'serv-pendientes\',null)">Ver reparaciones →</span>';
+  }else if(a.origen==='RESERVA'){
+    origenEl.style.display='block';
+    origenEl.innerHTML='Generado automaticamente desde la fecha prometida de entrega de una reserva. <span style="color:var(--rd-green);cursor:pointer;font-weight:600;" onclick="agendaCerrarModal();goCel(\'cel-reservas\',null)">Ver reservas →</span>';
   }else{
     origenEl.style.display='none';
   }
@@ -5976,6 +6054,20 @@ function celItemLineaHtml(item){
     '</div>';
 }
 
+// Badge de estado de una reserva: resumen derivado de sus items (una reserva puede tener varios
+// equipos en distinta etapa cada uno), salvo CANCELADA que es un estado del header en si (se
+// cancela la reserva completa via ejecutarCancelarReserva). "Asignado" implica siempre "listo
+// para entregar" en este sistema -- asignar un equipo nunca lo bloquea en stock (queda EN STOCK),
+// asi que no hay un estado intermedio real entre asignar y poder entregar.
+function celReservaEstadoBadge(r){
+  if(r.estado==='CANCELADA')return'<span class="badge" style="background:var(--red-lt);color:var(--red);">🔴 Cancelada</span>';
+  var items=celItemsDeReserva(r.id);
+  var completa=celReservaCompleta(r);
+  var algunaAsignada=items.some(function(i){return i.estado==='ASIGNADO'||i.estado==='ENTREGADO';});
+  if(completa)return'<span class="badge b-vendido">⚪ Entregada</span>';
+  if(algunaAsignada)return'<span class="badge" style="background:var(--green-lt);color:var(--green);">🟢 Lista para entregar</span>';
+  return'<span class="badge" style="background:var(--amber-lt);color:var(--amber);">🟡 Pendiente</span>';
+}
 function celRenderReservas(){
   var tbody=document.getElementById('cel-tbody-reservas');
   if(!tbody)return;
@@ -5984,21 +6076,17 @@ function celRenderReservas(){
   if(!filtrado.length){tbody.innerHTML='<tr><td colspan="7" class="empty-row">Sin reservas</td></tr>';return;}
   tbody.innerHTML=filtrado.map(function(r){
     var items=celItemsDeReserva(r.id);
-    var completa=celReservaCompleta(r);
-    var algunaAsignada=items.some(function(i){return i.estado!=='PENDIENTE';});
-    var estadoBadge=completa?'<span class="badge b-vendido">Entregada</span>'
-      :algunaAsignada?'<span class="badge" style="background:var(--amber-lt);color:var(--amber);">Parcialmente asignada</span>'
-      :'<span class="badge" style="background:var(--amber-lt);color:var(--amber);">Pendiente de asignacion</span>';
-    var ultimaEntrega=items.filter(function(i){return i.fecha_entrega;}).map(function(i){return i.fecha_entrega;}).sort().pop();
+    var puedeCancelar=r.estado!=='CANCELADA'&&!celReservaCompleta(r);
     var borrarBtn='<button class="btn btn-sm" style="color:var(--red);" onclick="askDelete('+r.id+',\''+(r.cliente||'').replace(/'/g,'')+'\',\'reserva\')" title="Eliminar">🗑</button>';
+    var cancelarBtn=puedeCancelar?'<button class="btn btn-sm" style="color:var(--amber);" onclick="askDelete('+r.id+',\''+(r.cliente||'').replace(/'/g,'')+'\',\'reserva-cancelar\')" title="Cancelar reserva">✕</button>':'';
     return'<tr>'+
       '<td>'+r.cliente+'</td>'+
       '<td>'+(items.length?items.map(celItemLineaHtml).join(''):(r.modelo||'-'))+'</td>'+
       '<td class="mono">'+fmtSmart(r.importe)+'</td>'+
       '<td class="mono" style="font-size:11px;">'+fd(r.fecha)+'</td>'+
-      '<td class="mono" style="font-size:11px;">'+(ultimaEntrega?fd(ultimaEntrega):'-')+'</td>'+
-      '<td>'+estadoBadge+'</td>'+
-      '<td>'+borrarBtn+'</td>'+
+      '<td class="mono" style="font-size:11px;">'+(r.fecha_entrega_prometida?fd(r.fecha_entrega_prometida):'-')+'</td>'+
+      '<td>'+celReservaEstadoBadge(r)+'</td>'+
+      '<td>'+cancelarBtn+borrarBtn+'</td>'+
       '</tr>';
   }).join('');
 }
@@ -6012,10 +6100,13 @@ function reservaAgregarItem(){
     marca:document.getElementById('cri-marca').value.trim().toUpperCase()||null,
     modelo:modelo,
     color:document.getElementById('cri-color').value||null,
-    capacidad:document.getElementById('cri-cap').value||null
+    capacidad:document.getElementById('cri-cap').value||null,
+    estado_equipo:document.getElementById('cri-estado-eq').value||'NUEVO',
+    imei:document.getElementById('cri-imei').value.trim()||null
   });
-  ['cri-marca','cri-modelo','cri-color'].forEach(function(id){document.getElementById(id).value='';});
+  ['cri-marca','cri-modelo','cri-color','cri-imei'].forEach(function(id){document.getElementById(id).value='';});
   document.getElementById('cri-cap').value='';
+  document.getElementById('cri-estado-eq').value='NUEVO';
   renderReservaItemsLista();
 }
 function reservaQuitarItem(idx){reservaItemsTemp.splice(parseInt(idx),1);renderReservaItemsLista();}
@@ -6028,7 +6119,7 @@ function renderReservaItemsLista(){
   }
   el.innerHTML=reservaItemsTemp.map(function(it,i){
     return'<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg);border-radius:var(--r);margin-bottom:6px;font-size:12px;">'+
-      '<span style="flex:1;"><strong>'+(it.marca?it.marca+' ':'')+it.modelo+'</strong>'+(it.color?' '+it.color:'')+(it.capacidad?' '+it.capacidad:'')+'</span>'+
+      '<span style="flex:1;"><strong>'+(it.marca?it.marca+' ':'')+it.modelo+'</strong>'+(it.color?' '+it.color:'')+(it.capacidad?' '+it.capacidad:'')+' · '+it.estado_equipo+(it.imei?' · IMEI '+it.imei:'')+'</span>'+
       '<button style="padding:2px 8px;font-size:10px;border:1px solid var(--red-lt);border-radius:4px;color:var(--red);background:transparent;cursor:pointer;" data-idx="'+i+'" onclick="reservaQuitarItem(this.dataset.idx)">x</button>'+
       '</div>';
   }).join('');
@@ -6038,10 +6129,14 @@ function celReservaAbrirNueva(){
   document.getElementById('cr-cliente').value='';
   reservaItemsTemp=[];
   renderReservaItemsLista();
+  document.getElementById('cri-estado-eq').value='NUEVO';
+  document.getElementById('cri-imei').value='';
+  document.getElementById('cr-tipo-pago').value='SEÑA';
   document.getElementById('cr-importe').value='';
   document.getElementById('cr-importe-moneda').value='ARS';
   document.getElementById('cr-metodo').value='MP';
   document.getElementById('cr-fecha').value=new Date().toISOString().slice(0,10);
+  document.getElementById('cr-fecha-entrega-prometida').value='';
   document.getElementById('cel-reserva-modal').classList.add('show');
 }
 function celReservaCerrarModal(){
@@ -6050,11 +6145,14 @@ function celReservaCerrarModal(){
 
 async function celReservaGuardar(){
   var cliente=document.getElementById('cr-cliente').value.trim();
+  var tipoPago=document.getElementById('cr-tipo-pago').value;
   var importeVal=parseFloat(document.getElementById('cr-importe').value)||0;
   var moneda=document.getElementById('cr-importe-moneda').value;
   var metodo=document.getElementById('cr-metodo').value;
   var fecha=document.getElementById('cr-fecha').value||new Date().toISOString().slice(0,10);
+  var fechaEntregaProm=document.getElementById('cr-fecha-entrega-prometida').value;
   if(!cliente||!reservaItemsTemp.length||!importeVal){showToast('Completa Cliente, al menos un equipo e Importe',true);return;}
+  if(!fechaEntregaProm){showToast('Ingresa la fecha prometida de entrega',true);return;}
   if(!dolarBlue&&moneda==='USD'){showToast('No se pudo obtener la cotizacion del dolar, actualizala antes de guardar',true);return;}
   var conv=convertirMoneda(importeVal,moneda);
   var modeloResumen=reservaItemsTemp.map(function(it){return(it.marca?it.marca+' ':'')+it.modelo+(it.color?' '+it.color:'')+(it.capacidad?' '+it.capacidad:'');}).join(', ');
@@ -6064,7 +6162,7 @@ async function celReservaGuardar(){
     // La plata entra hoy aunque los equipos todavia no tengan IMEI asignado.
     var movId=await guardarMovimientoInternoConId({
       fecha:fecha,unidad:'CELULARES',operacion:'VENTAS',categoria:'DIRECTA',
-      descripcion:'Reserva — '+modeloResumen,
+      descripcion:'Reserva ('+(tipoPago==='TOTAL'?'pago total':'seña')+') — '+modeloResumen,
       ingreso:conv.ars,egreso:0,metodo:metodo,mensaje:cliente,
       moneda:moneda,importe_original:importeVal
     });
@@ -6072,9 +6170,9 @@ async function celReservaGuardar(){
       method:'POST',
       headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=representation'},
       body:JSON.stringify({
-        cliente:cliente,modelo:modeloResumen,
+        cliente:cliente,modelo:modeloResumen,tipo_pago:tipoPago,
         importe:conv.ars,importe_usd:conv.usd,moneda:moneda,cotizacion:conv.cotizacion,
-        metodo_pago:metodo,fecha:fecha,estado:'PENDIENTE_ASIGNACION',movimiento_id:movId
+        metodo_pago:metodo,fecha:fecha,fecha_entrega_prometida:fechaEntregaProm,estado:'PENDIENTE',movimiento_id:movId
       })
     });
     if(!res.ok){var e=await res.text();showToast('Error: '+e.slice(0,80),true);return;}
@@ -6086,9 +6184,21 @@ async function celReservaGuardar(){
         await fetch(SUPA_URL+'/rest/v1/celulares_reservas_items',{
           method:'POST',
           headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
-          body:JSON.stringify({reserva_id:reservaId,marca:it.marca,modelo:it.modelo,color:it.color,capacidad:it.capacidad,estado:'PENDIENTE'})
+          body:JSON.stringify({reserva_id:reservaId,marca:it.marca,modelo:it.modelo,color:it.color,capacidad:it.capacidad,imei:it.imei,estado_equipo:it.estado_equipo,estado:'PENDIENTE'})
         });
       }
+      // Recordatorio en Agenda de la fecha prometida -- mismo patron que Servicio Tecnico
+      // (origen/origen_id), se completa/cancela cuando la reserva cambia de estado.
+      await fetch(SUPA_URL+'/rest/v1/agenda',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+        body:JSON.stringify({
+          tipo:'RECORDATORIO',titulo:'Entregar reserva: '+cliente+' — '+modeloResumen,
+          fecha:fechaEntregaProm,prioridad:'MEDIA',estado:'PENDIENTE',
+          origen:'RESERVA',origen_id:reservaId
+        })
+      });
+      await cargarAgenda();
     }
     await ensureCliente(cliente);
     showToast('Reserva registrada');
@@ -6118,6 +6228,14 @@ function celAsignarAbrir(itemId){
   search.value='';
   document.getElementById('ca-search-ac').classList.remove('show');
   search.focus();
+}
+// Opcion A del Paso 2: en vez de elegir un celular que ya esta en stock, se abre directamente el
+// alta de Compra con esta reserva ya preseleccionada en "Asignar a reserva" -- al guardar la
+// compra, el equipo queda asignado a la reserva sin pasos extra (ver celAbrirOp).
+function celAsignarAbrirComoCompra(){
+  var itemId=celAsignarItemId;
+  celAsignarCerrarModal();
+  celAbrirOp('compra',null,itemId);
 }
 function celAsignarCerrarModal(){
   document.getElementById('cel-asignar-modal').classList.remove('show');
@@ -6277,6 +6395,14 @@ function celAsignarReservaDesdeStock(celularId){
   celMostrarMatchReservas(cel,pendientes,'Cancelar');
 }
 
+// Paso 2, Opcion B del rediseño de Reservas: "¿Este equipo corresponde a una reserva pendiente?"
+// -- progressive disclosure, mismo patron que ppToggle() en el asistente de Venta.
+function ncReservaToggle(){
+  var si=document.getElementById('nc-es-reserva').value==='SI';
+  var wrap=document.getElementById('nc-reserva-wrap');
+  if(wrap)wrap.style.display=si?'block':'none';
+  if(!si){var sel=document.getElementById('nc-reserva');if(sel)sel.value='';}
+}
 // El texto del equipo reservado (ej. "iPhone 17 Negro 128GB") casi nunca coincide letra por
 // letra con el modelo que se tipea al cargar la compra, asi que ademas del aviso automatico
 // se puede elegir el item a mano desde el desplegable "Asignar a reserva" del alta de compra.
@@ -6284,7 +6410,7 @@ function celPopularSelectReserva(){
   var sel=document.getElementById('nc-reserva');
   if(!sel)return;
   var pendientes=celReservaItems.filter(function(i){return i.estado==='PENDIENTE';});
-  sel.innerHTML='<option value="">Sin asignar</option>'+pendientes.map(function(i){
+  sel.innerHTML='<option value="">Selecciona...</option>'+pendientes.map(function(i){
     var r=celReservas.find(function(x){return String(x.id)===String(i.reserva_id);});
     return'<option value="'+i.id+'">'+(r?r.cliente:'-')+' — '+(i.marca?i.marca+' ':'')+i.modelo+(i.color?' '+i.color:'')+(r?' ('+fd(r.fecha)+')':'')+'</option>';
   }).join('');
@@ -6504,7 +6630,7 @@ function celRenderTabla(tipo){
 }
 
 // ABRIR OPERACION - redirect to cargar form
-function celAbrirOp(op, imeiPre){
+function celAbrirOp(op, imeiPre, reservaItemIdPre){
   // Navigate to cargar screen
   go('cargar', document.getElementById('nav-cargar'));
   // Set unidad to CELULARES
@@ -6527,6 +6653,19 @@ function celAbrirOp(op, imeiPre){
           if(op==='venta'){
             var celPre=celulares.find(function(c){return c.imei===imeiPre&&c.estado==='EN STOCK';});
             if(celPre)ventaCelSeleccionar(celPre.id);
+          }
+        },100);
+      }
+      // Opcion A del Paso 2 de Reservas: "Asignar celular" -> "Registrar como compra nueva" llega
+      // aca con el item de reserva ya elegido, se preselecciona en "Asignar a reserva" para no
+      // hacer que el usuario lo busque de nuevo.
+      if(op==='compra'&&reservaItemIdPre){
+        setTimeout(function(){
+          var selReserva=document.getElementById('nc-reserva');
+          if(selReserva){
+            selReserva.value=reservaItemIdPre;
+            var toggle=document.getElementById('nc-es-reserva');
+            if(toggle){toggle.value='SI';ncReservaToggle();}
           }
         },100);
       }
@@ -6698,17 +6837,34 @@ function ventaBuscarCelular(input){
   dd.classList.add('show');
 }
 
+// Si el celular esta ASIGNADO a una reserva, la venta lo detecta sola -- el usuario nunca vuelve
+// a elegir la reserva a mano (ver plan "Relacion con la Venta"). Autocompleta el cliente (sin
+// pisar uno ya tipeado) y deja la linea marcada para que celGuardarOp cierre el item al guardar.
+function ventaResolverReservaDeCelular(celId){
+  var item=celReservaItems.find(function(i){return String(i.celular_id)===String(celId)&&i.estado==='ASIGNADO';});
+  if(!item)return null;
+  var reserva=celReservas.find(function(r){return String(r.id)===String(item.reserva_id);});
+  if(!reserva)return null;
+  return{reservaItemId:item.id,reservaId:reserva.id,reservaCliente:reserva.cliente,reservaAbonadoArs:parseFloat(reserva.importe)||0};
+}
 function ventaCelSeleccionar(id){
   var cel=celulares.find(function(c){return String(c.id)===String(id);});
   if(!cel)return;
   if(ventaCarritoTemp.some(function(c){return c.id===cel.id;})){showToast('Ese celular ya esta en la venta',true);return;}
-  ventaCarritoTemp.push({
+  var lineItem={
     id:cel.id,imei:cel.imei,marca:cel.marca,modelo:cel.modelo,color:cel.color,capacidad:cel.capacidad,bateria:cel.bateria,
     costoTotal:celCostoTotal(cel),
     precioLista:parseFloat(cel.precio_lista)||0,
     precioVentaMoneda:'ARS',
     precioVentaValor:parseFloat(cel.precio_lista)||0
-  });
+  };
+  var reservaInfo=ventaResolverReservaDeCelular(cel.id);
+  if(reservaInfo){
+    Object.assign(lineItem,reservaInfo);
+    var clienteInput=document.getElementById('venta-cliente');
+    if(clienteInput&&!clienteInput.value.trim())clienteInput.value=reservaInfo.reservaCliente;
+  }
+  ventaCarritoTemp.push(lineItem);
   var input=document.getElementById('venta-cel-search');
   input.value='';input.focus();
   var dd=document.getElementById('venta-cel-search-ac');
@@ -6752,6 +6908,7 @@ function renderVentaCarrito(){
   }else{
     el.innerHTML=ventaCarritoTemp.map(function(c,i){
       return'<div class="rd-info-card">'+
+        (c.reservaItemId?'<div style="font-size:11px;color:var(--rd-green);margin-bottom:8px;">🔗 Reservado por '+c.reservaCliente+' — Seña abonada: '+fmtARS(c.reservaAbonadoArs)+'</div>':'')+
         '<div class="rd-info-card-row"><label>Marca</label><span>'+c.marca+'</span></div>'+
         '<div class="rd-info-card-row"><label>Modelo</label><span>'+c.modelo+'</span></div>'+
         '<div class="rd-info-card-row"><label>Color</label><span>'+(c.color||'-')+'</span></div>'+
@@ -6832,6 +6989,30 @@ function ventaCalcRentabilidad(){
   set('venta-rent-costo-acc',costoAcc);
   var elRent=document.getElementById('venta-rentabilidad');
   if(elRent){elRent.textContent=fmtARS(rent);elRent.style.color=rent>=0?'var(--rd-green)':'var(--rd-red)';}
+  ventaCalcSaldoReserva();
+}
+
+// Info-only: si alguna linea del carrito viene de una reserva, muestra cuanto falta cobrar
+// (precio de venta cargado en esas lineas - lo que ya se abono como seña). No fuerza nada en los
+// metodos de pago -- es solo una ayuda visual para saber cuanto cobrar ahora.
+function ventaCalcSaldoReserva(){
+  var lineasReserva=ventaCarritoTemp.filter(function(c){return c.reservaItemId;});
+  var box=document.getElementById('venta-saldo-reserva-box');
+  if(!box)return;
+  if(!lineasReserva.length){box.style.display='none';return;}
+  box.style.display='block';
+  var precioCargado=lineasReserva.reduce(function(s,c){return s+convertirMoneda(c.precioVentaValor,c.precioVentaMoneda).ars;},0);
+  // Una reserva puede tener varias lineas en este carrito (varios equipos de la misma reserva);
+  // no duplicar el abonado por cada linea.
+  var reservasUnicas={};
+  lineasReserva.forEach(function(c){reservasUnicas[c.reservaId]=c.reservaAbonadoArs;});
+  var abonado=Object.keys(reservasUnicas).reduce(function(s,k){return s+reservasUnicas[k];},0);
+  var saldo=precioCargado-abonado;
+  document.getElementById('venta-saldo-precio').textContent=fmtARS(precioCargado);
+  document.getElementById('venta-saldo-abonado').textContent=fmtARS(abonado);
+  var elSaldo=document.getElementById('venta-saldo-reserva');
+  elSaldo.textContent=fmtARS(saldo);
+  elSaldo.style.color=saldo>=0?'var(--rd-green)':'var(--rd-red)';
 }
 
 // ── Accesorios (Tiendas) agregados a la venta de un celular. Precio siempre editable a mano
@@ -7234,13 +7415,22 @@ async function celGuardarOp(){
       if(esParteDePago&&!ppListaTemp.length){showToast('Agrega el celular recibido como parte de pago, o marca "No"',true);return false;}
       if(document.getElementById('venta-cuotas-check').checked&&!ventaCuotasTemp.length){showToast('Completa los datos de las cuotas',true);return false;}
       var descVenta=ventaCarritoTemp.map(function(c){return c.marca+' '+c.modelo+' IMEI:'+c.imei;}).join(', ');
+      // Si todas las lineas reserva-vinculadas del carrito son de la MISMA reserva, el movimiento
+      // de la venta queda enlazado a ella (reserva_id) -- reactiva el "deshacer venta" que ya sabe
+      // restaurar una reserva (askDelete/revertirRegistrosDeVenta). Si hay lineas de reservas
+      // distintas mezcladas, no se puede representar mas de una en el movimiento, pero cada item
+      // igual se cierra a ENTREGADO mas abajo.
+      var reservaIdsEnCarrito=ventaCarritoTemp.filter(function(c){return c.reservaId;}).map(function(c){return c.reservaId;});
+      var reservaIdsUnicos=reservaIdsEnCarrito.filter(function(v,i,a){return a.indexOf(v)===i;});
+      var reservaIdParaMovimiento=reservaIdsUnicos.length===1?reservaIdsUnicos[0]:null;
       // Movimiento se crea primero para poder enlazar los celulares a su venta (movimiento_id)
       // y poder revertir la venta completa si el movimiento se borra despues (ver revertirRegistrosDeVenta).
       var movIdVenta=await guardarMovimientoInternoConId({
         fecha:ventaFecha,unidad:'CELULARES',operacion:'VENTAS',
         categoria:'DIRECTA',descripcion:descVenta,
         ingreso:ingresoVenta,egreso:0,metodo:ventaMetodo,mensaje:ventaCliente,canal_venta:canalVenta,
-        tiene_garantia:garantiaVenta.tiene_garantia,dias_garantia:garantiaVenta.dias_garantia,fecha_vencimiento_garantia:garantiaVenta.fecha_vencimiento_garantia
+        tiene_garantia:garantiaVenta.tiene_garantia,dias_garantia:garantiaVenta.dias_garantia,fecha_vencimiento_garantia:garantiaVenta.fecha_vencimiento_garantia,
+        reserva_id:reservaIdParaMovimiento
       });
       if(!movIdVenta){showToast('No se pudo registrar el movimiento de la venta',true);return false;}
       for(var vi=0;vi<ventaCarritoTemp.length;vi++){
@@ -7372,6 +7562,40 @@ async function celGuardarOp(){
           if(!resCuota.ok)cuotasError=true;
         }
         if(cuotasError)showToast('La venta se guardo, pero las cuotas no se pudieron registrar (¿falta correr la migracion de cuotas en Supabase?)',true);
+      }
+      // Cierre de reservas: cada linea reserva-vinculada del carrito cierra su item a ENTREGADO.
+      // El usuario nunca volvio a elegir la reserva a mano -- salio solo de que celular busco.
+      var lineasReserva=ventaCarritoTemp.filter(function(c){return c.reservaItemId;});
+      if(lineasReserva.length){
+        var itemsCerradosIds=[];
+        for(var lri=0;lri<lineasReserva.length;lri++){
+          var lr=lineasReserva[lri];
+          await fetch(SUPA_URL+'/rest/v1/celulares_reservas_items?id=eq.'+lr.reservaItemId,{
+            method:'PATCH',
+            headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+            body:JSON.stringify({estado:'ENTREGADO',fecha_entrega:ventaFecha})
+          });
+          itemsCerradosIds.push(lr.reservaItemId);
+        }
+        // Si con este cierre TODOS los items de una reserva quedan ENTREGADO, la reserva pasa a
+        // Entregada (header + su recordatorio de Agenda).
+        for(var ru=0;ru<reservaIdsUnicos.length;ru++){
+          var rId=reservaIdsUnicos[ru];
+          var itemsDeEsaReserva=celItemsDeReserva(rId);
+          var todosEntregados=itemsDeEsaReserva.every(function(it){return it.estado==='ENTREGADO'||itemsCerradosIds.indexOf(it.id)>-1;});
+          if(todosEntregados){
+            await fetch(SUPA_URL+'/rest/v1/celulares_reservas?id=eq.'+rId,{
+              method:'PATCH',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+              body:JSON.stringify({estado:'ENTREGADA'})
+            });
+            await fetch(SUPA_URL+'/rest/v1/agenda?origen=eq.RESERVA&origen_id=eq.'+rId+'&estado=in.(PENDIENTE,EN_PROGRESO)',{
+              method:'PATCH',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+              body:JSON.stringify({estado:'COMPLETADA'})
+            });
+          }
+        }
+        await cargarCelularesReservas();
+        await cargarAgenda();
       }
       showToast('Venta registrada correctamente');
     }
