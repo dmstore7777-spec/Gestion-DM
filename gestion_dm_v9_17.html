@@ -2374,6 +2374,30 @@ volver a "Inicio" aunque una accion del FAB lo haya llevado a una pantalla de es
   </div>
 </div>
 
+<!-- CELULARES: AGREGAR EQUIPO a una reserva ya existente (reservas viejas sin items, o para sumar
+     otro equipo mas adelante). Sin esto, una reserva sin ningun item no tiene forma de asignarse
+     a stock ni desde aca ni desde Compra -- ver celReservaItemAbrir/celReservaItemGuardar. -->
+<div class="cel-modal-bg" id="cel-reserva-item-modal">
+  <div class="cel-modal" style="max-width:480px;">
+    <h3>Agregar equipo a la reserva</h3>
+    <input type="hidden" id="ri2-reserva-id">
+    <div class="cel-form-grid">
+      <div class="cel-fgroup"><label>Marca</label><input type="text" id="ri2-marca" placeholder="Apple, Samsung..."></div>
+      <div class="cel-fgroup"><label>Modelo *</label><input type="text" id="ri2-modelo" placeholder="iPhone 15 Pro..."></div>
+      <div class="cel-fgroup"><label>Color</label><input type="text" id="ri2-color"></div>
+      <div class="cel-fgroup"><label>Capacidad</label>
+        <select id="ri2-cap"><option value="">-</option><option>64GB</option><option>128GB</option><option>256GB</option><option>512GB</option><option>1TB</option></select></div>
+      <div class="cel-fgroup"><label>Estado</label>
+        <select id="ri2-estado-eq"><option value="NUEVO">Nuevo</option><option value="SEMI NUEVO">Seminuevo</option><option value="USADO">Usado</option></select></div>
+      <div class="cel-fgroup"><label>IMEI (opcional)</label><input type="text" id="ri2-imei" placeholder="Si ya se conoce..."></div>
+    </div>
+    <div class="cel-modal-actions">
+      <button class="btn" onclick="celReservaItemCerrarModal()">Cancelar</button>
+      <button class="btn btn-p" id="ri2-btn-guardar" onclick="celReservaItemGuardar()">Guardar</button>
+    </div>
+  </div>
+</div>
+
 <!-- CELULARES: ASIGNAR CELULAR a una reserva (buscador por modelo/color/IMEI, no requiere el IMEI completo) -->
 <div class="cel-modal-bg" id="cel-asignar-modal">
   <div class="cel-modal" style="max-width:480px;">
@@ -6079,9 +6103,10 @@ function celRenderReservas(){
     var puedeCancelar=r.estado!=='CANCELADA'&&!celReservaCompleta(r);
     var borrarBtn='<button class="btn btn-sm" style="color:var(--red);" onclick="askDelete('+r.id+',\''+(r.cliente||'').replace(/'/g,'')+'\',\'reserva\')" title="Eliminar">🗑</button>';
     var cancelarBtn=puedeCancelar?'<button class="btn btn-sm" style="color:var(--amber);" onclick="askDelete('+r.id+',\''+(r.cliente||'').replace(/'/g,'')+'\',\'reserva-cancelar\')" title="Cancelar reserva">✕</button>':'';
+    var agregarEquipoLink=r.estado!=='CANCELADA'?'<div style="margin-top:4px;"><span style="color:var(--rd-green);cursor:pointer;font-size:11px;font-weight:600;" onclick="celReservaItemAbrir('+r.id+')">+ Agregar equipo</span></div>':'';
     return'<tr>'+
       '<td>'+r.cliente+'</td>'+
-      '<td>'+(items.length?items.map(celItemLineaHtml).join(''):(r.modelo||'-'))+'</td>'+
+      '<td>'+(items.length?items.map(celItemLineaHtml).join(''):(r.modelo||'-'))+agregarEquipoLink+'</td>'+
       '<td class="mono">'+fmtSmart(r.importe)+'</td>'+
       '<td class="mono" style="font-size:11px;">'+fd(r.fecha)+'</td>'+
       '<td class="mono" style="font-size:11px;">'+(r.fecha_entrega_prometida?fd(r.fecha_entrega_prometida):'-')+'</td>'+
@@ -6205,6 +6230,49 @@ async function celReservaGuardar(){
     celReservaCerrarModal();
     await cargarCelularesReservas();
     await cargarDatos();
+  }catch(e){showToast('Error de conexion',true);}
+  finally{btn.disabled=false;btn.textContent='Guardar';}
+}
+
+// Agregar un equipo a una reserva YA EXISTENTE (reservas viejas creadas antes de que existiera
+// la tabla de items, o para sumar otro equipo mas adelante). Sin esto una reserva sin ningun item
+// no tiene forma de asignarse a stock -- ni el boton "Asignar celular" (que se renderea por item)
+// ni el desplegable de Compra (que lista items PENDIENTE) tienen de donde salir.
+function celReservaItemAbrir(reservaId){
+  document.getElementById('ri2-reserva-id').value=reservaId;
+  ['ri2-marca','ri2-modelo','ri2-color','ri2-imei'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('ri2-cap').value='';
+  document.getElementById('ri2-estado-eq').value='NUEVO';
+  document.getElementById('cel-reserva-item-modal').classList.add('show');
+}
+function celReservaItemCerrarModal(){
+  document.getElementById('cel-reserva-item-modal').classList.remove('show');
+}
+async function celReservaItemGuardar(){
+  var reservaId=document.getElementById('ri2-reserva-id').value;
+  var modelo=document.getElementById('ri2-modelo').value.trim();
+  if(!modelo){showToast('El modelo es obligatorio',true);return;}
+  var btn=document.getElementById('ri2-btn-guardar');
+  btn.disabled=true;btn.textContent='Guardando...';
+  try{
+    var res=await fetch(SUPA_URL+'/rest/v1/celulares_reservas_items',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},
+      body:JSON.stringify({
+        reserva_id:reservaId,
+        marca:document.getElementById('ri2-marca').value.trim().toUpperCase()||null,
+        modelo:modelo,
+        color:document.getElementById('ri2-color').value||null,
+        capacidad:document.getElementById('ri2-cap').value||null,
+        estado_equipo:document.getElementById('ri2-estado-eq').value||'NUEVO',
+        imei:document.getElementById('ri2-imei').value.trim()||null,
+        estado:'PENDIENTE'
+      })
+    });
+    if(!res.ok){var e=await res.text();showToast('Error: '+e.slice(0,80),true);return;}
+    showToast('Equipo agregado a la reserva');
+    celReservaItemCerrarModal();
+    await cargarCelularesReservas();
   }catch(e){showToast('Error de conexion',true);}
   finally{btn.disabled=false;btn.textContent='Guardar';}
 }
