@@ -1110,6 +1110,7 @@ bajo el breakpoint mobile, ver reglas dentro de @media mas abajo. */
             </div>
             <div class="rd-summary-box" id="venta-rentabilidad-box">
               <div class="rd-summary-row"><span>Ingresos (métodos de cobro)</span><span id="venta-rent-ingresos">$0</span></div>
+              <div class="rd-summary-row"><span>+ Seña ya abonada (reserva)</span><span id="venta-rent-abonado">$0</span></div>
               <div class="rd-summary-row"><span>+ Valor parte de pago</span><span id="venta-rent-pp">$0</span></div>
               <div class="rd-summary-row"><span>− Costo celular</span><span id="venta-rent-costo-cel">$0</span></div>
               <div class="rd-summary-row"><span>− Costo accesorios</span><span id="venta-rent-costo-acc">$0</span></div>
@@ -7041,17 +7042,30 @@ function ventaUpdateMixto(){
   ventaWizardEvaluar();
 }
 
-// Bloque 4: rentabilidad = ingresos efectivamente cobrados (metodos de pago) + valor del celular
-// recibido como parte de pago (no es efectivo, pero es valor recibido) - costo del celular -
-// costo de los accesorios. Solo informativo, no se persiste como campo aparte.
+// Una reserva puede tener varias lineas en este carrito (varios equipos de la misma reserva);
+// no duplicar el abonado por cada linea. Compartido por ventaCalcRentabilidad y ventaCalcSaldoReserva.
+function ventaReservaAbonadoTotal(){
+  var lineasReserva=ventaCarritoTemp.filter(function(c){return c.reservaItemId;});
+  var reservasUnicas={};
+  lineasReserva.forEach(function(c){reservasUnicas[c.reservaId]=c.reservaAbonadoArs;});
+  return Object.keys(reservasUnicas).reduce(function(s,k){return s+reservasUnicas[k];},0);
+}
+
+// Bloque 4: rentabilidad = ingresos efectivamente cobrados AHORA (metodos de pago) + la seña que
+// el cliente ya habia abonado al reservar (esa plata entro en su propio movimiento cuando se
+// cargo la reserva, pero es parte de lo que paga por el equipo asi que cuenta para saber si el
+// negocio en conjunto da ganancia) + valor del celular recibido como parte de pago - costo del
+// celular - costo de los accesorios. Solo informativo, no se persiste como campo aparte.
 function ventaCalcRentabilidad(){
   var ingresos=ventaMetodoTotal();
+  var abonadoReservas=ventaReservaAbonadoTotal();
   var ppValor=ppListaTemp.reduce(function(s,p){return s+(p.valorArs!=null?p.valorArs:(parseFloat(p.valor)||0));},0);
   var costoCel=ventaCarritoTemp.reduce(function(s,c){return s+c.costoTotal;},0);
   var costoAcc=ventaAccesorioCostoArs();
-  var rent=ingresos+ppValor-costoCel-costoAcc;
+  var rent=ingresos+abonadoReservas+ppValor-costoCel-costoAcc;
   var set=function(id,val){var el=document.getElementById(id);if(el)el.textContent=fmtARS(val);};
   set('venta-rent-ingresos',ingresos);
+  set('venta-rent-abonado',abonadoReservas);
   set('venta-rent-pp',ppValor);
   set('venta-rent-costo-cel',costoCel);
   set('venta-rent-costo-acc',costoAcc);
@@ -7070,11 +7084,7 @@ function ventaCalcSaldoReserva(){
   if(!lineasReserva.length){box.style.display='none';return;}
   box.style.display='block';
   var precioCargado=lineasReserva.reduce(function(s,c){return s+convertirMoneda(c.precioVentaValor,c.precioVentaMoneda).ars;},0);
-  // Una reserva puede tener varias lineas en este carrito (varios equipos de la misma reserva);
-  // no duplicar el abonado por cada linea.
-  var reservasUnicas={};
-  lineasReserva.forEach(function(c){reservasUnicas[c.reservaId]=c.reservaAbonadoArs;});
-  var abonado=Object.keys(reservasUnicas).reduce(function(s,k){return s+reservasUnicas[k];},0);
+  var abonado=ventaReservaAbonadoTotal();
   var saldo=precioCargado-abonado;
   document.getElementById('venta-saldo-precio').textContent=fmtARS(precioCargado);
   document.getElementById('venta-saldo-abonado').textContent=fmtARS(abonado);
@@ -7350,6 +7360,11 @@ function ventaGetMetodoStr(){
   if(m1&&m1.value&&v1&&parseFloat(v1.value))parts.push(m1.value+':'+parseFloat(v1.value));
   if(m2&&m2.value&&v2&&parseFloat(v2.value))parts.push(m2.value+':'+parseFloat(v2.value));
   if(m3&&m3.value&&v3&&parseFloat(v3.value))parts.push(m3.value+':'+parseFloat(v3.value));
+  // Un solo metodo con monto se guarda "puro" (sin ":monto"): el resto del sistema (Caja USD,
+  // KPIs, guardarMovimientoInterno) reconoce moneda USD por igualdad exacta de texto ("USD"), y
+  // el sufijo ":monto" rompia esa deteccion incluso para una venta 100% en dolares. El formato
+  // con ":monto" solo hace falta para poder separar los metodos cuando el pago esta partido en 2+.
+  if(parts.length===1)return parts[0].split(':')[0];
   return parts.length?parts.join('|'):(document.getElementById('venta-metodo1')?document.getElementById('venta-metodo1').value||'EFECTIVO':'EFECTIVO');
 }
 // Total de los hasta 3 metodos de cobro del Bloque 4 -- es el "ingreso" real de la venta (ya no
@@ -8863,6 +8878,9 @@ function tventaGetMetodoStr(){
   if(m1&&m1.value&&v1&&parseFloat(v1.value))parts.push(m1.value+':'+parseFloat(v1.value));
   if(m2&&m2.value&&v2&&parseFloat(v2.value))parts.push(m2.value+':'+parseFloat(v2.value));
   if(m3&&m3.value&&v3&&parseFloat(v3.value))parts.push(m3.value+':'+parseFloat(v3.value));
+  // Ver comentario en ventaGetMetodoStr: un solo metodo se guarda "puro" para que la deteccion
+  // de moneda USD (por igualdad exacta de texto) siga funcionando.
+  if(parts.length===1)return parts[0].split(':')[0];
   return parts.length?parts.join('|'):(m1&&m1.value?m1.value:'EFECTIVO');
 }
 
@@ -9447,6 +9465,9 @@ function ftventaGetMetodoStr(){
   if(m1&&m1.value&&v1&&parseFloat(v1.value))parts.push(m1.value+':'+parseFloat(v1.value));
   if(m2&&m2.value&&v2&&parseFloat(v2.value))parts.push(m2.value+':'+parseFloat(v2.value));
   if(m3&&m3.value&&v3&&parseFloat(v3.value))parts.push(m3.value+':'+parseFloat(v3.value));
+  // Ver comentario en ventaGetMetodoStr: un solo metodo se guarda "puro" para que la deteccion
+  // de moneda USD (por igualdad exacta de texto) siga funcionando.
+  if(parts.length===1)return parts[0].split(':')[0];
   return parts.length?parts.join('|'):(m1&&m1.value?m1.value:'EFECTIVO');
 }
 
